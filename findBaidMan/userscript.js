@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         findBadMan
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  try to take over the world!
 // @author       tlk
 // @include    https://trade.taobao.com/trade/itemlist/*
@@ -10,7 +10,7 @@
 
 //全局变量区域
 var urllist = new Array(0);
-var keyWorld = new Array("极限品牌2015","鹏哥到此一游","啥尼英伦会社","张恒","罗腾","18005651225","15375371225","15395511780","北干街道建设2路","红十燕七里桥","龙池办事处","麻城市","萧山区","贤武","唐倩","李杏桦");
+var keyWorld = new Array("极限品牌2015","鹏哥到此一游","啥尼英伦会社","张恒","罗腾","18005651225","15375371225","15395511780","北干街道建设2路","红十燕七里桥","龙池办事处","麻城市","萧山区","贤武");
 var doUrlList = new Array(0);
 //处理页面上边的详情连接并且放入urllist
     function doList (callback){
