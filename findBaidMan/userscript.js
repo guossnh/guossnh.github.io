@@ -4,6 +4,8 @@
 // @version      0.2
 // @description  try to take over the world!
 // @author       tlk
+// @updateURL  http://guossnh.com/findBaidMan/userscript.js
+// @downloadURL http://guossnh.com/findBaidMan/userscript.js
 // @include    https://trade.taobao.com/trade/itemlist/*
 // @require  http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js
 // ==/UserScript==
@@ -17,7 +19,7 @@ var doUrlList = new Array(0);
         setTimeout(function(){
             var data = $("a:contains('详情')");
             var datas;
-            console.log("dolist have dane");
+            //console.log("dolist have dane");
             for(var i = 0;i<data.length;i++){
                 datas = data.get()[i].href.toString();
                 if (datas.indexOf("detail")===31){
@@ -43,7 +45,7 @@ var doUrlList = new Array(0);
 //新建list存入值为Ture的订单号
     function getTheList(callback){
         setTimeout(function(){
-            console.log("getTheList");
+            //console.log("getTheList");
             for(var i = 0; i<urllist.length;i++){
                 findBadManKeyWorld(urllist[i]);
             }
