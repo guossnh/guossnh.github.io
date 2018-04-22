@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         quicklink
 // @namespace    http://guossnh.github.io/quickLink/userscript.js
-// @version      0.1
+// @version      0.2
 // @description  try to take over the world!
 // @author       tlk
 // @updateURL  http://guossnh.com/quickLink/userscript.js
@@ -17,7 +17,7 @@ function creatButton(){
     $("body").append("<a class='myButton' href = 'https://trade.taobao.com/trade/itemlist/list_sold_items.htm' style='top:100px;left:3px;position:fixed;' >已卖</a>");
     $("body").append("<a class='myButton' href = 'https://sell.taobao.com/auction/merchandise/auction_list.htm' style='top:200px;left:3px;position:fixed;' >仓库</a>");
     $("body").append("<a class='myButton' href = 'https://login.taobao.com/member/login.jhtml?style=minisimple' style='top:300px;left:3px;position:fixed;' >登录</a>");
-    $("body").append("<a class='myButton' href = 'https://sycm.taobao.com' style='top:400px;left:3px;position:fixed;' >参谋</a>");
+    $("body").append("<a class='myButton' href = 'https://sycm.taobao.com/ipoll/rank.htm' style='top:400px;left:3px;position:fixed;' >参谋</a>");
     $("body").append("<a class='myButton' href = 'https://sell.taobao.com/auction/merchandise/auction_list.htm' style='top:500px;left:3px;position:fixed;' >售中</a>");
     $("body").append("<a class='myButton' href = 'https://healthcenter.taobao.com/home/health_home.htm' style='top:600px;left:3px;position:fixed;' >体检</a>");
 }
