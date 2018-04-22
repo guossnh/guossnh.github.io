@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         quicklink
 // @namespace    http://guossnh.github.io/quickLink/userscript.js
-// @version      0.2
+// @version      0.1
 // @description  try to take over the world!
 // @author       tlk
-// @updateURL  http://guossnh.com/quickLink/userscript.js
-// @downloadURL http://guossnh.com/quickLink/userscript.js
+// @updateURL  http://guossnh.com/taobao/quickLink/userscript.js
+// @downloadURL http://guossnh.com/taobao/quickLink/userscript.js
 // @include    *taobao.com*
 // @require  http://cdn.bootcss.com/jquery/2.1.0/jquery.js
 // ==/UserScript==
