@@ -1,0 +1,28 @@
+<html>
+<header>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</header>
+
+<body>
+    <script>
+        function getdata() {
+            $.ajax
+                ({
+                    type: "GET",
+                    url: "https://jinshuju.net/api/v1/forms/eqbAZf/entries",
+                    dataType: 'json',
+                    headers: {
+                        "Authorization": "Basic " + btoa('Dre63QDX2ggUV4rK56TaeA:Wm0dn1MZjkt84UoQzOHd-g')
+                    },
+                    success: function (json) {
+                        alert(json);
+                    }
+                });
+        }
+
+    </script>
+    <button onclick="getdata()">123</button>
+</body>
+
+</html>
