@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         sell_all_add
-// @namespace    http://tampermonkey.net/
+// @namespace    http://guossnh.com/taobao/sellAllAdd/userscript.js
 // @version      0.3
 // @description  try to take over the world!
 // @author       tlk
