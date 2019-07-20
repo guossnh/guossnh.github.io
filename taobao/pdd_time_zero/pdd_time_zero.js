@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         pdd_time_zero
 // @namespace   http://guossnh.github.io/ pdd_time_zero/ pdd_time_zero.js
-// @version      0.1
+// @version      0.2
 // @description  这个主要是老谢用拼多多查询的时候 时间归零的插件
 // @author       You
 // @match        https://mms.pinduoduo.com/orders/list*
@@ -12,7 +12,7 @@
 // @grant        none
 //
 // ==/UserScript==
-
+/*
 function set_time_over(){
     //$("input[height='24']").eq('0').attr('value','0')
     setTimeout(function () {
@@ -32,8 +32,9 @@ function set_time_over(){
         
     }, 200);
 }   
-
+*/
 (function() {
+    /*
     setTimeout(function () {
         $("input[placeholder='请选择日期']").on('click', function () {
         set_time_over();
@@ -41,10 +42,19 @@ function set_time_over(){
         $("i[class='BeastIcon___outer-wrapper___1um08 BeastSelect___arrow-icon___3_NXq BeastIcon___type-down___12RiT']").eq(0).click()
         $("span[class='BeastSelect___item-renderer-label___24ERE']").eq(0).click()
     }, 1000);
+    */
     setTimeout(function () {
-        $("i[class='BeastIcon___outer-wrapper___1um08 BeastSelect___arrow-icon___3_NXq BeastIcon___type-down___12RiT']").eq(1).click()
+        //$("i[class='BeastIcon___outer-wrapper___1um08 BeastSelect___arrow-icon___3_NXq BeastIcon___type-down___12RiT']").eq(1).click()
+        $("input[placeholder='请选择']").eq(0).parent().click()
         setTimeout(function () {
-        $("span[class='BeastSelect___item-renderer-label___24ERE']").eq(0).click()
+        //$("span[class='BeastSelect___item-renderer-label___24ERE']").eq(0).click()
+        $("li[role='option']").eq(0).click()
+        }, 200);
+    }, 1000);
+    setTimeout(function () {
+        $("input[placeholder='请选择']").eq(1).parent().click()
+        setTimeout(function () {
+        $("li[role='option']").eq(0).click()
         }, 200);
     }, 1500);
 })();
