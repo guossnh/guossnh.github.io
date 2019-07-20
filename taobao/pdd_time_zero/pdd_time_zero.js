@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         pdd_time_zero
-// @namespace   http://guossnh.github.io/ pdd_time_zero/pdd_time_zero.js
+// @namespace   http://guossnh.github.io/taobao/pdd_time_zero/pdd_time_zero.js
 // @version      0.2
 // @description  这个主要是老谢用拼多多查询的时候 时间归零的插件
 // @author       You
