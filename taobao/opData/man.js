@@ -1,6 +1,6 @@
 //获取数据
 function getData(){
-    $.getJSON( "http://qiancaotang.oicp.vip/magicflu/odata/d553a687-4234-4536-9fe5-8489c8dfacc3/产品信息?$skip=0&$top=1000", function( data ) {
+    $.getJSON( "http://qiancaotang.oicp.vip/magicflu/service/s/jsonv2/d553a687-4234-4536-9fe5-8489c8dfacc3/forms/c323773c-8db0-477d-84d2-c7d5cd17ee5c/records/entry/2", function( data ) {
         var items = [];
         $.each( data, function( key, val ) {
           items.push( "<li id='" + key + "'>" + val + "</li>" );
@@ -32,7 +32,7 @@ $(function() {
 
     //当增加按钮被点击的时候
     $('#addData').on('click', function() {
-        $(".weui-tab__panel").append('<iframe src ="http://qiancaotang.oicp.vip/magicflu/html/loginformobile.jsp"></iframe>');
+        alert("暂时未完善")
     });
 
 });
