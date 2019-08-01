@@ -1,3 +1,50 @@
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+下边是程序所需要的变量
+*/
+//获取最近三天的时间
+var today = new Date();
+today.setHours(8)
+var yestday = new Date(new Date().getTime() - (1000 * 60 * 60 * 24))
+var beforeYestay = new Date(new Date().getTime() - (1000 *   60 * 60 * 48))
+var yestdayAllData = [];
+var beforeYestdayAllData = [];
+var getOperationDataLink = "http://qiancaotang.oicp.vip/magicflu/service/s/jsonv2/d553a687-4234-4536-9fe5-8489c8dfacc3/forms/c323773c-8db0-477d-84d2-c7d5cd17ee5c/records/entry?"
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+需要的方法
+*/
+
+//这个 方法是判断两个date格式的年月日是相等的
+function dateSame(date1, date2) {
+  if (date1.getFullYear() == date2.getFullYear() && date1.getMonth() == date2.getMonth() && date1.getDate() == date2.getDate()) {
+      return true
+  } else {
+      return false
+  }
+}
+//这个主要是获取页面载入就要执行的
+$(function() {
+
+
+});
+
+
+function get_data_by_date (date){
+  var get_data = "";
+  $.getJSON( "http://qiancaotang.oicp.vip/magicflu/service/s/jsonv2/d553a687-4234-4536-9fe5-8489c8dfacc3/forms/c323773c-8db0-477d-84d2-c7d5cd17ee5c/records/entry/2", function( data ) {
+    get_data = data;
+  });
+  return get_data;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+man
+*/
+
+
+
 //获取数据
 function getData(){
     $.getJSON( "http://qiancaotang.oicp.vip/magicflu/service/s/jsonv2/d553a687-4234-4536-9fe5-8489c8dfacc3/forms/c323773c-8db0-477d-84d2-c7d5cd17ee5c/records/entry/2", function( data ) {
@@ -9,7 +56,7 @@ function getData(){
           "class": "my-new-list",
           html: items.join( "" )
         }).appendTo( "body" );
-      });
+      });     
 }
 
 //底部选项卡的监听
