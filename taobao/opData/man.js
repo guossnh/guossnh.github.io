@@ -9,7 +9,7 @@ var yestday = new Date(new Date().getTime() - (1000 * 60 * 60 * 24))
 var beforeYestay = new Date(new Date().getTime() - (1000 * 60 * 60 * 48))
 var yestdayAllData = [];
 var beforeYestdayAllData = [];
-var getOperationDataLink = "http://qiancaotang.oicp.vip/magicflu/service/s/jsonv2/d553a687-4234-4536-9fe5-8489c8dfacc3/forms/c323773c-8db0-477d-84d2-c7d5cd17ee5c/records/entry?limit=-1&start=0&bq="
+var getOperationDataLink = "http://qiancaotang.oicp.vip/magicflu/service/s/jsonv2/d553a687-4234-4536-9fe5-8489c8dfacc3/forms/10d021d4-ca02-438c-8fa1-33e0032a9935/records/entry?limit=-1&start=0&bq="
 
 
 
@@ -90,9 +90,10 @@ function make_list_to_select(){
 }
 
 
-//获取ID
+//通过ID像页面展示数据
 function makeDataToPage(chanpinid){
   console.log(chanpinid)
+  
 }
 
 
