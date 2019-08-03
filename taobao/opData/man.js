@@ -75,7 +75,6 @@ $('#personData').on('click', function () {
   });
 });
 
-
 //生成选择列表的json文件并且返回
 function make_list_to_select(){
   var select_data_List = [];
@@ -89,11 +88,39 @@ function make_list_to_select(){
   return select_data_List
 }
 
-
 //通过ID像页面展示数据
 function makeDataToPage(chanpinid){
-  console.log(chanpinid)
+  var one_product_id_yesterday = find_One_OPdata_by_product_id(chanpinid)
+  var one_product_id_beforeyesterday = find_One_OPdata_by_product_id(chanpinid,1)
+  $(".weui-tab__panel").empty();
+  $(".weui-tab__panel").append('<h1>'+one_product_id_yesterday.yunyingxingming+"的"+one_product_id_yesterday.yunyingxingming+'<h1>');
   
+}
+
+//输入产品ID查找数据下标,num是判断需要昨天的数据还是前天的数据0是昨天的数据默认不写，1是前天的数据。其他的就返回null
+function find_One_OPdata_by_product_id(chanpinid,num = 0){
+  if(num==0){
+    for(i = 0; i < yestdayAllData.length; i++){
+      if(yestdayAllData[i].chanpinid1 == chanpinid){
+        return yestdayAllData[i];
+      }else{
+        console.log("昨天数据没有查到ID")
+        return null
+      }
+    }
+  }else if(num==1){
+    for(i = 0; i < beforeYestdayAllData.length; i++){
+      if(beforeYestdayAllData[i].chanpinid1 == chanpinid){
+        return beforeYestdayAllData[i];
+      }else{
+        console.log("前天数据没有查到ID")
+        return null
+      }
+    }
+  }else{
+    console.log("没有找到ID")
+    return null;
+  }
 }
 
 
