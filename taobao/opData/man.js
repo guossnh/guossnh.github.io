@@ -51,7 +51,7 @@ function return_date_url_use(date){
       return nu;
     }
   }
-  return date.getFullYear()+"-"+get_date_str(date.getMonth())+"-"+get_date_str(date.getDate())
+  return date.getFullYear()+"-"+get_date_str(date.getMonth()+1)+"-"+get_date_str(date.getDate())
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
