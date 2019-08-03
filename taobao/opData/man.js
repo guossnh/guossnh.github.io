@@ -11,6 +11,16 @@ var yestdayAllData = [];
 var beforeYestdayAllData = [];
 var getOperationDataLink = "http://qiancaotang.oicp.vip/magicflu/service/s/jsonv2/d553a687-4234-4536-9fe5-8489c8dfacc3/forms/c323773c-8db0-477d-84d2-c7d5cd17ee5c/records/entry?limit=-1&start=0&bq="
 
+
+
+
+
+
+
+
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
 需要的方法
 */
@@ -54,21 +64,48 @@ function return_date_url_use(date){
   return date.getFullYear()+"-"+get_date_str(date.getMonth()+1)+"-"+get_date_str(date.getDate())
 }
 
+//生成单列选择器
+$('#personData').on('click', function () {
+  weui.picker(make_list_to_select(), {
+      onChange: function (result) {
+      },
+      onConfirm: function (result) {
+          makeDataToPage(result)
+      }
+  });
+});
+
+
+//生成选择列表的json文件并且返回
+function make_list_to_select(){
+  var select_data_List = [];
+  for (i = 0; i < yestdayAllData.length; i++) {
+    $("#selectNameList").append("<div onclick=makeDataToPage(" + yestdayAllData[i].chanpinid + ")  class='weui-actionsheet__cell'>" + yestdayAllData[i].yunyingxingming11 + "的" + yestdayAllData[i].chanpinmingcheng1 + "</div>");
+    var oneyestdayData={}
+    oneyestdayData["label"] = "" + yestdayAllData[i].yunyingxingming11 + "的" + yestdayAllData[i].chanpinmingcheng1 + "";
+    oneyestdayData["value"] = "" + yestdayAllData[i].chanpinid + "";
+    select_data_List.push(oneyestdayData)
+    }
+  return select_data_List
+}
+
+
+//获取ID
+function makeDataToPage(chanpinid){
+  console.log(chanpinid)
+}
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
 man
 */
 
 //这个主要是获取页面载入就要执行的
-$(function () {
-  //获取昨天和前天的数据
-  yestdayAllData = get_data_by_date(yestday)
-  beforeYestdayAllData = get_data_by_date(beforeYestay)
-  
-});
-
-
 //底部选项卡的监听
 $(function () {
+  //获取昨天和前天的数据
+  yestdayAllData = (get_data_by_date(yestday)).entry
+  beforeYestdayAllData = (get_data_by_date(beforeYestay)).entry
   //选项卡被点击之后的样式更新
   $('.weui-navbar__item').on('click', function () {
     $(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
@@ -76,13 +113,23 @@ $(function () {
     $(".weui-tab__panel").empty()
   });
   //当点击个人选项
-  $('#personData').on('click', function () {
-    getData();
-  });
-
+  $('#personData').on('click', function() {
+    $(".weui-tab__panel").empty();
+    $(".weui-tab__panel").append('<div class="weui-skin_android" id="androidActionsheet" style="display: non  "><div class="weui-actionsheet"><div id="selectNameList" class="weui-actionsheet__menu"></div></div></div>');
+    $(".weui-tab__panel").append('<div class="page__hd" id="DataTitle"></div>');
+    $(".weui-tab__panel").append('<div class="page__bd page__bd_spacing" id="DataContent"></div>');
+    //展示列表
+    var $androidActionSheet = $('#androidActionsheet');
+    var $androidMask = $androidActionSheet.find('.weui-mask');
+    $androidActionSheet.fadeIn(200);
+    $androidMask.on('click', function() {
+        $androidActionSheet.fadeOut(200);
+    });
+});
   //当点击整体选项
-  $('#AllData').on('click', function () {
-
+  $('#AllData').on('click', function() {
+      $(".weui-tab__panel").empty();
+      $(".weui-tab__panel").append('<div class="page__hd"><h1 class="page__title">昨日销售总额：'+getTureAllSellMoney()+'</h1><p class="page__desc">数据为已经统计的数据之和</p></div>');
   });
 
   //当增加按钮被点击的时候
@@ -90,16 +137,4 @@ $(function () {
     alert("暂时未完善")
   });
 
-});
-
-
-生成单列选择器
-$('#personData').on('click', function () {
-    weui.picker(yestdayDatalist, {
-        onChange: function (result) {
-        },
-        onConfirm: function (result) {
-            makeDataToPage(result)
-        }
-    });
 });
