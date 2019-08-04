@@ -25,8 +25,7 @@ function dateSame(date1, date2) {
   } else {
     return false;
   }
-}
-
+};
 //通过日期获取运营数据表格的数据并且返回json格式
 function get_data_by_date(date) {
   var result_data = "";
@@ -43,7 +42,6 @@ function get_data_by_date(date) {
   });
   return result_data;
 };
-
 //传入日期返回一个链接使用的日期字符串
 function return_date_url_use(date) {
   //这个方法判断月份和日期是否是一位如果是的话需要前边加0
@@ -56,7 +54,6 @@ function return_date_url_use(date) {
   }
   return date.getFullYear() + "-" + get_date_str(date.getMonth() + 1) + "-" + get_date_str(date.getDate())
 }
-
 //生成单列选择器
 $('#personData').on('click', function () {
   weui.picker(make_list_to_select(), {
@@ -67,7 +64,6 @@ $('#personData').on('click', function () {
     }
   });
 });
-
 //生成选择列表的json文件并且返回
 function make_list_to_select() {
   var select_data_List = [];
@@ -80,8 +76,6 @@ function make_list_to_select() {
   }
   return select_data_List
 }
-
-
 //通过ID像页面展示数据
 function makeDataToPage(chanpinid) {
   var one_product_id_yesterday = find_One_OPdata_by_product_id(chanpinid)
@@ -154,8 +148,6 @@ function makeDataToPage(chanpinid) {
   make_date_content_no_count("cunzaiwenti","存在问题")//存在问题cunzaiwenti
   make_date_content_no_count("huodong","活动")//活动huodong
 }
-
-
 //输入产品ID查找数据下标,num是判断需要昨天的数据还是前天的数据0是昨天的数据默认不写，1是前天的数据。其他的就返回null
 function find_One_OPdata_by_product_id(chanpinid, num = 0) {
   console.log("chanpinid传入的值为" + chanpinid)
@@ -180,7 +172,6 @@ function find_One_OPdata_by_product_id(chanpinid, num = 0) {
     return null;
   }
 }
-
 //计算真实销售额
 function getTureAllSellMoney() {
   var allmoney = 0;
@@ -190,9 +181,6 @@ function getTureAllSellMoney() {
   }
   return allmoney.toFixed(2);
 }
-
-
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
 man
 */
@@ -229,9 +217,10 @@ $(function () {
     $(".weui-tab__panel").append('<div class="page__hd"><h1 class="page__title">昨日销售总额：' + getTureAllSellMoney() + '</h1><p class="page__desc">数据为已经统计的数据之和</p></div>');
   });
 
-  //当增加按钮被点击的时候
-  $('#addData').on('click', function () {
-    alert("暂时未完善")
-  });
 
+
+  //当页面载入之后
+  $("#addData").remove()//删除增加按钮
+  $(".weui-tab__panel").empty()
+  $(".weui-tab__panel").append("<h1>请稍等几秒钟开始下边菜单的操作</h1>")
 });
