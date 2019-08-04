@@ -110,15 +110,49 @@ function makeDataToPage(chanpinid) {
       $("#contentTable").append("<tr><td>" + show_name + "</td><td>" + yestady_one_data + "</td><td>持平</td></tr>")
     }
   }
+
+  function make_date_content_no_count(v_name, show_name){
+    $("#contentTable").append("<tr><td>" + show_name + "</td><td>" + one_product_id_yesterday[v_name] + "</td></tr>")
+  }
   $("#DataTitle").append('<h1>' + one_product_id_yesterday.yunyingxingming11 + "的" + one_product_id_yesterday.chanpinmingcheng1 + '昨天运营数据如下<h1>');
   //表格生成标题行
   $("#DataContent").append('<table class="gridtable" id= "contentTable"><tr><th>类别</th><th>昨日数据</th><th>前日较</th></tr></table>');
-  //天加总访客数合计
-  make_data_content("zongfangkeshuheji", "总访客数合计");
-  //添加自然访客数
-  make_data_content("ziranfangkeshu", "自然访客数");
-  //推广访客数tuiguangfangkeshu
-  make_data_content("tuiguangfangkeshu", "推广访客数");
+  
+  make_data_content("zongfangkeshuheji", "总访客数合计");//天加总访客数合计
+
+  make_data_content("ziranfangkeshu", "自然访客数");//添加自然访客数
+
+  make_data_content("tuiguangfangkeshu", "推广访客数");//推广访客数tuiguangfangkeshu
+
+  make_data_content("tfangkeshu", "真实访客数");//真实访客数tfangkeshu
+
+
+
+
+  make_data_content("danpinzongxiaoliang", "单品总销量");//总共销量danpinzongxiaoliang
+  
+  make_data_content("sdandanliang","刷单数量")//刷单数量
+
+  make_data_content("zongxiaoshoueheji", "总销量");//总销量zongxiaoshoueheji
+
+  make_data_content("tuiguangchengdanliang", "推广单量");//tuiguangchengdanliang推广单量
+  
+
+
+  make_data_content("tuiguangfeiyong", "推广费用");//推广费用tuiguangfeiyong
+
+  make_data_content("txiaoshoue", "真实销售额");//txiaoshoue真实销售额
+
+  make_data_content("zhuanhuashuai", "转化数");//zhuanhuashuai转化数
+
+
+
+  make_data_content("zongpingjiashu", "总评价数");//总评价数zongpingjiashu
+
+  make_date_content_no_count("jiage","价格")//价格jiage
+  make_date_content_no_count("xiugaijihua","修改计划")//修改计划xiugaijihua
+  make_date_content_no_count("cunzaiwenti","存在问题")//存在问题cunzaiwenti
+  make_date_content_no_count("huodong","活动")//活动huodong
 }
 
 
