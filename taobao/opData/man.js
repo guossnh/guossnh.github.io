@@ -83,7 +83,9 @@ function make_list_to_select(){
 
 //通过ID像页面展示数据
 function makeDataToPage(chanpinid){
+  console.log("chanpinid传入的值为"+chanpinid)
   var one_product_id_yesterday = find_One_OPdata_by_product_id(chanpinid)
+  console.log("one_product_id_yesterday传入的值为"+one_product_id_yesterday)
   var one_product_id_beforeyesterday = find_One_OPdata_by_product_id(chanpinid,1)
   $("#DataTitle").append('<h1>'+one_product_id_yesterday.yunyingxingming11+"的"+one_product_id_yesterday.dianpumingcheng11+'昨天运营数据如下<h1>');
   //表格生成标题行
@@ -101,14 +103,14 @@ function find_One_OPdata_by_product_id(chanpinid,num = 0){
   String(chanpinid)
   if(num==0){
     for(i = 0; i < yestdayAllData.length; i++){
-      if(String(yestdayAllData[i].chanpinid1) == chanpinid){
+      if(String(yestdayAllData[i].chanpinid) == chanpinid){
         return yestdayAllData[i];
       }
     }
     console.log("昨天数据没有查到ID")
   }else if(num==1){
     for(i = 0; i < beforeYestdayAllData.length; i++){
-      if(String(beforeYestdayAllData[i].chanpinid1) == chanpinid){
+      if(String(beforeYestdayAllData[i].chanpinid) == chanpinid){
         return beforeYestdayAllData[i];
       }
     }
