@@ -218,10 +218,4 @@ $(function () {
     $(".weui-tab__panel").append('<div class="page__hd"><h1 class="page__title">昨日销售总额：' + getTureAllSellMoney() + '</h1><p class="page__desc">数据为已经统计的数据之和</p></div>');
   });
 
-
-
-  //当页面载入之后
-  $("#addData").remove()//删除增加按钮
-  $(".weui-tab__panel").empty()
-  $(".weui-tab__panel").append("<h1>请稍等几秒钟开始下边菜单的操作</h1>")
 });
