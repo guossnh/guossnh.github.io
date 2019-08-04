@@ -156,8 +156,6 @@ function makeDataToPage(chanpinid) {
 }
 
 
-
-
 //输入产品ID查找数据下标,num是判断需要昨天的数据还是前天的数据0是昨天的数据默认不写，1是前天的数据。其他的就返回null
 function find_One_OPdata_by_product_id(chanpinid, num = 0) {
   console.log("chanpinid传入的值为" + chanpinid)
@@ -182,6 +180,17 @@ function find_One_OPdata_by_product_id(chanpinid, num = 0) {
     return null;
   }
 }
+
+//计算真实销售额
+function getTureAllSellMoney() {
+  var allmoney = 0;
+  for (i = 0; i < yestdayAllData.length; i++) {
+    console.log(yestdayAllData.txiaoshoue)
+    allmoney = Number(allmoney) + Number(parseFloat(yestdayAllData[i].txiaoshoue))
+  }
+  return allmoney.toFixed(2);
+}
+
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
