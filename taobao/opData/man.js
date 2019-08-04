@@ -122,12 +122,13 @@ function makeDataToPage(chanpinid) {
 
 
 
+  make_data_content("zongxiaoshoueheji", "总销售合计");//总销量zongxiaoshoueheji
+
+  make_data_content("tchudanliang", "真实出单量");//tchudanliang真实出单量
 
   make_data_content("danpinzongxiaoliang", "单品总销量");//总共销量danpinzongxiaoliang
   
   make_data_content("sdandanliang","刷单数量")//刷单数量
-
-  make_data_content("zongxiaoshoueheji", "总销量");//总销量zongxiaoshoueheji
 
   make_data_content("tuiguangchengdanliang", "推广单量");//tuiguangchengdanliang推广单量
   
