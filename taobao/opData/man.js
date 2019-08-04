@@ -85,7 +85,7 @@ function make_list_to_select(){
 function makeDataToPage(chanpinid){
   var one_product_id_yesterday = find_One_OPdata_by_product_id(chanpinid)
   var one_product_id_beforeyesterday = find_One_OPdata_by_product_id(chanpinid,1)
-  $("#DataTitle").append('<h1>'+one_product_id_yesterday.yunyingxingming+"的"+one_product_id_yesterday.chanpinmingcheng+'昨天运营数据如下<h1>');
+  $("#DataTitle").append('<h1>'+one_product_id_yesterday.creatorname+"的"+one_product_id_yesterday.dianpumingcheng11+'昨天运营数据如下<h1>');
   //表格生成标题行
   $("#DataContent").append('<table class="gridtable" id= "contentTable"><tr><th>类别</th><th>今日数据</th><th>较昨日</th></tr></table>')
   //天加
