@@ -72,10 +72,10 @@ $('#personData').on('click', function () {
 function make_list_to_select(){
   var select_data_List = [];
   for (i = 0; i < yestdayAllData.length; i++) {
-    $("#selectNameList").append("<div onclick=makeDataToPage(" + yestdayAllData[i].chanpinid1 + ")  class='weui-actionsheet__cell'>" + yestdayAllData[i].yunyingxingming + "的" + yestdayAllData[i].chanpinmingcheng + "</div>");
+    $("#selectNameList").append("<div onclick=makeDataToPage(" + yestdayAllData[i].chanpinid + ")  class='weui-actionsheet__cell'>" + yestdayAllData[i].creatorname + "的" + yestdayAllData[i].dianpumingcheng11 + "</div>");
     var oneyestdayData={}
-    oneyestdayData["label"] = "" + yestdayAllData[i].yunyingxingming + "的" + yestdayAllData[i].chanpinmingcheng + "";
-    oneyestdayData["value"] = "" + yestdayAllData[i].chanpinid1 + "";
+    oneyestdayData["label"] = "" + yestdayAllData[i].creatorname + "的" + yestdayAllData[i].dianpumingcheng11 + "";
+    oneyestdayData["value"] = "" + yestdayAllData[i].chanpinid + "";
     select_data_List.push(oneyestdayData)
     }
   return select_data_List
