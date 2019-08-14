@@ -17,6 +17,21 @@ var getOperationDataLink = "http://qiancaotang.oicp.vip/magicflu/service/s/jsonv
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
 需要的方法
 */
+//这里准备写一个服务器的访问模块可以传入参数根据参数访问数据
+function get_data_from_serivre(){
+  var result_data = "";
+  //对日期做判断需要加0
+  $.ajax({
+    url: getOperationDataLink,
+    data: {},
+    dataType: 'json',
+    async: false,
+    success: function (data) {
+      result_data = data;
+    }
+  });
+  return result_data;
+}
 
 //这个 方法是判断两个date格式的年月日是相等的
 function dateSame(date1, date2) {
@@ -215,7 +230,7 @@ $(function () {
   //当点击整体选项
   $('#AllData').on('click', function () {
     $(".weui-tab__panel").empty();
-    $(".weui-tab__panel").append('<div class="page__hd"><h1 class="page__title">昨日销售总额：' + getTureAllSellMoney() + '</h1><p class="page__desc">数据为已经统计的数据之和</p></div>');
+    $(".weui-tab__panel").append('<div class="page__hd"><h1 class="page__title">昨日销售总额：</h1><p class="page__desc">数据为已经统计的数据之和</p></div>');
   });
 
 });
