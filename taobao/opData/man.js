@@ -69,16 +69,6 @@ function return_date_url_use(date) {
   }
   return date.getFullYear() + "-" + get_date_str(date.getMonth() + 1) + "-" + get_date_str(date.getDate())
 }
-//生成单列选择器
-$('#personData').on('click', function () {
-  weui.picker(make_list_to_select(), {
-    onChange: function (result) {
-    },
-    onConfirm: function (result) {
-      makeDataToPage(result)
-    }
-  });
-});
 //生成选择列表的json文件并且返回
 function make_list_to_select() {
   var select_data_List = [];
@@ -220,11 +210,18 @@ $(function () {
     $(".weui-tab__panel").append('<div class="page__hd" id="DataTitle"></div>');
     $(".weui-tab__panel").append('<div class="page__bd page__bd_spacing" id="DataContent"></div>');
     //展示列表
-    var $androidActionSheet = $('#androidActionsheet');
-    var $androidMask = $androidActionSheet.find('.weui-mask');
-    $androidActionSheet.fadeIn(200);
-    $androidMask.on('click', function () {
-      $androidActionSheet.fadeOut(200);
+    //var $androidActionSheet = $('#androidActionsheet');
+    //var $androidMask = $androidActionSheet.find('.weui-mask');
+    //$androidActionSheet.fadeIn(200);
+    //$androidMask.on('click', function () {
+    //  $androidActionSheet.fadeOut(200);
+    //});
+    weui.picker(make_list_to_select(), {
+      onChange: function (result) {
+      },
+      onConfirm: function (result) {
+        makeDataToPage(result)
+      }
     });
   });
   //当点击整体选项
