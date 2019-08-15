@@ -210,12 +210,12 @@ $(function () {
     $(".weui-tab__panel").append('<div class="page__hd" id="DataTitle"></div>');
     $(".weui-tab__panel").append('<div class="page__bd page__bd_spacing" id="DataContent"></div>');
     //展示列表
-    //var $androidActionSheet = $('#androidActionsheet');
-    //var $androidMask = $androidActionSheet.find('.weui-mask');
-    //$androidActionSheet.fadeIn(200);
-    //$androidMask.on('click', function () {
-    //  $androidActionSheet.fadeOut(200);
-    //});
+    var $androidActionSheet = $('#androidActionsheet');
+    var $androidMask = $androidActionSheet.find('.weui-mask');
+    $androidActionSheet.fadeIn(200);
+    $androidMask.on('click', function () {
+      $androidActionSheet.fadeOut(200);
+    });
     weui.picker(make_list_to_select(), {
       onChange: function (result) {
       },
