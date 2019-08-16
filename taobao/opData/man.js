@@ -16,7 +16,7 @@ var getOperationDataLink = "http://qiancaotang.oicp.vip/magicflu/service/s/jsonv
 需要的方法
 */
 //根据商品ID查询之前一周的数据
-function get_data_from_serivre(){
+function get_weak_data_by_productID(){
   var result_data = "";
   //对日期做判断需要加0
   $.ajax({
@@ -185,6 +185,34 @@ function getTureAllSellMoney() {
   }
   return allmoney.toFixed(2);
 }
+//生成页面图标的方法
+function make_date_img_to_page(params) {
+/* 
+页面数据分成如下
+#访客部分
+##访客总数
+##自然访客数
+##推广访客数
+##干预访客数、
+#流量部分
+##流量总数
+##自然流量
+##推广流量 
+##干预流量
+#出单数
+##总单数
+##推广单数
+##干预单数
+##自然单数
+#总共销售额
+##自然销售额
+##推广销售额
+##干预销售额
+##推广费用
+*/
+}
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
 man
 */
