@@ -12,12 +12,10 @@ var beforeYestdayAllData = [];
 var getOperationDataLink = "http://qiancaotang.oicp.vip/magicflu/service/s/jsonv2/d553a687-4234-4536-9fe5-8489c8dfacc3/forms/c323773c-8db0-477d-84d2-c7d5cd17ee5c/records/entry?limit=-1&start=0&bq="
 
 
-
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
 需要的方法
 */
-//这里准备写一个服务器的访问模块可以传入参数根据参数访问数据
+//根据商品ID查询之前一周的数据
 function get_data_from_serivre(){
   var result_data = "";
   //对日期做判断需要加0
@@ -210,11 +208,12 @@ $(function () {
       },
       onConfirm: function (result) {
         makeDataToPage(result)
-      }
+      },
+      title:'选择要查看的产品'
     });
 
     $(".weui-tab__panel").empty();
-    $(".weui-tab__panel").append('<div class="weui-skin_android" id="androidActionsheet" style="display: none"><div class="weui-actionsheet"><div id="selectNameList" class="weui-actionsheet__menu"></div></div></div>');
+    $(".weui-tab__panel").append('<div class="weui-half-screen-dialog weui-picker weui-animate-slide-up" id="androidActionsheet" style="display: none"><div class="weui-actionsheet"><div id="selectNameList" class="weui-actionsheet__menu"></div></div></div>');
     $(".weui-tab__panel").append('<div class="page__hd" id="DataTitle"></div>');
     $(".weui-tab__panel").append('<div class="page__bd page__bd_spacing" id="DataContent"></div>');
     //展示列表
