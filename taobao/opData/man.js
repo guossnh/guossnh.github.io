@@ -9,26 +9,26 @@ var yestday = new Date(new Date().getTime() - (1000 * 60 * 60 * 24))
 var beforeYestay = new Date(new Date().getTime() - (1000 * 60 * 60 * 48))
 var yestdayAllData = [];
 var beforeYestdayAllData = [];
+var all_weak_date =[];//这是一周数据的合集
+var product_ID = "";
 var getOperationDataLink = "http://qiancaotang.oicp.vip/magicflu/service/s/jsonv2/d553a687-4234-4536-9fe5-8489c8dfacc3/forms/c323773c-8db0-477d-84d2-c7d5cd17ee5c/records/entry?limit=-1&start=0&bq="
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
 需要的方法
 */
-//根据商品ID查询之前一周的数据
-function get_weak_data_by_productID(){
-  var result_data = "";
-  //对日期做判断需要加0
-  $.ajax({
-    url: getOperationDataLink,
-    data: {},
-    dataType: 'json',
-    async: false,
-    success: function (data) {
-      result_data = data;
-    }
-  });
-  return result_data;
+
+//获取一周的数据根日期。网表的查询功能真是想骂人，操你妈
+function get_data_weak(date,time=7){
+  var weak_data=[date];
+  for(i = 1; i < time; i++){
+    weak_data.push(new Date(date.getTime() - (1000 * 60 * 60 * 24*i)));
+  }
+  console.log("最近一周的时间数据为"+weak_data);
+  for(i = 0; i < time; i++){
+    all_weak_date = all_weak_date.concat(get_data_by_date(weak_data[i]).entry);
+  }
+  console.log("所有数据集合为"+all_weak_date);
 }
 
 //这个 方法是判断两个date格式的年月日是相等的
@@ -186,7 +186,7 @@ function getTureAllSellMoney() {
   return allmoney.toFixed(2);
 }
 //生成页面图标的方法
-function make_date_img_to_page(params) {
+function make_date_img_to_page(chanpin_id) {
 /* 
 页面数据分成如下
 #访客部分
@@ -210,6 +210,26 @@ function make_date_img_to_page(params) {
 ##干预销售额
 ##推广费用
 */
+//把大数组放入小数组并且去重，方便后边计算
+var all_date_by_chanpinid = [];
+var flow_data =[];//这个是流量的数据合集
+for(i = 0; i < all_weak_date.length; i++){ 
+  console.log(Number(all_weak_date[i].chanpinid))
+  console.log(chanpin_id);
+  if(Number(all_weak_date[i].chanpinid) == chanpin_id&&flow_data.length>0){
+    console.log(i)
+    for(j = 0; j < flow_data.length; j++){
+      if(flow_data[j].riqi!=all_weak_date[i].riqi){
+        console.log(j)
+        all_date_by_chanpinid.append(all_weak_date[i]);
+      }
+    }
+      
+  }
+}
+
+wocao = all_date_by_chanpinid;
+
 }
 
 
@@ -235,7 +255,8 @@ $(function () {
       onChange: function (result) {
       },
       onConfirm: function (result) {
-        makeDataToPage(result)
+        makeDataToPage(result);
+        make_date_img_to_page(result);
       },
       title:'选择要查看的产品'
     });
