@@ -229,7 +229,7 @@ function find_same_data_by_date(data_list){
 for(i = 0; i < all_weak_date.length; i++){ 
   if(Number(all_weak_date[i].chanpinid) == chanpin_id){
     console.log("我是I的值"+i)
-    all_date_by_chanpinid.append(all_weak_date[i]); 
+    all_date_by_chanpinid.push(all_weak_date[i]); 
   }
 }
 //开始执行数据去重
