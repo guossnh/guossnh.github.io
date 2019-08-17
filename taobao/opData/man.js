@@ -213,25 +213,54 @@ function make_date_img_to_page(chanpin_id) {
 //把大数组放入小数组并且去重，方便后边计算
 var all_date_by_chanpinid = [];
 var flow_data =[];//这个是流量的数据合集
-for(i = 0; i < all_weak_date.length; i++){ 
-  console.log(Number(all_weak_date[i].chanpinid))
-  console.log(chanpin_id);
-  if(Number(all_weak_date[i].chanpinid) == chanpin_id&&flow_data.length>0){
-    console.log(i)
-    for(j = 0; j < flow_data.length; j++){
-      if(flow_data[j].riqi!=all_weak_date[i].riqi){
-        console.log(j)
-        all_date_by_chanpinid.append(all_weak_date[i]);
+//用于专门的对象数组去重的函数根据日期去重。也不知道去除的是哪一个去他妈的
+function find_same_data_by_date(data_list){
+  for(i = 0;i<data_list.length;i++){
+    for(j = i+1;j<data_list.length;j++){
+      if(data_list[i].riqi == data_list[j].riqi){
+        data_list.splice(j,1);
+       j--;
       }
     }
-      
+   }
+   return data_list;
+}
+//这个是数据的缩减
+for(i = 0; i < all_weak_date.length; i++){ 
+  if(Number(all_weak_date[i].chanpinid) == chanpin_id){
+    console.log("我是I的值"+i)
+    all_date_by_chanpinid.append(all_weak_date[i]); 
   }
 }
+//开始执行数据去重
+all_date_by_chanpinid = find_same_data_by_date(all_date_by_chanpinid);
 
-wocao = all_date_by_chanpinid;
+//生成流量部分需要的json格式文件
+for (i=0;i<all_date_by_chanpinid.length;i++){
+  var jsonObj = [{"date": all_date_by_chanpinid[i].riqi,"type":"总访客","value":all_date_by_chanpinid[i].zongfangkeshuheji},{"date": all_date_by_chanpinid[i].riqi,"type":"自然访客","value":all_date_by_chanpinid[i].ziranfangkeshu},{"date": all_date_by_chanpinid[i].riqi,"type":"推广访客","value":all_date_by_chanpinid[i].ziranfangkeshu},{"date": all_date_by_chanpinid[i].riqi,"type":"干预访客","value":all_date_by_chanpinid[i].tfangkeshu}]
+  flow_data = flow_data.concat(jsonObj)
+}
+//制作访客图标
+make_flow_img_for_page(flow_data);
 
 }
 
+//生成流量图标的方法
+function make_flow_img_for_page(flow_data){
+  $("#weak_data").append('<h2>下边是流量一周数据</h2>');
+  $("#weak_data").append('<canvas id="flow_chart_id" width="100%" height="300"></canvas>');
+  //创建图标对象
+  const flow_chart = new F2.Chart({
+    id: 'flow_chart_id',
+    pixelRatio: window.devicePixelRatio // 指定分辨率
+  });
+  //载入数据源
+  flow_chart.source(flow_data);
+
+  flow_chart.line().position('date*value').color('type');
+
+  flow_chart.render();
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
 man
@@ -241,8 +270,10 @@ man
 //底部选项卡的监听
 $(function () {
   //获取昨天和前天的数据
-  yestdayAllData = (get_data_by_date(yestday)).entry
-  beforeYestdayAllData = (get_data_by_date(beforeYestay)).entry
+  yestdayAllData = (get_data_by_date(yestday)).entry;
+  beforeYestdayAllData = (get_data_by_date(beforeYestay)).entry;
+  //获取一周的数据
+  get_data_weak(yestday);
   //选项卡被点击之后的样式更新
   $('.weui-navbar__item').on('click', function () {
     $(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
@@ -265,6 +296,8 @@ $(function () {
     $(".weui-tab__panel").append('<div class="weui-half-screen-dialog weui-picker weui-animate-slide-up" id="androidActionsheet" style="display: none"><div class="weui-actionsheet"><div id="selectNameList" class="weui-actionsheet__menu"></div></div></div>');
     $(".weui-tab__panel").append('<div class="page__hd" id="DataTitle"></div>');
     $(".weui-tab__panel").append('<div class="page__bd page__bd_spacing" id="DataContent"></div>');
+    $(".weui-tab__panel").append('<div class="page__bd page__bd_spacing" id="weak_data"></div>');
+    //添加流量模块
     //展示列表
 
     var $androidActionSheet = $('#androidActionsheet');
