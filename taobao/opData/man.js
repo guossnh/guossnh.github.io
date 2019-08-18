@@ -237,7 +237,7 @@ all_date_by_chanpinid = find_same_data_by_date(all_date_by_chanpinid);
 
 //生成流量部分需要的json格式文件
 for (i=0;i<all_date_by_chanpinid.length;i++){
-  var jsonObj = [{"date": all_date_by_chanpinid[i].riqi,"type":"总访客","value":all_date_by_chanpinid[i].zongfangkeshuheji},{"date": all_date_by_chanpinid[i].riqi,"type":"自然访客","value":all_date_by_chanpinid[i].ziranfangkeshu},{"date": all_date_by_chanpinid[i].riqi,"type":"推广访客","value":all_date_by_chanpinid[i].tuiguangfangkeshu},{"date": all_date_by_chanpinid[i].riqi,"type":"干预访客","value":all_date_by_chanpinid[i].tfangkeshu}]
+  var jsonObj = [{"date": (all_date_by_chanpinid[i].riqi).substr(-5),"type":"总访客","value":Number(all_date_by_chanpinid[i].zongfangkeshuheji)},{"date": (all_date_by_chanpinid[i].riqi).substr(-5),"type":"自然访客","value":Number(all_date_by_chanpinid[i].ziranfangkeshu)},{"date": (all_date_by_chanpinid[i].riqi).substr(-5),"type":"推广访客","value":Number(all_date_by_chanpinid[i].tuiguangfangkeshu)},{"date": (all_date_by_chanpinid[i].riqi).substr(-5),"type":"干预访客","value":Number(all_date_by_chanpinid[i].tfangkeshu)}]
   flow_data = flow_data.concat(jsonObj)
 }
 //制作访客图标
