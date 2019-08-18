@@ -237,7 +237,7 @@ all_date_by_chanpinid = find_same_data_by_date(all_date_by_chanpinid);
 
 //生成流量部分需要的json格式文件
 for (i=0;i<all_date_by_chanpinid.length;i++){
-  var jsonObj = [{"date": all_date_by_chanpinid[i].riqi,"type":"总访客","value":all_date_by_chanpinid[i].zongfangkeshuheji},{"date": all_date_by_chanpinid[i].riqi,"type":"自然访客","value":all_date_by_chanpinid[i].ziranfangkeshu},{"date": all_date_by_chanpinid[i].riqi,"type":"推广访客","value":all_date_by_chanpinid[i].ziranfangkeshu},{"date": all_date_by_chanpinid[i].riqi,"type":"干预访客","value":all_date_by_chanpinid[i].tfangkeshu}]
+  var jsonObj = [{"date": all_date_by_chanpinid[i].riqi,"type":"总访客","value":all_date_by_chanpinid[i].zongfangkeshuheji},{"date": all_date_by_chanpinid[i].riqi,"type":"自然访客","value":all_date_by_chanpinid[i].ziranfangkeshu},{"date": all_date_by_chanpinid[i].riqi,"type":"推广访客","value":all_date_by_chanpinid[i].tuiguangfangkeshu},{"date": all_date_by_chanpinid[i].riqi,"type":"干预访客","value":all_date_by_chanpinid[i].tfangkeshu}]
   flow_data = flow_data.concat(jsonObj)
 }
 //制作访客图标
@@ -247,8 +247,8 @@ make_flow_img_for_page(flow_data);
 
 //生成流量图标的方法
 function make_flow_img_for_page(flow_data){
-  $("#weak_data").append('<h2>下边是流量一周数据</h2>');
-  $("#weak_data").append('<canvas id="flow_chart_id" width="100%" height="300"></canvas>');
+  $("#weak_data").append('<h2>下边是最近一周的流量数据</h2>');
+  $("#weak_data").append('<canvas id="flow_chart_id" style="width: 100%;" height="300"></canvas>');
   //创建图标对象
   const flow_chart = new F2.Chart({
     id: 'flow_chart_id',
