@@ -111,7 +111,7 @@ function makeDataToPage(chanpinid) {
   function make_date_content_no_count(v_name, show_name){
     $("#contentTable").append("<tr><td>" + show_name + "</td><td>" + one_product_id_yesterday[v_name] + "</td></tr>")
   }
-  $("#DataTitle").append('<h1>' + one_product_id_yesterday.yunyingxingming11 + "的" + one_product_id_yesterday.chanpinmingcheng1 + '昨天运营数据如下<h1>');
+  $("#DataTitle").append('<h2>' + one_product_id_yesterday.yunyingxingming11 + "的" + one_product_id_yesterday.chanpinmingcheng1 + '运营数据如下<h2>');
   //表格生成标题行
   $("#DataContent").append('<table class="gridtable" id= "contentTable"><tr><th>类别</th><th>昨日数据</th><th>前日较</th></tr></table>');
   
@@ -238,7 +238,7 @@ all_date_by_chanpinid = find_same_data_by_date(all_date_by_chanpinid);
 //生成流量部分需要的json格式文件
 for (i=0;i<all_date_by_chanpinid.length;i++){
   var jsonObj = [{"date": (all_date_by_chanpinid[i].riqi).substr(-5),"type":"总访客","value":Number(all_date_by_chanpinid[i].zongfangkeshuheji)},{"date": (all_date_by_chanpinid[i].riqi).substr(-5),"type":"自然访客","value":Number(all_date_by_chanpinid[i].ziranfangkeshu)},{"date": (all_date_by_chanpinid[i].riqi).substr(-5),"type":"推广访客","value":Number(all_date_by_chanpinid[i].tuiguangfangkeshu)},{"date": (all_date_by_chanpinid[i].riqi).substr(-5),"type":"干预访客","value":Number(all_date_by_chanpinid[i].tfangkeshu)}]
-  flow_data = flow_data.concat(jsonObj)
+  flow_data = jsonObj.concat(flow_data)
 }
 //制作访客图标
 make_flow_img_for_page(flow_data);
@@ -247,7 +247,7 @@ make_flow_img_for_page(flow_data);
 
 //生成流量图标的方法
 function make_flow_img_for_page(flow_data){
-  $("#weak_data").append('<h2>下边是最近一周的流量数据</h2>');
+  $("#weak_data").append('<h3>下边是最近一周的流量数据</h3>');
   $("#weak_data").append('<canvas id="flow_chart_id" style="width: 100%;" height="300"></canvas>');
   //创建图标对象
   const flow_chart = new F2.Chart({
