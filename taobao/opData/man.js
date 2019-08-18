@@ -295,8 +295,9 @@ $(function () {
     $(".weui-tab__panel").empty();
     $(".weui-tab__panel").append('<div class="weui-half-screen-dialog weui-picker weui-animate-slide-up" id="androidActionsheet" style="display: none"><div class="weui-actionsheet"><div id="selectNameList" class="weui-actionsheet__menu"></div></div></div>');
     $(".weui-tab__panel").append('<div class="page__hd" id="DataTitle"></div>');
-    $(".weui-tab__panel").append('<div class="page__bd page__bd_spacing" id="DataContent"></div>');
     $(".weui-tab__panel").append('<div class="page__bd page__bd_spacing" id="weak_data"></div>');
+    $(".weui-tab__panel").append('<div class="page__bd page__bd_spacing" id="DataContent"></div>');
+    
     //添加流量模块
     //展示列表
 
