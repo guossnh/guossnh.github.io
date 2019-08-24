@@ -42,6 +42,7 @@ function dateSame(date1, date2) {
 //通过日期获取运营数据表格的数据并且返回json格式
 function get_data_by_date(date) {
   var result_data = "";
+  make_black_page(true);
   console.log(getOperationDataLink + "riqi(eq):" + return_date_url_use(date))
   //对日期做判断需要加0
   $.ajax({
@@ -51,6 +52,7 @@ function get_data_by_date(date) {
     async: false,
     success: function (data) {
       result_data = data;
+      make_black_page(false);
     }
   });
   return result_data;
@@ -245,7 +247,7 @@ make_flow_img_for_page(flow_data);
 
 }
 
-//生成流量图标的方法
+//生成流量访客的方法
 function make_flow_img_for_page(flow_data){
   $("#weak_data").append('<h3>下边是最近一周的流量数据</h3>');
   $("#weak_data").append('<canvas id="flow_chart_id" style="width: 100%;" height="300"></canvas>');
@@ -261,6 +263,44 @@ function make_flow_img_for_page(flow_data){
 
   flow_chart.render();
 }
+
+//生成销量数据的方法
+function make_sell_img_for_page(sell_data){
+  $("#weak_data").append('<h3>下边是最近一周的销量数据</h3>');
+  $("#weak_data").append('<canvas id="sell_chart_id" style="width: 100%;" height="300"></canvas>');
+  //创建图标对象
+  const flow_chart = new F2.Chart({
+    id: 'sell_chart_id',
+    pixelRatio: window.devicePixelRatio // 指定分辨率
+  });
+  //载入数据源
+  flow_chart.source(sell_data);
+
+  flow_chart.interval().position('月份*月均降雨量').color('name').adjust('stack');
+
+  flow_chart.render();
+}
+
+//页面遮罩层的开关
+function make_black_page(off_on){
+  if(off_on){
+    $(".weui-tab").append("<div class='weui-mask'></div>");
+  }else{
+    $(".weui-mask").remove();
+  }
+
+  //
+  //top: 50%;
+  //position: fixed;
+  //z-index: 1001;
+  //
+}
+
+
+
+
+
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~我是华丽的分割线~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
 man
