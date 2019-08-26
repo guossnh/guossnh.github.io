@@ -42,7 +42,7 @@ function dateSame(date1, date2) {
 //通过日期获取运营数据表格的数据并且返回json格式
 function get_data_by_date(date) {
   var result_data = "";
-  make_black_page(true);
+  //make_black_page(true);
   console.log(getOperationDataLink + "riqi(eq):" + return_date_url_use(date))
   //对日期做判断需要加0
   $.ajax({
@@ -309,6 +309,7 @@ man
 //这个主要是获取页面载入就要执行的
 //底部选项卡的监听
 $(function () {
+  make_black_page(true);
   //获取昨天和前天的数据
   yestdayAllData = (get_data_by_date(yestday)).entry;
   beforeYestdayAllData = (get_data_by_date(beforeYestay)).entry;
