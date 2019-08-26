@@ -29,6 +29,7 @@ function get_data_weak(date,time=7){
     all_weak_date = all_weak_date.concat(get_data_by_date(weak_data[i]).entry);
   }
   console.log("所有数据集合为"+all_weak_date);
+  make_black_page(false);
 }
 
 //这个 方法是判断两个date格式的年月日是相等的
@@ -42,7 +43,7 @@ function dateSame(date1, date2) {
 //通过日期获取运营数据表格的数据并且返回json格式
 function get_data_by_date(date) {
   var result_data = "";
-  make_black_page(true);
+  //make_black_page(true);
   console.log(getOperationDataLink + "riqi(eq):" + return_date_url_use(date))
   //对日期做判断需要加0
   $.ajax({
@@ -52,7 +53,7 @@ function get_data_by_date(date) {
     async: false,
     success: function (data) {
       result_data = data;
-      make_black_page(false);
+      //make_black_page(false);
     }
   });
   return result_data;
@@ -309,6 +310,7 @@ man
 //这个主要是获取页面载入就要执行的
 //底部选项卡的监听
 $(function () {
+  make_black_page(true);
   //获取昨天和前天的数据
   yestdayAllData = (get_data_by_date(yestday)).entry;
   beforeYestdayAllData = (get_data_by_date(beforeYestay)).entry;
