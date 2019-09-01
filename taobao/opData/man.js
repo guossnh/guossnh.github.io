@@ -42,7 +42,7 @@ function dateSame(date1, date2) {
 //通过日期获取运营数据表格的数据并且返回json格式
 function get_data_by_date(date) {
   var result_data = "";
-  //make_black_page(true);
+  make_black_page(true);
   console.log(getOperationDataLink + "riqi(eq):" + return_date_url_use(date))
   //对日期做判断需要加0
   $.ajax({
@@ -215,6 +215,7 @@ function make_date_img_to_page(chanpin_id) {
 //把大数组放入小数组并且去重，方便后边计算
 var all_date_by_chanpinid = [];
 var flow_data =[];//这个是流量的数据合集
+var sell_money_data =[];//这个是流量的数据合集
 //用于专门的对象数组去重的函数根据日期去重。也不知道去除的是哪一个去他妈的
 function find_same_data_by_date(data_list){
   for(i = 0;i<data_list.length;i++){
@@ -245,6 +246,14 @@ for (i=0;i<all_date_by_chanpinid.length;i++){
 //制作访客图标
 make_flow_img_for_page(flow_data);
 
+//生成流量不封需要的json格式文件
+for (i=0;i<all_date_by_chanpinid.length;i++){
+ var jsonobj = [{"date":(all_date_by_chanpinid[i].riqi).substr(-5),"type":"推广销售额","value":Number(all_date_by_chanpinid[i].tuiguangxiaoshoue)},{"date":(all_date_by_chanpinid[i].riqi).substr(-5),"type":"干预销售额","value":Number(all_date_by_chanpinid[i].txiaoshoue)},{"date":(all_date_by_chanpinid[i].riqi).substr(-5),"type":"自然销售额","value":Number(all_date_by_chanpinid[i].zongxiaoshoueheji)-(Number(all_date_by_chanpinid[i].tuiguangxiaoshoue)+Number(all_date_by_chanpinid[i].txiaoshoue))}];
+ sell_money_data = jsonObj.concat(sell_money_data)
+}
+
+make_sell_img_for_page(sell_money_data)
+
 }
 
 //生成流量访客的方法
@@ -269,16 +278,16 @@ function make_sell_img_for_page(sell_data){
   $("#weak_data").append('<h3>下边是最近一周的销量数据</h3>');
   $("#weak_data").append('<canvas id="sell_chart_id" style="width: 100%;" height="300"></canvas>');
   //创建图标对象
-  const flow_chart = new F2.Chart({
+  const sell_money = new F2.Chart({
     id: 'sell_chart_id',
     pixelRatio: window.devicePixelRatio // 指定分辨率
   });
   //载入数据源
-  flow_chart.source(sell_data);
+  sell_money.source(sell_data);
 
-  flow_chart.interval().position('月份*月均降雨量').color('name').adjust('stack');
+  sell_money.interval().position('date*value').color('name').adjust('stack');
 
-  flow_chart.render();
+  sell_money.render();
 }
 
 //页面遮罩层的开关
