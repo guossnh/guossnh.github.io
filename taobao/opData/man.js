@@ -285,7 +285,7 @@ function make_sell_img_for_page(sell_data){
   //载入数据源
   sell_money.source(sell_data);
 
-  sell_money.interval().position('date*value').color('name').adjust('stack');
+  sell_money.interval().position('date*value').color('type').adjust('stack');
 
   sell_money.render();
 }
