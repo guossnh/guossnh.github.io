@@ -248,8 +248,8 @@ make_flow_img_for_page(flow_data);
 
 //生成流量不封需要的json格式文件
 for (i=0;i<all_date_by_chanpinid.length;i++){
- var jsonobj = [{"date":(all_date_by_chanpinid[i].riqi).substr(-5),"type":"推广销售额","value":Number(all_date_by_chanpinid[i].tuiguangxiaoshoue)},{"date":(all_date_by_chanpinid[i].riqi).substr(-5),"type":"干预销售额","value":Number(all_date_by_chanpinid[i].txiaoshoue)},{"date":(all_date_by_chanpinid[i].riqi).substr(-5),"type":"自然销售额","value":Number(all_date_by_chanpinid[i].zongxiaoshoueheji)-(Number(all_date_by_chanpinid[i].tuiguangxiaoshoue)+Number(all_date_by_chanpinid[i].txiaoshoue))}];
- sell_money_data = jsonObj.concat(sell_money_data)
+ var jsonobj1 = [{"date":(all_date_by_chanpinid[i].riqi).substr(-5),"type":"推广销售额","value":Number(all_date_by_chanpinid[i].tuiguangxiaoshoue)},{"date":(all_date_by_chanpinid[i].riqi).substr(-5),"type":"干预销售额","value":Number(all_date_by_chanpinid[i].txiaoshoue)},{"date":(all_date_by_chanpinid[i].riqi).substr(-5),"type":"自然销售额","value":Number(all_date_by_chanpinid[i].zongxiaoshoueheji)-(Number(all_date_by_chanpinid[i].tuiguangxiaoshoue)+Number(all_date_by_chanpinid[i].txiaoshoue))}];
+ sell_money_data = jsonobj1.concat(sell_money_data)
 }
 
 make_sell_img_for_page(sell_money_data)
