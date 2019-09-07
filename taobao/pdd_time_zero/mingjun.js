@@ -17,15 +17,15 @@
     var endTimen;
 
     function add_wrong_num(num) {
-        var $a1 = $('<span>' + num + '</span><br>')
-        $("body").prepend($a1)
+        var $a1 = $('<span style = "color:red;">' + num + '</span><br>')
+        $("#bu").after($a1)
     }
 
 
 
 
     (function () {
-        var $h1 = $('<textarea id = "tx1" style ="height:300px;width:300px;"></textarea><br><input type="button" id ="bu" style ="height:40px;width:140px;" value= "点击开始执行">');
+        var $h1 = $('<textarea id = "tx1" style ="height:300px;width:300px;"></textarea><br><input type="button" id ="bu" style ="height:40px;width:140px;" value= "点击开始执行"><br>');
         $("body").prepend($h1);
         $("#bu").click(function(){
             console.log("进入主函数")
@@ -41,25 +41,33 @@
             console.log("endTime是："+endTime+"");
             console.log("startTimen是："+startTimen+"");
             console.log("endTimen是："+endTimen+"");
-            if(data_list[0] == ''){
-                alert("请在文本框选择合适的值");
-                return null;
-            }else{
-                var product;
-                for (var i=0;i<data_list.length;i++){
-                    console.log(data_list[i]);
-                    product = data_list[i];
-                    get_json_from_server(product);
-                    //先给问本框赋值
+            setTimeout(function () {
+                if(data_list[0] == ''){
+                    alert("请在文本框选择合适的值");
+                    return null;
+                }else{
+                    var product;
+                    for (var i=0;i<data_list.length;i++){
+                        console.log(data_list[i]);
+                        product = data_list[i];
+                        get_json_from_server(product);
+                        //先给问本框赋值
+                    }
                 }
-            }
+                $("#data_num").text(data_num);
+                $("#right_num").text(right_num);
+            },3000);
+            var $resultin = $('<p>总共分析<span id = "data_num" style = "color:red;">'+data_num+'</span>条数据。有<span id = "right_num" style = "color:red;">'+right_num+'</span>条数据出现问题<p>');
+            $("body").prepend($resultin);
         });
 
 
     })();
 
     function get_json_from_server(product_id){
-        var jsondata = JSON.parse('{"startTime": '+startTimen+',"endTime": '+endTimen+',"orderSn": '+product_id+',"pageNum": 0,"pageSize": 20}');
+        var jsondata = {startTime: startTimen,endTime: endTimen,orderSn: product_id,pageNum: 0,pageSize: 20};
+
+
         $.ajax({
             url: "https://mms.pinduoduo.com/latitude/message/getHistoryMessage",
             method: "POST",
@@ -78,14 +86,14 @@
             async: false,
             dataType: "json",
             contentType: "application/json",
-            data: jsondata,
+            data: JSON.stringify(jsondata),
             success: function (data) {
                 console.log("成功返回数据");
                 data_num++;
-                console.log("data.total的值是"+data[0]+"");
-                if(data.total=="0"){
+                console.log("data.total的值是"+data.result.total+"");
+                if(data.result.total=="0"){
                     
-                }else if(data.total=="1"){
+                }else if(data.result.total=="1"){
                     add_wrong_num(product_id);
                     right_num++;
                 }else{
