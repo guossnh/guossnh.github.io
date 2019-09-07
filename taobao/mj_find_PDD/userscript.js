@@ -1,9 +1,11 @@
     // ==UserScript==
-    // @name         mj
-    // @namespace    http://tampermonkey.net/
+    // @name         mj_find_PDD
+    // @namespace    http://guossnh.github.io/mj_find_PDD/userscript.js
     // @version      0.1
-    // @description  try to take over the world!
+    // @description  明君使用的查出刷单的
     // @author       You
+    // @updateURL  http://guossnh.github.io/mj_find_PDD/userscript.js
+    // @downloadURL http://guossnh.github.io/mj_find_PDD/userscript.js
     // @match        https://mms.pinduoduo.com/sycm/goods_effect
     // @match        https://mms.pinduoduo.com/chat-service/search
     // @include    https://mms.pinduoduo.com/chat-service/search
@@ -20,8 +22,6 @@
         var $a1 = $('<span style = "color:red;">' + num + '</span><br>')
         $("#bu").after($a1)
     }
-
-
 
 
     (function () {
