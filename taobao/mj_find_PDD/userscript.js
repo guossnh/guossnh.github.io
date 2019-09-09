@@ -94,6 +94,8 @@
                 if(data.result.total=="0"){
                     
                 }else if(data.result.total=="1"){
+                    console.log("这条是仅有一条记录的过滤掉");
+                }else if((data.result.total!="1")&&(data.result.total!="0")){
                     add_wrong_num(product_id);
                     right_num++;
                 }else{
