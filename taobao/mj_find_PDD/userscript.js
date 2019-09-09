@@ -1,7 +1,7 @@
     // ==UserScript==
     // @name         mj_find_PDD
     // @namespace    http://guossnh.github.io/mj_find_PDD/userscript.js
-    // @version      0.1
+    // @version      0.2
     // @description  明君使用的查出刷单的
     // @author       You
     // @updateURL  http://guossnh.github.io/mj_find_PDD/userscript.js
