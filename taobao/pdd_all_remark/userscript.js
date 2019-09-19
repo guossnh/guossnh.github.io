@@ -13,7 +13,9 @@
 
 var sell_id_num= 0;
 var reight_id=0;
+var wrong_id=0;
 var data_list = [];
+var user_remark = "G-WZ"
 
 
 function add_button(){
@@ -22,9 +24,12 @@ function add_button(){
 }
 
 function add_div_for_remark(){
+    $("#span_result").remove();
+    sell_id_num =0;
+    reight_id =0;
+    wrong_id = 0;
     var $d1 =$('<div class = "message-box-NewMsgBox-AllMsg--modal-1xe4g" style = "position: fixed;left: 0;right: 0;bottom: 0;top: 0;background: rgba(0, 0, 0, 0.4);display: flex;justify-content: center;-webkit-box-align: center;    align-items: center;" id = "background_div" ><div id ="list_box_div" style = "position: relative;    height: 600px;width: 300px;background: white;border-radius: 6px;"><textarea id = "tx1" style ="height:500px;width:300px;"></textarea><br><input type="button" id ="bu" style ="height:38px;width:140px;" value= "go"><br></div></div>');
     $("#remark_button").after($d1);//找到这个div
-
     $("#background_div").on('click', function (e) {
 	    if(e.target === $(this)[0]){
             $("#background_div").remove();
@@ -33,22 +38,26 @@ function add_div_for_remark(){
     $("#list_box_div").on('click', function () {
         console.log("pass");
     });
+    $("#bu").on('click', function () {
+        get_id_from_div();
+    });
 }
 
 function send_json_to_server_for_remark(product_id){
-    var jsondata = {startTime: startTimen,endTime: endTimen,orderSn: product_id,pageNum: 0,pageSize: 20};
+    var jsondata = {orderSn: product_id,remark: user_remark};
     $.ajax({
-        url: "",
+        url: "https://mms.pinduoduo.com/mars/shop/addOrderNote",
         method: "POST",
         authority: "mms.pinduoduo.com",
-        path: "/latitude/message/getHistoryMessage",
+        path: "/mars/shop/addOrderNote",
         scheme: "https",
-        accept: "application/json, text/javascript, */*; q=0.01",
+        accept: "application/json",
         'accept-encoding': "gzip, deflate, br",
         'accept-language': "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
         cookie:document.cookie,
+        'content-length': "52",
         origin: "https://mms.pinduoduo.com",
-        referer: "https://mms.pinduoduo.com/chat-service/search",
+        referer: "https://mms.pinduoduo.com/orders/list",
         "sec-fetch-mode": "cors",
         "sec-fetch-site": "same-origin",
         "user-agent":navigator.userAgent,
@@ -58,6 +67,16 @@ function send_json_to_server_for_remark(product_id){
         data: JSON.stringify(jsondata),
         success: function (data) {
             console.log("成功返回数据");
+            console.log(data.success);
+            console.log(data);
+            if(data.success){
+                reight_id++;
+                console.log("写入成功");
+            }else{
+                wrong_id++;
+                console.log("写入失败");
+            }
+            
 
         }
       });
@@ -65,7 +84,6 @@ function send_json_to_server_for_remark(product_id){
 
 function get_id_from_div(){
     data_list = $("#tx1").val().split(/[\n]/);//获取文本框的值并且拆分字符串放入数组
-    
     if(data_list[0] == ''){
         alert("请在文本框选择合适的值");
         return null;
@@ -74,10 +92,13 @@ function get_id_from_div(){
         for (var i=0;i<data_list.length;i++){
             console.log(data_list[i]);
             product = data_list[i];
-            get_json_from_server(product);
+            send_json_to_server_for_remark(product);
+            sell_id_num++;
             //先给问本框赋值
         }
     }
+    var $r1 =$('<span id = "span_result">总共添加了'+sell_id_num+'条备注成功'+reight_id+'条错误'+wrong_id+'条</span>');
+    $("#bu").after($r1);//找到这个div
 }
 
 
