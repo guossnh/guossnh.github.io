@@ -1,7 +1,7 @@
     // ==UserScript==
     // @name         mj_find_PDD
     // @namespace    http://guossnh.github.io/mj_find_PDD/userscript.js
-    // @version      0.2
+    // @version      0.1
     // @description  明君使用的查出刷单的
     // @author       You
     // @updateURL  http://guossnh.github.io/mj_find_PDD/userscript.js
@@ -32,8 +32,9 @@
             data_list = $("#tx1").val().split(/[\n]/);//获取文本框的值并且拆分字符串放入数组
             console.log("data_list的值事"+data_list+"")
             //下边是时间的处理部分
-            var startTime = $("input")[2].value;
-            var endTime = $("input")[3].value;
+            var tt = $("input")[4].value.replace(/-/g,"/");
+            var startTime = tt.split(" ~ ")[0];
+            var endTime = tt.split(" ~ ")[1];
             startTimen = Date.parse(new Date(startTime))/1000;
             endTimen = Date.parse(new Date(endTime))/1000;
 
@@ -77,6 +78,8 @@
             accept: "application/json, text/javascript, */*; q=0.01",
             'accept-encoding': "gzip, deflate, br",
             'accept-language': "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+            'content-length': 106,
+            'content-type': "application/json",
             cookie:document.cookie,
             origin: "https://mms.pinduoduo.com",
             referer: "https://mms.pinduoduo.com/chat-service/search",
@@ -121,5 +124,5 @@
         },2000);
     }
 
-    //190906-255574344533922 //有 
+    //190906-255574344533922 //有
     //190813-325206672053584 //没有
