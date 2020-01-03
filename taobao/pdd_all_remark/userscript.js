@@ -82,6 +82,10 @@ function send_json_to_server_for_remark(product_id){
       });
 }
 
+function find_inf_by_id(sell_id){//根据单个id查询商品信息并且返回商品信息包括 价格 优惠券
+
+}
+
 function get_id_from_div(){
     data_list = $("#tx1").val().split(/[\n]/);//获取文本框的值并且拆分字符串放入数组
     if(data_list[0] == ''){
