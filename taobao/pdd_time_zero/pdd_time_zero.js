@@ -55,6 +55,6 @@ function set_time_over(){
         $("input[placeholder='请选择']").eq(1).parent().click()
         setTimeout(function () {
         $("li[role='option']").eq(0).click()
-        }, 200);
+        }, 300);
     }, 1500);
 })();
