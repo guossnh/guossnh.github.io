@@ -68,19 +68,18 @@ function add_wrong_num(num) {
 
 function get_json_from_server(product_id){
     var jsondata = {startTime: startTimen,endTime: endTimen,orderSn: product_id,pageNum: 0,pageSize: 20};
-
-
     $.ajax({
         url: "https://mms.pinduoduo.com/latitude/message/getHistoryMessage",
-        method: "POST",
+        method:"POST",
+        type: "POST",
         authority: "mms.pinduoduo.com",
         path: "/latitude/message/getHistoryMessage",
         scheme: "https",
-        accept: "application/json, text/javascript, */*; q=0.01",
+        accept: "application/json",
         'accept-encoding': "gzip, deflate, br",
         'accept-language': "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-        'content-length': 106,
-        'content-type': "application/json",
+        'content-type': "application/json;charset=UTF-8",
+        contentType: 'application/json;charset=UTF-8',
         cookie:document.cookie,
         origin: "https://mms.pinduoduo.com",
         referer: "https://mms.pinduoduo.com/chat-service/search",
@@ -89,7 +88,6 @@ function get_json_from_server(product_id){
         "user-agent":navigator.userAgent,
         async: false,
         dataType: "json",
-        contentType: "application/json",
         data: JSON.stringify(jsondata),
         success: function (data) {
             console.log("成功返回数据");
