@@ -76,8 +76,6 @@ function send_json_to_server_for_remark(product_id){
                 wrong_id++;
                 console.log("写入失败");
             }
-            
-
         }
       });
 }
@@ -103,6 +101,10 @@ function get_id_from_div(){
     }
     var $r1 =$('<span id = "span_result">总共添加了'+sell_id_num+'条备注成功'+reight_id+'条错误'+wrong_id+'条</span>');
     $("#bu").after($r1);//找到这个div
+}
+
+function put_box_to_id(){//在每一个ID的前边放一个多选框
+    $('span:contains("订单编号：")')
 }
 
 
