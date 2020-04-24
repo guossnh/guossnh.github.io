@@ -104,7 +104,9 @@ function get_id_from_div(){
 }
 
 function put_box_to_id(){//在每一个ID的前边放一个多选框
-    $('span:contains("订单编号：")')
+    for(var i in $(".package-center-table").children){
+        $(".package-center-table").children[i]
+    } 
 }
 
 (function () {
