@@ -107,7 +107,6 @@ function put_box_to_id(){//在每一个ID的前边放一个多选框
     $('span:contains("订单编号：")')
 }
 
-
 (function () {
     add_button();
     // Your code here...
