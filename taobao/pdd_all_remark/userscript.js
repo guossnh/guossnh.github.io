@@ -109,7 +109,6 @@ function put_box_to_id(){//在每一个ID的前边放一个多选框
     } 
 }
 
-
 (function () {
     add_button();
     // Your code here...
