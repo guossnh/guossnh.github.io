@@ -15,11 +15,21 @@ var sell_id_num= 0;
 var reight_id=0;
 var wrong_id=0;
 var data_list = [];
-var user_remark = "G-WZ"
 
 function add_button(){
     var $a1 = $("<a style = 'position:fixed;bottom:100px;right:0px;width:62px;height:62px;z-index:901;background-color:#44c767;-moz-border-radius:42px;-webkit-border-radius:42px;border-radius:42px;border:2px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;font-size:14px;padding:19px 7px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;margin-bottom: 90px;margin-right: 135px;' id= 'remark_button' class='myButton'>remark</a>");
     $("body").append($a1);//找到这个div
+}
+
+function sent_vilue_to_txt(){
+    for(var i=0;i<document.getElementsByName("tlk").length;i++){
+        if(document.getElementsByName("tlk")[i].checked){
+            //console.log(document.getElementsByName("tlk")[i].value);
+            document.getElementById('tx1').value += "\n" + document.getElementsByName("tlk")[i].value
+        }
+    }
+    //删除空行
+    document.getElementById('tx1').value = document.getElementById('tx1').value.replace(/(\n[\s\t]*\r*\n)/g, '\n').replace(/^[\n\r\n\t]*|[\n\r\n\t]*$/g, '');
 }
 
 function add_div_for_remark(){
@@ -42,7 +52,7 @@ function add_div_for_remark(){
     });
 }
 
-function send_json_to_server_for_remark(product_id){
+function send_json_to_server_for_remark(product_id,user_remark){
     var jsondata = {orderSn: product_id,remark: user_remark};
     $.ajax({
         url: "https://mms.pinduoduo.com/mars/shop/addOrderNote",
@@ -90,10 +100,11 @@ function get_id_from_div(){
         return null;
     }else{
         var product;
+        var remark = document.getElementById('remark_content').value
         for (var i=0;i<data_list.length;i++){
             console.log(data_list[i]);
             product = data_list[i];
-            send_json_to_server_for_remark(product);
+            send_json_to_server_for_remark(product,remark);
             sell_id_num++;
             //先给问本框赋值
         }
@@ -103,8 +114,10 @@ function get_id_from_div(){
 }
 
 function put_box_to_id(){//在每一个ID的前边放一个多选框
+    console.log("开始执行1");
     for(var i=0;i<$(".package-center-table").children.length;i++){
         var pdd_id = $(".package-center-table").children[i].children[0].children[0].children[0].children[0].innerText.split("：")[1];
+        console.log(pdd_id);
         var abs=document.createElement("input"); 
         abs.setAttribute('name', 'tlk');
         abs.setAttribute('value', pdd_id);
@@ -115,26 +128,31 @@ function put_box_to_id(){//在每一个ID的前边放一个多选框
     };
 }
 
+function put_box_to_id_v2(){
+    console.log("开始执行2");
+    for(var i=0;i<document.getElementsByClassName("package-center-table")[0].children.length;i++){
+        var pdd_id = document.getElementsByClassName("package-center-table")[0].children[i].getElementsByTagName("span")[0].innerText.split("：")[1];
+        var abs=document.createElement("input"); 
+        abs.setAttribute('name', 'tlk');
+        abs.setAttribute('value', pdd_id);
+        abs.setAttribute('type', "checkbox");
+        abs.setAttribute('style', "width:20px;");
+        abs.setAttribute('id', "myCheck");
+        document.getElementsByClassName("package-center-table")[0].children[i].getElementsByTagName("span")[0].appendChild(abs);
+    };
+}
+
 (function () {
     add_button();
     // Your code here...
     $('#remark_button').on('click', function () {
-        console.log("进来了");
+        console.log("点击remark按钮");
         add_div_for_remark();
+        sent_vilue_to_txt();
     });
-        setTimeout(function () {
-            console.log("开始");
-            for(var i=0;i<$(".package-center-table").children.length;i++){
-                var pdd_id = $(".package-center-table").children[i].children[0].children[0].children[0].children[0].innerText.split("：")[1];
-                var abs=document.createElement("input"); 
-                abs.setAttribute('name', 'tlk');
-                abs.setAttribute('value', pdd_id);
-                abs.setAttribute('type', "checkbox");
-                abs.setAttribute('style', "width:20px;");
-                abs.setAttribute('id', "myCheck");
-                $(".package-center-table").children[i].children[0].children[0].children[0].children[0].before(abs);
-                };
-            }, 10000);
+    setTimeout(function () {
+        put_box_to_id_v2();
+        }, 6000);
 })();
 
 
