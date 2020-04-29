@@ -109,7 +109,7 @@ function get_id_from_div(){
             //先给问本框赋值
         }
     }
-    var $r1 =$('<span id = "span_result">总共添加了'+sell_id_num+'条备注成功'+reight_id+'条错误'+wrong_id+'条</span>');
+    var $r1 =$('<span id = "span_result">总共添加了'+sell_id_num+'条\n备注成功'+reight_id+'条\n错误'+wrong_id+'条</span>');
     $("#bu").after($r1);//找到这个div
 }
 
@@ -130,16 +130,28 @@ function put_box_to_id(){//在每一个ID的前边放一个多选框
 
 function put_box_to_id_v2(){
     console.log("开始执行2");
-    for(var i=0;i<document.getElementsByClassName("package-center-table")[0].children.length;i++){
-        var pdd_id = document.getElementsByClassName("package-center-table")[0].children[i].getElementsByTagName("span")[0].innerText.split("：")[1];
-        var abs=document.createElement("input"); 
-        abs.setAttribute('name', 'tlk');
-        abs.setAttribute('value', pdd_id);
-        abs.setAttribute('type', "checkbox");
-        abs.setAttribute('style', "width:20px;");
-        abs.setAttribute('id', "myCheck");
-        document.getElementsByClassName("package-center-table")[0].children[i].getElementsByTagName("span")[0].appendChild(abs);
+    ////删除之前的多选框
+    //try {
+    //    var checkbox_list = document.getElementsByName("tlk")
+    //    for(var i=0;i<checkbox_list.length;i++){
+    //        checkbox_list[i].remove()
+    //    }
+    //} catch (error) {
+    //    
+    //}
+    //添加新的多选框
+    setTimeout(function () {
+        for(var i=0;i<document.getElementsByClassName("package-center-table")[0].children.length;i++){
+            var pdd_id = document.getElementsByClassName("package-center-table")[0].children[i].getElementsByTagName("span")[0].innerText.split("：")[1];
+            var abs=document.createElement("input"); 
+            abs.setAttribute('name', 'tlk');
+            abs.setAttribute('value', pdd_id);
+            abs.setAttribute('type', "checkbox");
+            abs.setAttribute('style', "width:20px;");
+            abs.setAttribute('id', "myCheck");
+            document.getElementsByClassName("package-center-table")[0].children[i].getElementsByTagName("span")[0].appendChild(abs);
     };
+    }, 3000);
 }
 
 (function () {
@@ -152,7 +164,19 @@ function put_box_to_id_v2(){
     });
     setTimeout(function () {
         put_box_to_id_v2();
-        }, 6000);
+        }, 2000);
+    setTimeout(function () {
+        var spanlist = document.getElementsByTagName("span")
+        for(var i =0;i<spanlist.length;i++){
+        if(spanlist[i].innerHTML=="查询")
+            //console.log(spanlist[i])
+            $(spanlist[i].parentNode).on('click', function () {
+                console.log("点击remark按钮");
+                put_box_to_id_v2();
+            });
+        }
+        }, 4000);
+    
 })();
 
 
