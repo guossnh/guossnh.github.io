@@ -156,7 +156,7 @@ function put_box_to_id_v2(){
 
 (function () {
     add_button();
-    // Your code here...
+    //code here...
     $('#remark_button').on('click', function () {
         console.log("点击remark按钮");
         add_div_for_remark();
