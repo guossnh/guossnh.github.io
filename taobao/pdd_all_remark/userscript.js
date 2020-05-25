@@ -130,15 +130,15 @@ function put_box_to_id(){//在每一个ID的前边放一个多选框
 
 function put_box_to_id_v2(){
     console.log("开始执行2");
-    ////删除之前的多选框
-    //try {
-    //    var checkbox_list = document.getElementsByName("tlk")
-    //    for(var i=0;i<checkbox_list.length;i++){
-    //        checkbox_list[i].remove()
-    //    }
-    //} catch (error) {
-    //    
-    //}
+    //删除之前的多选框
+    try {
+        var checkbox_list = document.getElementsByName("tlk")
+        for(var i=0;i<checkbox_list.length;i++){
+            checkbox_list[i].remove()
+        }
+    } catch (error) {
+        
+    }
     //添加新的多选框
     setTimeout(function () {
         for(var i=0;i<document.getElementsByClassName("package-center-table")[0].children.length;i++){
@@ -175,7 +175,15 @@ function put_box_to_id_v2(){
                 put_box_to_id_v2();
             });
         }
+        var page_button = document.getElementsByClassName("PGT_pagerItem_290")
+        for(var i =0;i<spanlist.length;i++){
+            $(page_button[i]).on('click', function () {
+                console.log("点击了页码按钮");
+                put_box_to_id_v2();
+            });
+        }
         }, 4000);
+    
     
 })();
 
