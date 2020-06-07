@@ -4,8 +4,8 @@
 // @version      1.1
 // @description  是自己用的批量备注的软件
 // @author       You
-// @updateURL  http://guossnh.github.io/pdd_all_remark/userscript.js
-// @downloadURL http://guossnh.github.io/pdd_all_remark/userscript.js
+// @updateURL  http://guossnh.github.io/taobao/pdd_all_remark/userscript.js
+// @downloadURL http://guossnh.github.io/taobao/pdd_all_remark/userscript.js
 // @match https://mms.pinduoduo.com/orders/list
 // @require  https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js
 // ==/UserScript==
