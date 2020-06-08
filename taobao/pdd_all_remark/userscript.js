@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         pdd_all_remark
 // @namespace    http://guossnh.github.io/pdd_all_remark/userscript.js
-// @version      0.1
+// @version      1.1
 // @description  是自己用的批量备注的软件
 // @author       You
-// @updateURL  http://guossnh.github.io/pdd_all_remark/userscript.js
-// @downloadURL http://guossnh.github.io/pdd_all_remark/userscript.js
+// @updateURL  http://guossnh.github.io/taobao/pdd_all_remark/userscript.js
+// @downloadURL http://guossnh.github.io/taobao/pdd_all_remark/userscript.js
 // @match https://mms.pinduoduo.com/orders/list
 // @require  https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js
 // ==/UserScript==
@@ -17,7 +17,7 @@ var wrong_id=0;
 var data_list = [];
 
 function add_button(){
-    var $a1 = $("<a style = 'position:fixed;bottom:100px;right:0px;width:62px;height:62px;z-index:901;background-color:#44c767;-moz-border-radius:42px;-webkit-border-radius:42px;border-radius:42px;border:2px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;font-size:14px;padding:19px 7px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;margin-bottom: 90px;margin-right: 135px;' id= 'remark_button' class='myButton'>remark</a>");
+    var $a1 = $("<a style = 'position:fixed;bottom:100px;right:0px;width:62px;height:62px;z-index:901;background-color:#44c767;-moz-border-radius:42px;-webkit-border-radius:42px;border-radius:42px;border:2px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;font-size:14px;padding:19px 7px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;margin-bottom: 90px;margin-right: 25px;' id= 'remark_button' class='myButton'>remark</a>");
     $("body").append($a1);//找到这个div
 }
 

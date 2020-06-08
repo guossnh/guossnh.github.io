@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         mj_find_PDD
 // @namespace    http://guossnh.github.io/mj_find_PDD/userscript.js
-// @version      0.2
+// @version      1.2
 // @description  明君使用的查出刷单的
 // @author       You
 // @updateURL  http://guossnh.github.io/mj_find_PDD/userscript.js
@@ -33,7 +33,7 @@ function add_wrong_num(num) {
         data_list = $("#tx1").val().split(/[\n]/);//获取文本框的值并且拆分字符串放入数组
         console.log("data_list的值事"+data_list+"")
         //下边是时间的处理部分
-        var tt = $("input")[4].value.replace(/-/g,"/");
+        var tt = $("input")[5].value.replace(/-/g,"/");
         var startTime = tt.split(" ~ ")[0];
         var endTime = tt.split(" ~ ")[1];
         startTimen = Date.parse(new Date(startTime))/1000;
