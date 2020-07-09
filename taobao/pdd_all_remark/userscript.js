@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         pdd_all_remark
 // @namespace    http://guossnh.github.io/pdd_all_remark/userscript.js
-// @version      1.1
+// @version      2.1
 // @description  是自己用的批量备注的软件
 // @author       You
 // @updateURL  http://guossnh.github.io/taobao/pdd_all_remark/userscript.js
@@ -53,9 +53,9 @@ function add_div_for_remark(){
 }
 
 function send_json_to_server_for_remark(product_id,user_remark){
-    var jsondata = {orderSn: product_id,remark: user_remark};
+    var jsondata = {orderSn: product_id,remark: user_remark,source: 1};
     $.ajax({
-        url: "https://mms.pinduoduo.com/mars/shop/addOrderNote",
+        url: "https://mms.pinduoduo.com/pizza/order/note/update",
         method: "POST",
         authority: "mms.pinduoduo.com",
         path: "/mars/shop/addOrderNote",
@@ -64,7 +64,7 @@ function send_json_to_server_for_remark(product_id,user_remark){
         'accept-encoding': "gzip, deflate, br",
         'accept-language': "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
         cookie:document.cookie,
-        'content-length': "52",
+        'content-length': "65",
         origin: "https://mms.pinduoduo.com",
         referer: "https://mms.pinduoduo.com/orders/list",
         "sec-fetch-mode": "cors",
