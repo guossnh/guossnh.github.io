@@ -42,33 +42,14 @@ function click_button(page_num){
 }
 
 
-<<<<<<< HEAD
-
-function get_dtb(){
-    var c=0;
-    function showLogin()
-    {
-    c++;
-    document.getElementsByClassName("ant-pagination-item ant-pagination-item-"+c+"")[0]
-    //document.getElementsByClassName("ant-table-tbody")[0].children[0]
-    console.log(document.getElementsByClassName("ant-pagination-item ant-pagination-item-"+c+"")[0]);
-    }
-    setInterval("showLogin()","1000");
-=======
 function creat_div(){
     var wocao = document.createElement("div");
     wocao.setAttribute("id","rongqi");
     document.getElementsByTagName("body")[0].append(wocao);
->>>>>>> 5e74c8b35552fbe2fbeaa4dd04cb3c42506cc28d
 }
 
 (function() {
     'use strict';
-<<<<<<< HEAD
-
-    //get_dtb()
-})();
-=======
     var $ = window.jQuery;
     creat_div();
     var c=0;
@@ -76,4 +57,3 @@ function creat_div(){
             click_button(i);
     } 
 })();
->>>>>>> 5e74c8b35552fbe2fbeaa4dd04cb3c42506cc28d
