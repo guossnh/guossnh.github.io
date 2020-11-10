@@ -12,12 +12,20 @@
 // ==/UserScript==
 
 function click_button(page_num){
-    setTimeout(function(){
-        var order_id,product_id,money,time,state;
-        document.getElementsByClassName("ant-pagination-item ant-pagination-item-"+page_num+"")[0].click();
-        var one = document.getElementById("rongqi");
-        var table = document.getElementsByClassName("ant-table-tbody")[0].children;
+    function next_page(){
+        setTimeout(function(){
+            console.log("开始翻页")
+            document.getElementsByClassName("ant-pagination-item ant-pagination-item-"+page_num+"")[0].click();
+        },1000);
+    }
+    function copy_info(next_page){
+        setTimeout(function(){
+            console.log("开始执行复制")
+            var order_id,product_id,money,time,state;
+            var one = document.getElementById("rongqi");
+            var table = document.getElementsByClassName("ant-table-tbody")[0].children;
             for(var i=0;i<table.length;i++){
+                console.log("进入for循环")
                 order_id = table[i].children[0].innerHTML
                 product_id = table[i].children[3].innerHTML
                 money = table[i].children[5].children[0].innerText.replace("￥","");
@@ -26,8 +34,13 @@ function click_button(page_num){
                 console.log(order_id,product_id,money,time,state)
                 one.append(""+order_id+","+product_id+","+money+","+time+","+state+"")
             }
-    },2000*page_num);
+            console.log("结束复制")
+            next_page();
+        },3000*page_num);
+    }
+    copy_info(next_page);
 }
+
 
 function creat_div(){
     var wocao = document.createElement("div");
@@ -40,9 +53,7 @@ function creat_div(){
     var $ = window.jQuery;
     creat_div();
     var c=0;
-    for(let i=1;i<5;i++){
+    for(let i=2;i<5;i++){
             click_button(i);
-    }
-    
-    
+    } 
 })();
