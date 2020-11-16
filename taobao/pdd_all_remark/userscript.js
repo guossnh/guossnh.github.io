@@ -176,8 +176,8 @@ function put_box_to_id_v2(){
             });
         }
         var page_button = document.getElementsByClassName("PGT_pagerItem_290")
-        for(var i =0;i<spanlist.length;i++){
-            $(page_button[i]).on('click', function () {
+        for(var j =0;j<spanlist.length;j++){
+            $(page_button[j]).on('click', function () {
                 console.log("点击了页码按钮");
                 put_box_to_id_v2();
             });
