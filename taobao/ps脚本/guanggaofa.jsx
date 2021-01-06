@@ -36,9 +36,9 @@ function main(){
     if(!documents.length) return;//查不到东西就返回
     var doc=activeDocument;    //获取对象
     var text = scanLayerSets(doc).replace(/[\r\n]/g,""); //获取文本内容 并且去掉空格和回车避免检测不到
-    var inf1 = "极限词出现："//极限词
-    var inf2 = "绝对化词出现："//绝对化词
-    var inf3 = "医疗用语出现："//医疗用语
+    var inf1 = "极限词："//极限词
+    var inf2 = "绝对化词："//绝对化词
+    var inf3 = "医疗用语："//医疗用语
     for(var a =0;a<no_word.length;a++){
         if(text.indexOf(no_word[a]) != -1){
             inf1 += no_word[a] + ","
@@ -54,8 +54,8 @@ function main(){
             inf3 = no_word3[c] + ","
         }
     }
-    if(inf1!="极限词出现：" || inf2!="绝对化词出现：" || inf3!="医疗用语出现："){
-        alert(inf1+"\n"+inf2+"\n"+inf3+"\n")
+    if(inf1!="极限词：" || inf2!="绝对化词：" || inf3!="医疗用语："){
+        alert("企业店铺不能用极限词, 个人店铺使用要谨慎小心\n\t当下出现\t\n"+inf1+"\n"+inf2+"\n"+inf3+"\n")
     }
 
 }
