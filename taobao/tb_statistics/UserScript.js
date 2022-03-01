@@ -36,6 +36,9 @@
         var tm_qq = 0//统计天猫全球够的数量
         var cd_d = 0//c店大于1k
         var cd_s = 0//c店少于1k
+        var cd_k = 0//c店销量大于1k
+        var cd_b = 0//c店销量大于100小于1k
+        var cd_l = 0//c店销量介于0～100
         for(var i=0;i<list_nu.length;i++){
             if($(list_nu[i]).find(".icon-service-tianmao").length==1||$(list_nu[i]).find(".icon-fest-quanqiugou").length==1){
                 tm_qq++
@@ -44,15 +47,18 @@
                 var num = $(list_nu[i]).find(".deal-cnt").text();
                 num = num.split('+')[0]
                 if(num.indexOf("万")==-1){
-                    if(parseInt(num)<1000){
-                        cd_s++
+                    if(parseInt(num)<1000&&parseInt(num)>99){
+                        cd_b++
+                    }
+                    else if(parseInt(num)<99){
+                        cd_l++
                     }
                     else{
-                        cd_d++
+                        cd_k++
                     }
                 }
                 else{
-                    cd_d++
+                    cd_k++
                 }
             }
             else{
@@ -60,7 +66,7 @@
             }
         }
 
-        $("#guanjianci").append("<br><span>总共数量："+all_um+"</span><br><span>天猫全球购："+tm_qq+"</span><br><span>C店多："+cd_d+"</span><br><span>C店少："+cd_s+"</span>")
+        $("#guanjianci").append("<br><span>总共数量："+all_um+"</span><br><span>天猫全球购："+tm_qq+"</span><br><span>C店100-："+cd_l+"</span><br><span>C店100~1k："+cd_b+"</span><br><span>C店1k+："+cd_k+"</span>")
 
     }
     $(document).ready(function(){
