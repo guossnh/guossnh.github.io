@@ -14,7 +14,7 @@
 (function() {
     //这个是给页面注入显示区域的方法
     function make_div(){
-        $("body").append("<div style='position: fixed;right: 3px;top: 100px;z-index: 100000;width:100px,height:100px;background-color: #d2ffd5;'><h3 id = 'guanjianci'>关键词：你好</h3><div/>")
+        $("body").append("<div style='position: fixed;right: 3px;top: 100px;z-index: 100000;width:100px,height:100px;background-color: #d2ffd5;'><h3 id = 'guanjianci'>关键词：你好</h3><div/><br><span>总数量：</span><span id = 'all_um'>0</span><br><span>天猫全球购：</span><span id='tm_qq'>0</span><br><span>C店100-：</span><span id = 'cd_l'>0</span><br><span>C店100~1k：</span><span id='cd_b'>0</span><br><span>C店1k+：</span><span id = 'cd_k'>0</span>")
     }
     //传入参数返回url中的值
     function getUrlParam(name) {
@@ -30,7 +30,7 @@
     }
     //这个是生成数据
     function make_data(){
-        $("#guanjianci").text("关键词："+getUrlParam('q')+"")
+        
         var list_nu = $('#mainsrp-itemlist').find(".items").children();
         var all_um = list_nu.length
         var tm_qq = 0//统计天猫全球够的数量
@@ -65,15 +65,29 @@
                 console.log("出错了检测出不是0或者1个天猫图标")
             }
         }
+        $("#guanjianci").text("关键词："+getUrlParam('q')+"")
+        $("#all_um").text(all_um)
+        $("#tm_qq").text(tm_qq)
+        $("#cd_l").text(cd_l)
+        $("#cd_b").text(cd_b)
+        $("#cd_k").text(cd_k)
 
-        $("#guanjianci").append("<br><span>总共数量："+all_um+"</span><br><span>天猫全球购："+tm_qq+"</span><br><span>C店100-："+cd_l+"</span><br><span>C店100~1k："+cd_b+"</span><br><span>C店1k+："+cd_k+"</span>")
+        //$("#guanjianci").append("<br><span>总共数量："+all_um+"</span><br><span>天猫全球购："+tm_qq+"</span><br><span>C店100-："+cd_l+"</span><br><span>C店100~1k："+cd_b+"</span><br><span>C店1k+："+cd_k+"</span>")
 
     }
     $(document).ready(function(){
         //获取页面链接的元素
-        
         make_div();
-        make_data();
+        
+        var wocao = setInterval(function(){ 
+            if($("#all_um").text()=="0"){
+                console.log("计算一次数据")
+                make_data();
+            }else{
+                console.log("关闭进程")
+                clearInterval(wocao)
+            }
+        }, 1000);
 
         })
 })();
