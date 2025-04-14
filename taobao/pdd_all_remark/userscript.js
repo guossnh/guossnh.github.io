@@ -1,191 +1,435 @@
 // ==UserScript==
-// @name         pdd_all_remark
-// @namespace    http://guossnh.github.io/pdd_all_remark/userscript.js
-// @version      2.1
-// @description  是自己用的批量备注的软件
-// @author       You
-// @updateURL  http://guossnh.github.io/taobao/pdd_all_remark/userscript.js
-// @downloadURL http://guossnh.github.io/taobao/pdd_all_remark/userscript.js
-// @match https://mms.pinduoduo.com/orders/list
-// @require  https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js
+// @name         拼多多后台批量备注
+// @namespace    http://tampermonkey.net/
+// @version      0.2
+// @description  拼多多后台批量备注
+// @author       guossnh@gmail.com
+// @match        https://mms.pinduoduo.com/goods/goods_list*
+// @match        https://mms.pinduoduo.com/orders/list*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=pinduoduo.com
+// @grant        none
 // ==/UserScript==
-//message-box-NewMsgBox--important-wrapper-3bLn3   这是class 可以在这里插入元素
 
-var sell_id_num= 0;
-var reight_id=0;
-var wrong_id=0;
-var data_list = [];
+(function() {
+    'use strict';
 
-function add_button(){
-    var $a1 = $("<a style = 'position:fixed;bottom:100px;right:0px;width:62px;height:62px;z-index:901;background-color:#44c767;-moz-border-radius:42px;-webkit-border-radius:42px;border-radius:42px;border:2px solid #18ab29;display:inline-block;cursor:pointer;color:#ffffff;font-family:Arial;font-size:14px;padding:19px 7px;text-decoration:none;text-shadow:0px 1px 0px #2f6627;margin-bottom: 90px;margin-right: 25px;' id= 'remark_button' class='myButton'>remark</a>");
-    $("body").append($a1);//找到这个div
-}
-
-function sent_vilue_to_txt(){
-    for(var i=0;i<document.getElementsByName("tlk").length;i++){
-        if(document.getElementsByName("tlk")[i].checked){
-            //console.log(document.getElementsByName("tlk")[i].value);
-            document.getElementById('tx1').value += "\n" + document.getElementsByName("tlk")[i].value
+    // 创建UI界面
+    function createUI() {
+        // 检查是否已存在UI，避免重复创建
+        if (document.getElementById('batch-remark-button')) {
+            return;
         }
+
+        // 创建浮动按钮
+        const floatButton = document.createElement('div');
+        floatButton.id = 'batch-remark-button';
+        floatButton.textContent = '批量备注';
+        floatButton.style.cssText = 'position: fixed; bottom: 100px; right: 20px; background: #e02e24; color: white; padding: 10px 15px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.2); z-index: 9999; cursor: pointer; font-weight: bold;';
+
+        // 创建容器（初始隐藏）
+        const container = document.createElement('div');
+        container.id = 'batch-remark-container';
+        container.style.cssText = 'position: fixed; bottom: 150px; right: 20px; background: #fff; padding: 15px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.2); z-index: 9998; width: 250px; display: none;';
+
+        // 标题
+        const title = document.createElement('h3');
+        title.textContent = '批量备注工具';
+        title.style.cssText = 'margin-top: 0; color: #e02e24;';
+
+        // 备注输入框
+        const remarkLabel = document.createElement('label');
+        remarkLabel.textContent = '备注内容：';
+        remarkLabel.style.display = 'block';
+        remarkLabel.style.marginTop = '10px';
+
+        const remarkInput = document.createElement('input');
+        remarkInput.type = 'text';
+        remarkInput.id = 'batch-remark-input';
+        remarkInput.style.cssText = 'width: 100%; padding: 5px; margin-top: 5px; box-sizing: border-box;';
+
+        // 订单输入框
+        const orderLabel = document.createElement('label');
+        orderLabel.textContent = '批量订单号（每行一个）：';
+        orderLabel.style.display = 'block';
+        orderLabel.style.marginTop = '10px';
+
+        const orderInput = document.createElement('textarea');
+        orderInput.id = 'batch-order-input';
+        orderInput.style.cssText = 'width: 100%; height: 100px; padding: 5px; margin-top: 5px; box-sizing: border-box;';
+
+        // 延迟输入框
+        const delayLabel = document.createElement('label');
+        delayLabel.textContent = '操作延迟(ms)：';
+        delayLabel.style.display = 'block';
+        delayLabel.style.marginTop = '10px';
+
+        const delayInput = document.createElement('input');
+        delayInput.type = 'number';
+        delayInput.id = 'batch-delay-input';
+        delayInput.value = '1000';
+        delayInput.style.cssText = 'width: 100%; padding: 5px; margin-top: 5px; box-sizing: border-box;';
+
+        // 只保留一个按钮 - 批量订单备注
+        const orderRemarkButton = document.createElement('button');
+        orderRemarkButton.textContent = '批量订单备注';
+        orderRemarkButton.style.cssText = 'width: 100%; padding: 8px; margin-top: 15px; background: #e02e24; color: white; border: none; border-radius: 4px; cursor: pointer;';
+        orderRemarkButton.onclick = startOrderBatchRemark;
+
+        // 状态显示
+        const statusDiv = document.createElement('div');
+        statusDiv.id = 'batch-status';
+        statusDiv.style.cssText = 'margin-top: 10px; font-size: 12px; color: #666;';
+
+        // 组装UI
+        container.appendChild(title);
+        container.appendChild(remarkLabel);
+        container.appendChild(remarkInput);
+        container.appendChild(orderLabel);
+        container.appendChild(orderInput);
+        container.appendChild(delayLabel);
+        container.appendChild(delayInput);
+        container.appendChild(orderRemarkButton);
+        container.appendChild(statusDiv);
+
+        // 添加按钮点击事件 - 切换面板显示/隐藏
+        floatButton.addEventListener('click', function() {
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                floatButton.textContent = '关闭面板';
+            } else {
+                container.style.display = 'none';
+                floatButton.textContent = '批量备注';
+            }
+        });
+
+        // 添加到页面
+        document.body.appendChild(floatButton);
+        document.body.appendChild(container);
     }
-    //删除空行
-    document.getElementById('tx1').value = document.getElementById('tx1').value.replace(/(\n[\s\t]*\r*\n)/g, '\n').replace(/^[\n\r\n\t]*|[\n\r\n\t]*$/g, '');
-}
 
-function add_div_for_remark(){
-    $("#span_result").remove();
-    sell_id_num =0;
-    reight_id =0;
-    wrong_id = 0;
-    var $d1 =$('<div class = "message-box-NewMsgBox-AllMsg--modal-1xe4g" style = "position: fixed;left: 0;right: 0;bottom: 0;top: 0;background: rgba(0, 0, 0, 0.4);display: flex;justify-content: center;-webkit-box-align: center;    align-items: center;" id = "background_div" ><div id ="list_box_div" style = "position: relative;    height: 600px;width: 300px;background: white;border-radius: 6px;"><textarea placeholder="写入单号一行一个，不要加空格" id = "tx1" style ="border:0;border-radius:5px;background-color:rgba(241,241,241,.98);padding: 10px;resize: none;height:500px;width:300px;"></textarea><br><input type = "text" id = "remark_content" placeholder="写入备注内容" style = "width:100%;font-size:17px;margin-bottom: 10px;margin-top: 10px;"><br><input type="button" id ="bu" style ="height:38px;width:140px;"value= "go"><br></div></div>');
-    $("#remark_button").after($d1);//找到这个div
-    $("#background_div").on('click', function (e) {
-	    if(e.target === $(this)[0]){
-            $("#background_div").remove();
-	    }
-    });
-    $("#list_box_div").on('click', function () {
-        console.log("pass");
-    });
-    $("#bu").on('click', function () {
-        get_id_from_div();
-    });
-}
+    // 开始批量备注
+    async function startBatchRemark() {
+        const remarkText = document.getElementById('batch-remark-input').value.trim();
+        const delay = parseInt(document.getElementById('batch-delay-input').value) || 1000;
+        const statusDiv = document.getElementById('batch-status');
 
-function send_json_to_server_for_remark(product_id,user_remark){
-    var jsondata = {orderSn: product_id,remark: user_remark,source: 1};
-    $.ajax({
-        url: "https://mms.pinduoduo.com/pizza/order/note/update",
-        method: "POST",
-        authority: "mms.pinduoduo.com",
-        path: "/mars/shop/addOrderNote",
-        scheme: "https",
-        accept: "application/json",
-        'accept-encoding': "gzip, deflate, br",
-        'accept-language': "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-        cookie:document.cookie,
-        'content-length': "65",
-        origin: "https://mms.pinduoduo.com",
-        referer: "https://mms.pinduoduo.com/orders/list",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-origin",
-        "user-agent":navigator.userAgent,
-        async: false,
-        dataType: "json",
-        contentType: "application/json",
-        data: JSON.stringify(jsondata),
-        success: function (data) {
-            console.log("成功返回数据");
-            console.log(data.success);
-            console.log(data);
-            if(data.success){
-                reight_id++;
-                console.log("写入成功");
-            }else{
-                wrong_id++;
-                console.log("写入失败");
+        if (!remarkText) {
+            statusDiv.textContent = '请输入备注内容';
+            statusDiv.style.color = 'red';
+            return;
+        }
+
+        statusDiv.textContent = '正在获取商品列表...';
+        statusDiv.style.color = '#666';
+
+        // 获取所有商品行
+        // 尝试多种可能的选择器，适应页面变化
+        let productRows = document.querySelectorAll('.goods-list-table tr') ||
+                         document.querySelectorAll('.goods-table-content tr') ||
+                         document.querySelectorAll('[data-testid="goods-list-row"]') ||
+                         document.querySelectorAll('.ant-table-row');
+
+        if (!productRows || productRows.length === 0) {
+            statusDiv.textContent = '未找到商品列表，请刷新页面重试';
+            statusDiv.style.color = 'red';
+            return;
+        }
+
+        statusDiv.textContent = `找到 ${productRows.length} 个商品，开始处理...`;
+
+        let successCount = 0;
+        let failCount = 0;
+
+        for (let i = 0; i < productRows.length; i++) {
+            const row = productRows[i];
+            statusDiv.textContent = `正在处理第 ${i+1}/${productRows.length} 个商品...`;
+
+            try {
+                // 尝试点击备注按钮
+                // 尝试多种可能的选择器
+                let remarkBtn = row.querySelector('.goods-remark') ||
+                               row.querySelector('[data-testid="remark-button"]') ||
+                               row.querySelector('.remark-btn') ||
+                               Array.from(row.querySelectorAll('button')).find(btn =>
+                                   btn.textContent.includes('备注') ||
+                                   btn.getAttribute('title')?.includes('备注'));
+
+                if (!remarkBtn) {
+                    // 尝试在操作列中找到备注选项
+                    const actionBtns = row.querySelectorAll('.action-btn, .operation-btn, .more-actions');
+                    for (const btn of actionBtns) {
+                        btn.click();
+                        await sleep(300);
+
+                        // 检查弹出的菜单中是否有备注选项
+                        const menuItems = document.querySelectorAll('.ant-dropdown-menu-item, .menu-item');
+                        remarkBtn = Array.from(menuItems).find(item =>
+                            item.textContent.includes('备注') ||
+                            item.getAttribute('title')?.includes('备注'));
+
+                        if (remarkBtn) break;
+                    }
+                }
+
+                if (!remarkBtn) {
+                    console.log('未找到备注按钮:', row);
+                    failCount++;
+                    continue;
+                }
+
+                // 点击备注按钮
+                remarkBtn.click();
+                await sleep(delay);
+
+                // 查找备注输入框和确认按钮
+                // 尝试多种可能的选择器
+                const remarkInputs = document.querySelectorAll('.ant-modal input, .remark-modal input, [data-testid="remark-input"]');
+                const remarkInput = remarkInputs[remarkInputs.length - 1]; // 通常是最后一个打开的输入框
+
+                if (!remarkInput) {
+                    console.log('未找到备注输入框');
+                    failCount++;
+                    continue;
+                }
+
+                // 清空并输入备注
+                remarkInput.value = '';
+                remarkInput.dispatchEvent(new Event('input', { bubbles: true }));
+                await sleep(300);
+
+                remarkInput.value = remarkText;
+                remarkInput.dispatchEvent(new Event('input', { bubbles: true }));
+                await sleep(300);
+
+                // 查找确认按钮
+                const confirmBtns = document.querySelectorAll('.ant-modal .ant-btn-primary, .remark-modal .confirm-btn, [data-testid="confirm-button"]');
+                const confirmBtn = confirmBtns[confirmBtns.length - 1]; // 通常是最后一个打开的模态框中的按钮
+
+                if (!confirmBtn) {
+                    console.log('未找到确认按钮');
+                    failCount++;
+                    continue;
+                }
+
+                confirmBtn.click();
+                await sleep(delay);
+
+                successCount++;
+            } catch (error) {
+                console.error('处理商品时出错:', error);
+                failCount++;
             }
         }
-      });
-}
 
-function find_inf_by_id(sell_id){//根据单个id查询商品信息并且返回商品信息包括 价格 优惠券
-
-}
-
-function get_id_from_div(){
-    data_list = $("#tx1").val().split(/[\n]/);//获取文本框的值并且拆分字符串放入数组
-    if(data_list[0] == ''){
-        alert("请在文本框选择合适的值");
-        return null;
-    }else{
-        var product;
-        var remark = document.getElementById('remark_content').value
-        for (var i=0;i<data_list.length;i++){
-            console.log(data_list[i]);
-            product = data_list[i];
-            send_json_to_server_for_remark(product,remark);
-            sell_id_num++;
-            //先给问本框赋值
-        }
+        statusDiv.textContent = `处理完成！成功: ${successCount}, 失败: ${failCount}`;
+        statusDiv.style.color = failCount > 0 ? 'orange' : 'green';
     }
-    var $r1 =$('<span id = "span_result">总共添加了'+sell_id_num+'条\n备注成功'+reight_id+'条\n错误'+wrong_id+'条</span>');
-    $("#bu").after($r1);//找到这个div
-}
 
-function put_box_to_id(){//在每一个ID的前边放一个多选框
-    console.log("开始执行1");
-    for(var i=0;i<$(".package-center-table").children.length;i++){
-        var pdd_id = $(".package-center-table").children[i].children[0].children[0].children[0].children[0].innerText.split("：")[1];
-        console.log(pdd_id);
-        var abs=document.createElement("input"); 
-        abs.setAttribute('name', 'tlk');
-        abs.setAttribute('value', pdd_id);
-        abs.setAttribute('type', "checkbox");
-        abs.setAttribute('style', "width:20px;");
-        abs.setAttribute('id', "myCheck");
-        $(".package-center-table").children[i].children[0].children[0].children[0].children[0].before(abs);
-    };
-}
+    // 批量订单备注功能 - 简化直接使用API
+    async function startOrderBatchRemark() {
+        const remarkText = document.getElementById('batch-remark-input').value.trim();
+        const orderText = document.getElementById('batch-order-input').value.trim();
+        const delay = parseInt(document.getElementById('batch-delay-input').value) || 1000;
+        const statusDiv = document.getElementById('batch-status');
 
-function put_box_to_id_v2(){
-    console.log("开始执行2");
-    //删除之前的多选框
-    try {
-        var checkbox_list = document.getElementsByName("tlk")
-        for(var i=0;i<checkbox_list.length;i++){
-            checkbox_list[i].remove()
+        if (!remarkText) {
+            statusDiv.textContent = '请输入备注内容';
+            statusDiv.style.color = 'red';
+            return;
         }
-    } catch (error) {
-        
-    }
-    //添加新的多选框
-    setTimeout(function () {
-        for(var i=0;i<document.getElementsByClassName("package-center-table")[0].children.length;i++){
-            var pdd_id = document.getElementsByClassName("package-center-table")[0].children[i].getElementsByTagName("span")[0].innerText.split("：")[1];
-            var abs=document.createElement("input"); 
-            abs.setAttribute('name', 'tlk');
-            abs.setAttribute('value', pdd_id);
-            abs.setAttribute('type', "checkbox");
-            abs.setAttribute('style', "width:20px;");
-            abs.setAttribute('id', "myCheck");
-            document.getElementsByClassName("package-center-table")[0].children[i].getElementsByTagName("span")[0].appendChild(abs);
-    };
-    }, 3000);
-}
 
-(function () {
-    add_button();
-    //code here...
-    $('#remark_button').on('click', function () {
-        console.log("点击remark按钮");
-        add_div_for_remark();
-        sent_vilue_to_txt();
-    });
-    setTimeout(function () {
-        put_box_to_id_v2();
-        }, 2000);
-    setTimeout(function () {
-        var spanlist = document.getElementsByTagName("span")
-        for(var i =0;i<spanlist.length;i++){
-        if(spanlist[i].innerHTML=="查询")
-            //console.log(spanlist[i])
-            $(spanlist[i].parentNode).on('click', function () {
-                console.log("点击remark按钮");
-                put_box_to_id_v2();
+        if (!orderText) {
+            statusDiv.textContent = '请输入订单号';
+            statusDiv.style.color = 'red';
+            return;
+        }
+
+        // 分割订单号，支持多种分隔符
+        const orderIds = orderText.split(/[\n,，\s]+/).filter(id => id.trim() !== '');
+
+        if (orderIds.length === 0) {
+            statusDiv.textContent = '未找到有效的订单号';
+            statusDiv.style.color = 'red';
+            return;
+        }
+
+        statusDiv.textContent = `找到 ${orderIds.length} 个订单号，开始处理...`;
+
+        let successCount = 0;
+        let failCount = 0;
+
+        // 直接处理每个订单ID
+        for (let i = 0; i < orderIds.length; i++) {
+            const orderId = orderIds[i].trim();
+            statusDiv.textContent = `正在处理第 ${i+1}/${orderIds.length} 个订单: ${orderId}...`;
+
+            try {
+                // 直接调用API发送备注
+                const result = await send_json_to_server_for_remark_promise(orderId, remarkText);
+                if (result.success) {
+                    successCount++;
+                    console.log(`订单 ${orderId} 备注成功`);
+                } else {
+                    console.log(`订单 ${orderId} 备注失败:`, result);
+                    failCount++;
+                }
+
+                // 添加延迟，避免请求过快
+                await sleep(delay);
+            } catch (error) {
+                console.error(`处理订单时出错 ${orderId}:`, error);
+                failCount++;
+                await sleep(delay);
+            }
+        }
+
+        statusDiv.textContent = `处理完成！成功: ${successCount}, 失败: ${failCount}`;
+        statusDiv.style.color = failCount > 0 ? 'orange' : 'green';
+    }
+
+    // 将原有的AJAX调用转换为Promise形式，适应新的API接口
+    function send_json_to_server_for_remark_promise(product_id, user_remark) {
+        return new Promise((resolve, reject) => {
+            // 检查备注内容是否为空
+            if (!user_remark || user_remark.trim() === '') {
+                console.error("备注内容不能为空");
+                resolve({success: false, data: {errorCode: 5000308, errorMsg: "订单备注不能为空！"}});
+                return;
+            }
+
+            // 检查jQuery是否可用
+            if (typeof $ === 'undefined') {
+                console.error("jQuery未加载，尝试使用原生fetch");
+                // 使用原生fetch作为备选
+                const jsondata = {
+                    orderSn: product_id,
+                    remark: user_remark.trim(),  // 修改参数名为remark
+                    content: user_remark.trim(),  // 同时保留content参数
+                    note: user_remark.trim(),     // 尝试note参数
+                    tagType: 1,
+                    source: 1
+                };
+
+                console.log("使用fetch发送备注请求:", jsondata);
+
+                fetch("https://mms.pinduoduo.com/pizza/order/noteTag/add", {
+                    method: "POST",
+                    headers: {
+                        "authority": "mms.pinduoduo.com",
+                        "accept": "*/*",
+                        "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+                        "content-type": "application/json",
+                        "origin": "https://mms.pinduoduo.com",
+                        "referer": "https://mms.pinduoduo.com/orders/list",
+                        "sec-fetch-dest": "empty",
+                        "sec-fetch-mode": "cors",
+                        "sec-fetch-site": "same-origin"
+                    },
+                    credentials: 'include', // 包含cookie
+                    body: JSON.stringify(jsondata)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("备注API返回数据(fetch):", data);
+                    if (data.success === true || data.errorCode === 0 || data.code === 0) {
+                        resolve({success: true, data: data});
+                    } else {
+                        console.error("备注失败(fetch):", data);
+                        resolve({success: false, data: data});
+                    }
+                })
+                .catch(error => {
+                    console.error("备注API请求失败(fetch):", error);
+                    reject(error);
+                });
+
+                return;
+            }
+
+            // 新的API请求数据格式
+            var jsondata = {
+                orderSn: product_id,
+                remark: user_remark.trim(),  // 修改参数名为remark
+                content: user_remark.trim(),  // 同时保留content参数
+                note: user_remark.trim(),     // 尝试note参数
+                tagType: 1,
+                source: 1
+            };
+
+            console.log("准备发送备注请求:", jsondata);
+
+            $.ajax({
+                url: "https://mms.pinduoduo.com/pizza/order/noteTag/add",
+                method: "POST",
+                headers: {
+                    "authority": "mms.pinduoduo.com",
+                    "accept": "*/*",
+                    "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+                    "content-type": "application/json",
+                    "origin": "https://mms.pinduoduo.com",
+                    "referer": "https://mms.pinduoduo.com/orders/list",
+                    "sec-fetch-dest": "empty",
+                    "sec-fetch-mode": "cors",
+                    "sec-fetch-site": "same-origin"
+                },
+                xhrFields: {
+                    withCredentials: true  // 确保发送cookie
+                },
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(jsondata),
+                success: function (data) {
+                    console.log("备注API返回数据:", data);
+                    // 检查返回的数据格式，适应可能的变化
+                    if (data.success === true || data.errorCode === 0 || data.code === 0) {
+                        resolve({success: true, data: data});
+                    } else {
+                        console.error("备注失败:", data);
+                        resolve({success: false, data: data, message: data.errorMsg || data.msg || "未知错误"});
+                    }
+                },
+                error: function (error) {
+                    console.error("备注API请求失败:", error);
+                    // 尝试解析响应文本
+                    let responseText = "";
+                    try {
+                        responseText = error.responseText;
+                        console.log("错误响应文本:", responseText);
+                    } catch (e) {
+                        console.error("无法获取错误响应文本");
+                    }
+                    reject({error: error, responseText: responseText});
+                }
+            });
+        });
+    }
+
+    // 辅助函数：延迟
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // 等待页面加载完成后初始化
+    function init() {
+        // 检查页面是否已加载完成
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(createUI, 1000); // 延迟1秒创建UI，确保页面元素都已加载
+        } else {
+            window.addEventListener('DOMContentLoaded', () => {
+                setTimeout(createUI, 1000);
             });
         }
-        var page_button = document.getElementsByClassName("PGT_pagerItem_290")
-        for(var j =0;j<spanlist.length;j++){
-            $(page_button[j]).on('click', function () {
-                console.log("点击了页码按钮");
-                put_box_to_id_v2();
-            });
+    }
+
+    // 启动脚本
+    init();
+
+    // 监听页面变化，在SPA应用中可能需要重新创建UI
+    let lastUrl = location.href;
+    new MutationObserver(() => {
+        if (location.href !== lastUrl) {
+            lastUrl = location.href;
+            setTimeout(createUI, 1500); // 页面变化后重新创建UI
         }
-        }, 4000);
-    
-    
+    }).observe(document, {subtree: true, childList: true});
 })();
-
-
-
