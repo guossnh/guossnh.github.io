@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>酒桌记录器 - 干杯时刻</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #8B4513;
+            font-size: 2em;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1em;
+        }
+
+        .settings-panel {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .setting-item label {
+            font-weight: bold;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .setting-item input {
+            padding: 6px 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 70px;
+            text-align: center;
+        }
+
+        .settings-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .settings-btn:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn-add {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-remove {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-remove:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .players-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .player-card {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e9ecef;
+            transition: transform 0.3s ease;
+        }
+
+        .player-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .player-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #8B4513;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .player-name input {
+            background: transparent;
+            border: none;
+            font-size: inherit;
+            font-weight: inherit;
+            color: inherit;
+            text-align: center;
+            width: 100%;
+            padding: 3px;
+            border-radius: 3px;
+        }
+
+        .player-name input:focus {
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 2px #007bff;
+        }
+
+        .drink-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .drink-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .drink-btn-minus {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .drink-btn-minus:hover {
+            background: #ff5252;
+            transform: scale(1.1);
+        }
+
+        .drink-btn-plus {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .drink-btn-plus:hover {
+            background: #26d0ce;
+            transform: scale(1.1);
+        }
+
+        .drink-count {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #495057;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .drink-info {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.85em;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .stats h3 {
+            text-align: center;
+            color: #495057;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.8em;
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            color: #495057;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .modal-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .modal-setting-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .modal-setting-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .modal-setting-item input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn-primary {
+            background: #28a745;
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            background: #218838;
+        }
+
+        .modal-btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .modal-btn-danger:hover {
+            background: #c82333;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .players-container {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .setting-item {
+                justify-content: center;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🍻 酒桌记录器 🍻</h1>
+            <p class="subtitle">记录每一次干杯的美好时光</p>
+        </header>
+
+        <div class="settings-panel">
+            <div class="setting-item">
+                <label for="cupVolume">一杯酒量 (ml):</label>
+                <input type="number" id="cupVolume" value="25" min="10" max="200" step="5">
+            </div>
+            <div class="setting-item">
+                <button onclick="openSettingsModal()">酒友管理</button>
+            </div>
+        </div>
+
+        <div class="players-container" id="playersContainer">
+            <!-- 玩家列表将通过JavaScript动态生成 -->
+        </div>
+
+        <div class="controls">
+            <button id="resetAll" class="btn btn-reset">🔄 重置记录</button>
+        </div>
+
+        <div class="stats">
+            <h3>📊 统计信息</h3>
+            <div class="stats-grid" id="statsContainer">
+                <!-- 统计信息将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置弹窗 -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">酒友管理</span>
+                <span class="close" onclick="closeSettingsModal()">&times;</span>
+            </div>
+            <div class="modal-setting-item">
+                <label>当前酒友数量: <span id="playerCount">5</span></label>
+                <div class="modal-buttons">
+                    <button class="modal-btn modal-btn-primary" onclick="addPlayer()">➕ 增加酒友</button>
+                    <button class="modal-btn modal-btn-danger" onclick="removePlayer()">➖ 减少酒友</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class DrinkTracker {
+            constructor() {
+                this.players = [];
+                this.init();
+            }
+
+            init() {
+                // 初始化默认玩家
+                this.addDefaultPlayers();
+                this.bindEvents();
+                this.render();
+                this.updatePlayerCount();
+            }
+
+            updatePlayerCount() {
+                document.getElementById('playerCount').textContent = this.players.length;
+            }
+
+            addDefaultPlayers() {
+                const defaultNames = ['老大', '老二', '老三', '老四', '老五'];
+                defaultNames.forEach(name => {
+                    this.players.push({
+                        id: Date.now() + Math.random(),
+                        name: name,
+                        drinkCount: 0
+                    });
+                });
+            }
+
+            bindEvents() {
+                document.getElementById('resetAll').addEventListener('click', () => this.resetAll());
+                document.getElementById('cupVolume').addEventListener('change', () => {
+                    this.render();
+                });
+            }
+
+            addPlayer() {
+                const playerNumber = this.players.length + 1;
+                this.players.push({
+                    id: Date.now() + Math.random(),
+                    name: `酒友${playerNumber}`,
+                    drinkCount: 0
+                });
+                this.render();
+                this.updatePlayerCount();
+            }
+
+            removePlayer() {
+                if (this.players.length > 1) {
+                    this.players.pop();
+                    this.render();
+                    this.updatePlayerCount();
+                }
+            }
+
+            updatePlayerName(playerId, newName) {
+                const player = this.players.find(p => p.id === playerId);
+                if (player) {
+                    player.name = newName || '无名酒友';
+                }
+            }
+
+            updateDrinkCount(playerId, change) {
+                const player = this.players.find(p => p.id === playerId);
+                if (player) {
+                    player.drinkCount = Math.max(0, player.drinkCount + change);
+                    this.updateStats();
+                    this.renderPlayerCard(player);
+                }
+            }
+
+            resetAll() {
+                if (confirm('确定要重置所有记录吗？')) {
+                    this.players.forEach(player => {
+                        player.drinkCount = 0;
+                    });
+                    this.render();
+                }
+            }
+
+            getCupVolume() {
+                return parseInt(document.getElementById('cupVolume').value) || 25;
+            }
+
+            renderPlayerCard(player) {
+                const card = document.querySelector(`[data-player-id="${player.id}"]`);
+                if (card) {
+                    const countElement = card.querySelector('.drink-count');
+                    const infoElement = card.querySelector('.drink-info');
+                    countElement.textContent = player.drinkCount;
+                    const totalMl = player.drinkCount * this.getCupVolume();
+                    infoElement.textContent = `总计: ${totalMl}ml (${player.drinkCount}杯)`;
+                }
+            }
+
+            render() {
+                this.renderPlayers();
+                this.updateStats();
+            }
+
+            renderPlayers() {
+                const container = document.getElementById('playersContainer');
+                container.innerHTML = '';
+
+                this.players.forEach(player => {
+                    const playerCard = document.createElement('div');
+                    playerCard.className = 'player-card';
+                    playerCard.setAttribute('data-player-id', player.id);
+
+                    const totalMl = player.drinkCount * this.getCupVolume();
+                    
+                    playerCard.innerHTML = `
+                        <div class="player-name">
+                            <input type="text" value="${player.name}" 
+                                   onchange="drinkTracker.updatePlayerName(${player.id}, this.value)"
+                                   onblur="drinkTracker.updatePlayerName(${player.id}, this.value)">
+                        </div>
+                        <div class="drink-controls">
+                            <button class="drink-btn drink-btn-minus" 
+                                    onclick="drinkTracker.updateDrinkCount(${player.id}, -1)">−</button>
+                            <div class="drink-count">${player.drinkCount}</div>
+                            <button class="drink-btn drink-btn-plus" 
+                                    onclick="drinkTracker.updateDrinkCount(${player.id}, 1)">+</button>
+                        </div>
+                        <div class="drink-info">
+                            总计: ${totalMl}ml (${player.drinkCount}杯)
+                        </div>
+                    `;
+
+                    container.appendChild(playerCard);
+                });
+            }
+
+            updateStats() {
+                const container = document.getElementById('statsContainer');
+                
+                const totalCups = this.players.reduce((sum, player) => sum + player.drinkCount, 0);
+                const totalMl = totalCups * this.getCupVolume();
+                const avgCups = this.players.length > 0 ? (totalCups / this.players.length).toFixed(1) : 0;
+                const maxDrinker = this.players.reduce((max, player) => 
+                    player.drinkCount > max.drinkCount ? player : max, this.players[0] || {name: '无', drinkCount: 0});
+
+                container.innerHTML = `
+                    <div class="stat-item">
+                        <div class="stat-label">总饮酒量</div>
+                        <div class="stat-value">${totalMl}ml</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">总杯数</div>
+                        <div class="stat-value">${totalCups}杯</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">平均饮酒量</div>
+                        <div class="stat-value">${avgCups}杯</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">酒王</div>
+                        <div class="stat-value">${maxDrinker.name}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // 初始化应用
+        const drinkTracker = new DrinkTracker();
+
+        // 弹窗控制函数
+        function openSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'block';
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        // 点击弹窗外部关闭弹窗
+        window.onclick = function(event) {
+            const modal = document.getElementById('settingsModal');
+            if (event.target === modal) {
+                closeSettingsModal();
+            }
+        }
+    </script>
+</body>
+</html>
