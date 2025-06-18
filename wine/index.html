@@ -291,6 +291,49 @@
             font-size: 0.85em;
         }
 
+        .drink-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .drink-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 40px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .drink-btn.decrease {
+            background: #ff4757;
+            color: white;
+        }
+
+        .drink-btn.decrease:hover {
+            background: #ff3838;
+            transform: translateY(-1px);
+        }
+
+        .drink-btn.increase {
+            background: #2ed573;
+            color: white;
+        }
+
+        .drink-btn.increase:hover {
+            background: #26d065;
+            transform: translateY(-1px);
+        }
+
         .controls {
             text-align: center;
             margin-bottom: 20px;
@@ -511,6 +554,14 @@
                 <p style="margin-top: 5px; color: #666; font-size: 12px;">设置一杯酒可以分成多少个酒</p>
             </div>
             <div class="modal-setting-item">
+                <label for="buttonMode">按钮模式:</label>
+                <select id="buttonMode">
+                    <option value="buttons">加减按钮</option>
+                    <option value="slider">滑动按钮</option>
+                </select>
+                <p style="margin-top: 5px; color: #666; font-size: 12px;">选择喝酒记录的操作方式</p>
+            </div>
+            <div class="modal-setting-item">
                 <label>酒友管理</label>
                 <div class="modal-buttons">
                     <button class="modal-btn modal-btn-primary" onclick="addPlayerAndUpdate()">➕ 增加酒友</button>
@@ -648,13 +699,16 @@
 
             updateDrinkCount(playerId, change) {
                 const player = this.players.find(p => p.id === playerId);
-            if (player) {
-                const oldCount = player.drinkCount;
-                player.drinkCount = Math.max(0, player.drinkCount + change);
+                if (player) {
+                    player.drinkCount = Math.max(0, player.drinkCount + change);
                     this.updateStats();
                     this.renderPlayerCard(player);
                     this.saveToStorage();
                 }
+            }
+
+            changeDrinkCount(playerId, change) {
+                this.updateDrinkCount(playerId, change);
             }
 
             resetAll() {
@@ -671,16 +725,15 @@
 
             // 滑动手势功能
             handleTouchStart(event) {
-                event.preventDefault();
                 const touch = event.touches[0];
-                const rect = event.currentTarget.getBoundingClientRect();
-                const playerId = parseInt(event.currentTarget.dataset.playerId);
-                
                 this.swipeData = {
-                    startX: touch.clientX - rect.left,
-                    playerId: playerId,
+                    startX: touch.clientX,
+                    startY: touch.clientY,
+                    playerId: parseFloat(event.currentTarget.dataset.playerId),
+                    isActive: true,
                     isDragging: false
                 };
+                this.updateSwipeFeedback(0);
             }
 
             handleTouchMove(event) {
@@ -742,7 +795,8 @@
             }
 
             handleMouseDown(event) {
-                event.preventDefault();
+                if (event.button !== 0) return; // 只处理左键点击
+                
                 this.swipeData = {
                     startX: event.clientX,
                     startY: event.clientY,
@@ -903,16 +957,16 @@
             renderPlayers() {
                 const container = document.getElementById('playersContainer');
                 container.innerHTML = '';
+                const buttonMode = localStorage.getItem('buttonMode') || 'buttons';
 
                 this.players.forEach(player => {
                     const playerCard = document.createElement('div');
                     playerCard.className = 'player-card';
                     playerCard.setAttribute('data-player-id', player.id);
                     
-                    playerCard.innerHTML = `
-                        <div class="player-content">
-                            <div class="player-name">${player.name}</div>
-                            <div class="drink-count">${player.drinkCount}</div>
+                    let controlsHTML = '';
+                    if (buttonMode === 'slider') {
+                        controlsHTML = `
                             <div class="drink-swipe-area" 
                                  data-player-id="${player.id}"
                                  ontouchstart="drinkTracker.handleTouchStart(event)"
@@ -932,7 +986,20 @@
                                     <div class="swipe-handle" id="handle-${player.id}"></div>
                                     <div class="swipe-feedback" id="feedback-${player.id}"></div>
                                 </div>
-                            </div>
+                            </div>`;
+                    } else {
+                        controlsHTML = `
+                            <div class="drink-buttons">
+                                <button class="drink-btn decrease" onclick="drinkTracker.changeDrinkCount(${player.id}, -1)">-</button>
+                                <button class="drink-btn increase" onclick="drinkTracker.changeDrinkCount(${player.id}, 1)">+</button>
+                            </div>`;
+                    }
+                    
+                    playerCard.innerHTML = `
+                        <div class="player-content">
+                            <div class="player-name">${player.name}</div>
+                            <div class="drink-count">${player.drinkCount}</div>
+                            ${controlsHTML}
                         </div>
                     `;
 
@@ -972,38 +1039,17 @@
         // 初始化应用
         const drinkTracker = new DrinkTracker();
         
-        // 添加测试函数验证事件绑定
-        function testEventBinding() {
-            const swipeAreas = document.querySelectorAll('.drink-swipe-area');
-            
-            swipeAreas.forEach((area, index) => {
-                // 手动添加事件监听器作为备用
-                area.addEventListener('mousedown', function(e) {
-                    drinkTracker.handleMouseDown(e);
-                });
-            });
-        }
-        
-        // 页面加载完成后测试
-         setTimeout(testEventBinding, 1000);
-         
-         // 添加全局点击测试
-         document.addEventListener('click', function(e) {
-             if (e.target.closest('.drink-swipe-area')) {
-             }
-         });
-         
-         // 添加全局鼠标按下测试
-         document.addEventListener('mousedown', function(e) {
-             if (e.target.closest('.drink-swipe-area')) {
-             }
-         });
+
 
         // 弹窗控制函数
         function openSettingsModal() {
             // 同步酒量设置
             const currentVolume = drinkTracker.getCupVolume();
             document.getElementById('modalCupVolume').value = currentVolume;
+            
+            // 同步按钮模式设置
+            const currentButtonMode = localStorage.getItem('buttonMode') || 'buttons';
+            document.getElementById('buttonMode').value = currentButtonMode;
             
             // 生成名字编辑列表
             updateNameEditList();
@@ -1014,10 +1060,14 @@
         }
 
         function closeSettingsModal() {
+            // 保存按钮模式设置
+            const buttonMode = document.getElementById('buttonMode').value;
+            localStorage.setItem('buttonMode', buttonMode);
+            
             document.getElementById('settingsModal').style.display = 'none';
             // 恢复背景滚动
             document.body.classList.remove('modal-open');
-            // 关闭时重新渲染以应用酒量变化
+            // 关闭时重新渲染以应用酒量变化和按钮模式变化
             drinkTracker.render();
             // 保存设置变化
             drinkTracker.saveToStorage();
