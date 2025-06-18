@@ -125,6 +125,7 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
             border: 2px solid #e9ecef;
             transition: transform 0.3s ease;
+            overflow: visible;
         }
 
         .player-card:hover {
@@ -155,41 +156,125 @@
             flex: 0 0 auto;
         }
 
-        .drink-buttons {
-            display: flex;
-            gap: 8px;
-            flex: 0 0 auto;
-        }
-
-        .drink-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: none;
-            font-size: 20px;
-            font-weight: bold;
+        .drink-swipe-area {
+            width: 150px;
+            height: 50px;
+            background: transparent;
+            border-radius: 25px;
+            position: relative;
             cursor: pointer;
-            transition: all 0.3s ease;
+            user-select: none;
+            margin: 10px 0;
+            overflow: visible;
+            display: flex;
+            align-items: center;
         }
 
-        .drink-btn-minus {
-            background: #ff6b6b;
-            color: white;
+        .swipe-track {
+            width: 100%;
+            height: 2px;
+            position: relative;
+            border-radius: 1px;
+            background: linear-gradient(90deg, #ff4757 0%, #ff4757 12.5%, #6c757d 12.5%, #6c757d 37.5%, #2ed573 37.5%, #2ed573 100%);
         }
 
-        .drink-btn-minus:hover {
-            background: #ff5252;
-            transform: scale(1.1);
+        .swipe-handle {
+            width: 28px;
+            height: 28px;
+            background: #ffffff;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: calc(25% - 14px);
+            transform: translateY(-50%);
+            transition: left 0.2s ease;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
         }
 
-        .drink-btn-plus {
-            background: #4ecdc4;
-            color: white;
+        .swipe-handle::before {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background: #f1f2f6;
+            border-radius: 50%;
         }
 
-        .drink-btn-plus:hover {
-            background: #26d0ce;
-            transform: scale(1.1);
+        .swipe-zones {
+            position: absolute;
+            top: -20px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            display: flex;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .swipe-zone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .swipe-zone.left {
+            flex: 1;
+            color: #000000;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.8;
+        }
+
+        .swipe-zone.center {
+            flex: 2;
+            color: #000000;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.8;
+        }
+
+        .swipe-zone.right {
+            flex: 5;
+            color: #000000;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.8;
+        }
+
+        .swipe-feedback {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            font-size: 24px;
+            font-weight: bold;
+            color: #000000;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.2s ease;
+            opacity: 0;
+            text-shadow: none;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 5px 10px;
+            border-radius: 15px;
+            border: 2px solid #007bff;
+        }
+        
+        .swipe-feedback.active {
+            opacity: 1;
+            transform: translate(-50%, 0) scale(1.3);
         }
 
         .drink-count {
@@ -240,15 +325,16 @@
         }
 
         .stat-label {
-            color: #6c757d;
-            font-size: 0.8em;
+            color: #495057;
+            font-size: 1.1em;
+            font-weight: bold;
             margin-bottom: 3px;
         }
 
         .stat-value {
-            color: #495057;
-            font-size: 1.3em;
-            font-weight: bold;
+            color: #6c757d;
+            font-size: 1.0em;
+            font-weight: normal;
         }
 
         /* 弹窗样式 */
@@ -261,6 +347,14 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        /* 防止背景滚动的样式 */
+        .modal-open {
+            overflow: hidden !important;
+            position: fixed !important;
+            width: 100% !important;
         }
 
         .modal-content {
@@ -412,8 +506,9 @@
                 <span class="close" onclick="closeSettingsModal()">&times;</span>
             </div>
             <div class="modal-setting-item">
-                <label for="modalCupVolume">一杯酒量 (ml):</label>
-                <input type="number" id="modalCupVolume" value="25" min="10" max="200" step="5">
+                <label for="modalCupVolume">一杯酒等于多少个酒:</label>
+                <input type="number" id="modalCupVolume" value="30" min="5" max="100" step="1">
+                <p style="margin-top: 5px; color: #666; font-size: 12px;">设置一杯酒可以分成多少个酒</p>
             </div>
             <div class="modal-setting-item">
                 <label>酒友管理</label>
@@ -440,15 +535,65 @@
         class DrinkTracker {
             constructor() {
                 this.players = [];
+                this.storageKey = 'drinkTracker_data';
                 this.init();
             }
 
             init() {
-                // 初始化默认玩家
-                this.addDefaultPlayers();
+                // 尝试从本地存储加载数据
+                this.loadFromStorage();
+                
+                // 如果没有数据，初始化默认玩家
+                if (this.players.length === 0) {
+                    this.addDefaultPlayers();
+                }
+                
                 this.bindEvents();
                 this.render();
                 this.updatePlayerCount();
+            }
+
+            // 保存数据到本地存储
+            saveToStorage() {
+                try {
+                    const data = {
+                        players: this.players,
+                        cupVolume: this.getCupVolume(),
+                        timestamp: Date.now()
+                    };
+                    localStorage.setItem(this.storageKey, JSON.stringify(data));
+                } catch (error) {
+                    console.warn('保存数据失败:', error);
+                }
+            }
+
+            // 从本地存储加载数据
+            loadFromStorage() {
+                try {
+                    const data = localStorage.getItem(this.storageKey);
+                    if (data) {
+                        const parsed = JSON.parse(data);
+                        if (parsed.players && Array.isArray(parsed.players)) {
+                            this.players = parsed.players;
+                            // 恢复酒量设置
+                            if (parsed.cupVolume) {
+                                document.getElementById('modalCupVolume').value = parsed.cupVolume;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.warn('加载数据失败:', error);
+                    this.players = [];
+                }
+            }
+
+            // 清除本地存储
+            clearStorage() {
+                try {
+                    localStorage.removeItem(this.storageKey);
+                } catch (error) {
+                    console.warn('清除数据失败:', error);
+                }
             }
 
             updatePlayerCount() {
@@ -472,13 +617,16 @@
 
             addPlayer() {
                 const playerNumber = this.players.length + 1;
+                const names = ['老大', '老二', '老三', '老四', '老五', '老六', '老七', '老八', '老九', '老十'];
+                const defaultName = playerNumber <= names.length ? names[playerNumber - 1] : `酒友${playerNumber}`;
                 this.players.push({
                     id: Date.now() + Math.random(),
-                    name: `酒友${playerNumber}`,
+                    name: defaultName,
                     drinkCount: 0
                 });
                 this.render();
                 this.updatePlayerCount();
+                this.saveToStorage();
             }
 
             removePlayer() {
@@ -486,6 +634,7 @@
                     this.players.pop();
                     this.render();
                     this.updatePlayerCount();
+                    this.saveToStorage();
                 }
             }
 
@@ -493,15 +642,23 @@
                 const player = this.players.find(p => p.id === playerId);
                 if (player) {
                     player.name = newName || '无名酒友';
+                    this.saveToStorage();
                 }
             }
 
             updateDrinkCount(playerId, change) {
+                console.log('updateDrinkCount called with playerId:', playerId, 'change:', change);
                 const player = this.players.find(p => p.id === playerId);
+                console.log('Found player:', player);
                 if (player) {
+                    const oldCount = player.drinkCount;
                     player.drinkCount = Math.max(0, player.drinkCount + change);
+                    console.log('Updated drinkCount from', oldCount, 'to', player.drinkCount);
                     this.updateStats();
                     this.renderPlayerCard(player);
+                    this.saveToStorage();
+                } else {
+                    console.log('Player not found with id:', playerId);
                 }
             }
 
@@ -510,10 +667,244 @@
                     player.drinkCount = 0;
                 });
                 this.render();
+                this.saveToStorage();
             }
 
             getCupVolume() {
-                return parseInt(document.getElementById('modalCupVolume').value) || 25;
+                return parseInt(document.getElementById('modalCupVolume').value) || 30;
+            }
+
+            // 滑动手势功能
+            handleTouchStart(event) {
+                console.log('Touch start triggered', event);
+                const touch = event.touches[0];
+                this.swipeData = {
+                    startX: touch.clientX,
+                    startY: touch.clientY,
+                    playerId: parseFloat(event.currentTarget.dataset.playerId),
+                    isActive: true,
+                    isDragging: false
+                };
+                console.log('Touch swipe data:', this.swipeData);
+                this.updateSwipeFeedback(0);
+            }
+
+            handleTouchMove(event) {
+                if (!this.swipeData || !this.swipeData.isActive) return;
+                
+                const touch = event.touches[0];
+                const deltaX = touch.clientX - this.swipeData.startX;
+                const deltaY = touch.clientY - this.swipeData.startY;
+                
+                // 检测是否开始拖拽
+                if (!this.swipeData.isDragging && (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10)) {
+                    this.swipeData.isDragging = true;
+                    console.log('Touch dragging started');
+                    // 只有在确定是水平滑动时才阻止默认行为
+                    if (Math.abs(deltaX) > Math.abs(deltaY) && event.cancelable) {
+                        event.preventDefault();
+                    }
+                }
+                
+                if (this.swipeData.isDragging && Math.abs(deltaX) > Math.abs(deltaY)) {
+                    if (event.cancelable) {
+                        event.preventDefault();
+                    }
+                    this.updateSwipeFeedback(deltaX);
+                    console.log('Touch dragging:', deltaX);
+                }
+            }
+
+            handleTouchEnd(event) {
+                if (!this.swipeData || !this.swipeData.isActive) return;
+                
+                const touch = event.changedTouches[0];
+                const deltaX = touch.clientX - this.swipeData.startX;
+                console.log('Touch end:', deltaX, 'isDragging:', this.swipeData.isDragging);
+                
+                if (this.swipeData.isDragging) {
+                    // 只在事件可以被取消时才调用preventDefault
+                    if (event.cancelable) {
+                        event.preventDefault();
+                    }
+                    this.executeSwipe(deltaX);
+                }
+                
+                // 延迟清除反馈，让用户能看到结果
+                const feedback = document.getElementById(`feedback-${this.swipeData.playerId}`);
+                const handle = document.getElementById(`handle-${this.swipeData.playerId}`);
+                
+                // 立即重置滑块位置
+                if (handle) {
+                    handle.style.left = 'calc(25% - 14px)';
+                }
+                
+                // 延迟清除反馈文本，让用户看到操作结果
+                if (feedback) {
+                    setTimeout(() => {
+                        feedback.textContent = '';
+                        feedback.classList.remove('active');
+                    }, 500); // 500ms后清除
+                }
+                
+                this.swipeData = null;
+            }
+
+            handleMouseDown(event) {
+                console.log('handleMouseDown called', event);
+                event.preventDefault();
+                this.swipeData = {
+                    startX: event.clientX,
+                    startY: event.clientY,
+                    playerId: parseFloat(event.currentTarget.dataset.playerId),
+                    isActive: true,
+                    isDragging: false
+                };
+                console.log('Mouse down:', this.swipeData);
+                
+                // 保存绑定的函数引用以便后续移除
+                this.boundGlobalMouseMove = this.handleGlobalMouseMove.bind(this);
+                this.boundGlobalMouseUp = this.handleGlobalMouseUp.bind(this);
+                
+                // 添加全局鼠标事件监听
+                document.addEventListener('mousemove', this.boundGlobalMouseMove);
+                document.addEventListener('mouseup', this.boundGlobalMouseUp);
+            }
+
+            handleMouseMove(event) {
+                // 使用全局事件处理，这里保持空实现
+                console.log('handleMouseMove called (using global handler)');
+            }
+
+            handleMouseUp(event) {
+                // 使用全局事件处理，这里保持空实现
+                console.log('handleMouseUp called (using global handler)');
+            }
+            
+            handleGlobalMouseMove(event) {
+                if (!this.swipeData || !this.swipeData.isActive) return;
+                
+                const deltaX = event.clientX - this.swipeData.startX;
+                const deltaY = event.clientY - this.swipeData.startY;
+                
+                // 检测是否开始拖拽
+                if (!this.swipeData.isDragging && (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5)) {
+                    this.swipeData.isDragging = true;
+                    console.log('Start dragging');
+                }
+                
+                if (this.swipeData.isDragging) {
+                    this.updateSwipeFeedback(deltaX);
+                    console.log('Dragging:', deltaX);
+                }
+            }
+            
+            handleGlobalMouseUp(event) {
+                if (!this.swipeData || !this.swipeData.isActive) return;
+                
+                const deltaX = event.clientX - this.swipeData.startX;
+                console.log('Global mouse up:', deltaX, 'isDragging:', this.swipeData.isDragging);
+                
+                if (this.swipeData.isDragging) {
+                    this.executeSwipe(deltaX);
+                }
+                
+                // 清除反馈和重置滑块
+                const feedback = document.getElementById(`feedback-${this.swipeData.playerId}`);
+                const handle = document.getElementById(`handle-${this.swipeData.playerId}`);
+                if (feedback) {
+                    feedback.textContent = '';
+                    feedback.classList.remove('active');
+                }
+                if (handle) {
+                    handle.style.left = 'calc(25% - 14px)';
+                }
+                
+                // 移除全局事件监听
+                if (this.boundGlobalMouseMove) {
+                    document.removeEventListener('mousemove', this.boundGlobalMouseMove);
+                    this.boundGlobalMouseMove = null;
+                }
+                if (this.boundGlobalMouseUp) {
+                    document.removeEventListener('mouseup', this.boundGlobalMouseUp);
+                    this.boundGlobalMouseUp = null;
+                }
+                
+                this.swipeData = null;
+            }
+
+            updateSwipeFeedback(deltaX) {
+                if (!this.swipeData) return;
+                const feedback = document.getElementById(`feedback-${this.swipeData.playerId}`);
+                const handle = document.getElementById(`handle-${this.swipeData.playerId}`);
+                if (!feedback || !handle) return;
+                
+                const maxDistance = 112; // 最大滑动距离 (150px * 0.75 = 112px)
+                const constrainedDelta = Math.max(-maxDistance, Math.min(maxDistance, deltaX));
+                
+                // 更新滑块位置（以25%为基准，即0区域中心）
+                const centerPosition = 37.5; // 滑动区域25%位置 (150px * 0.25 = 37.5px)
+                const handlePosition = Math.max(14, Math.min(136, centerPosition + constrainedDelta));
+                handle.style.left = `${handlePosition - 14}px`;
+                
+                // 计算增减量
+                if (Math.abs(deltaX) < 15) {
+                    feedback.textContent = '0';
+                    feedback.style.color = '#6c757d';
+                    feedback.classList.add('active');
+                } else if (deltaX < 0) {
+                    // 左滑固定减1
+                    feedback.textContent = '-1';
+                    feedback.style.color = '#ff4757';
+                    feedback.classList.add('active');
+                } else {
+                    // 右滑按距离增加1-6
+                    const amount = Math.min(6, Math.floor(Math.abs(deltaX) / 25) + 1);
+                    feedback.textContent = `+${amount}`;
+                    feedback.style.color = '#2ed573';
+                    feedback.classList.add('active');
+                }
+            }
+
+            executeSwipe(deltaX) {
+                console.log('executeSwipe called with deltaX:', deltaX, 'swipeData:', this.swipeData);
+                if (!this.swipeData) {
+                    console.log('No swipeData, returning');
+                    return;
+                }
+                const absDistance = Math.abs(deltaX);
+                if (absDistance < 15) {
+                    console.log('Distance too small:', absDistance, 'no change (0 position)');
+                    // 滑动距离太小，相当于放在0位置，不做任何改变
+                } else {
+                    let change;
+                    if (deltaX < 0) {
+                        // 左滑固定减1
+                        change = -1;
+                    } else {
+                        // 右滑按距离增加1-6
+                        change = Math.min(6, Math.floor(absDistance / 25) + 1);
+                    }
+                    
+                    console.log('Calling updateDrinkCount with playerId:', this.swipeData.playerId, 'change:', change);
+                    this.updateDrinkCount(this.swipeData.playerId, change);
+                }
+                
+                // 重置滑块位置
+                const handle = document.getElementById(`handle-${this.swipeData.playerId}`);
+                if (handle) {
+                    handle.style.left = 'calc(25% - 14px)';
+                }
+            }
+
+            clearSwipeFeedback() {
+                if (!this.swipeData) return;
+                const feedback = document.getElementById(`feedback-${this.swipeData.playerId}`);
+                if (feedback) {
+                    setTimeout(() => {
+                        feedback.textContent = '';
+                    }, 300);
+                }
             }
 
             renderPlayerCard(player) {
@@ -537,18 +928,31 @@
                     const playerCard = document.createElement('div');
                     playerCard.className = 'player-card';
                     playerCard.setAttribute('data-player-id', player.id);
-
-                    const totalMl = player.drinkCount * this.getCupVolume();
                     
                     playerCard.innerHTML = `
                         <div class="player-content">
                             <div class="player-name">${player.name}</div>
                             <div class="drink-count">${player.drinkCount}</div>
-                            <div class="drink-buttons">
-                                <button class="drink-btn drink-btn-minus" 
-                                        onclick="drinkTracker.updateDrinkCount(${player.id}, -1)">−</button>
-                                <button class="drink-btn drink-btn-plus" 
-                                        onclick="drinkTracker.updateDrinkCount(${player.id}, 1)">+</button>
+                            <div class="drink-swipe-area" 
+                                 data-player-id="${player.id}"
+                                 ontouchstart="console.log('Touch start'); drinkTracker.handleTouchStart(event)"
+                                 ontouchmove="drinkTracker.handleTouchMove(event)"
+                                 ontouchend="drinkTracker.handleTouchEnd(event)"
+                                 onmousedown="console.log('Inline mousedown triggered'); drinkTracker.handleMouseDown(event)"
+                                 onmousemove="drinkTracker.handleMouseMove(event)"
+                                 onmouseup="drinkTracker.handleMouseUp(event)"
+                                 onmouseleave="drinkTracker.handleMouseUp(event)"
+                                 onclick="console.log('Click event triggered on swipe area')"
+                                 style="user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;">
+                                <div class="swipe-track">
+                                    <div class="swipe-zones">
+                                        <div class="swipe-zone left">-1</div>
+                                        <div class="swipe-zone center"></div>
+                                        <div class="swipe-zone right">+1~6</div>
+                                    </div>
+                                    <div class="swipe-handle" id="handle-${player.id}"></div>
+                                    <div class="swipe-feedback" id="feedback-${player.id}"></div>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -560,28 +964,27 @@
             updateStats() {
                 const container = document.getElementById('statsContainer');
                 
-                const totalCups = this.players.reduce((sum, player) => sum + player.drinkCount, 0);
-                const totalMl = totalCups * this.getCupVolume();
-                const avgCups = this.players.length > 0 ? (totalCups / this.players.length).toFixed(1) : 0;
+                const totalDrinks = this.players.reduce((sum, player) => sum + player.drinkCount, 0);
+                const cupSize = this.getCupVolume();
+                const totalCups = Math.floor(totalDrinks / cupSize);
+                const remainingDrinks = totalDrinks % cupSize;
                 const maxDrinker = this.players.reduce((max, player) => 
                     player.drinkCount > max.drinkCount ? player : max, this.players[0] || {name: '无', drinkCount: 0});
+                const minDrinker = this.players.reduce((min, player) => 
+                    player.drinkCount < min.drinkCount ? player : min, this.players[0] || {name: '无', drinkCount: 0});
 
                 container.innerHTML = `
                     <div class="stat-item">
-                        <div class="stat-label">总饮酒量</div>
-                        <div class="stat-value">${totalMl}ml</div>
-                    </div>
-                    <div class="stat-item">
                         <div class="stat-label">总杯数</div>
-                        <div class="stat-value">${totalCups}杯</div>
+                        <div class="stat-value">${totalCups}杯${remainingDrinks > 0 ? ` + ${remainingDrinks}个酒` : ''}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-label">平均饮酒量</div>
-                        <div class="stat-value">${avgCups}杯</div>
+                        <div class="stat-label">全场最佳</div>
+                        <div class="stat-value">${maxDrinker.name} (${maxDrinker.drinkCount})</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-label">酒王</div>
-                        <div class="stat-value">${maxDrinker.name}</div>
+                        <div class="stat-label">运气之子</div>
+                        <div class="stat-value">${minDrinker.name} (${minDrinker.drinkCount})</div>
                     </div>
                 `;
             }
@@ -589,6 +992,43 @@
 
         // 初始化应用
         const drinkTracker = new DrinkTracker();
+        
+        // 添加测试函数验证事件绑定
+        function testEventBinding() {
+            console.log('Testing event binding...');
+            const swipeAreas = document.querySelectorAll('.drink-swipe-area');
+            console.log('Found swipe areas:', swipeAreas.length);
+            
+            swipeAreas.forEach((area, index) => {
+                console.log(`Area ${index}:`, area);
+                console.log('Dataset playerId:', area.dataset.playerId);
+                
+                // 手动添加事件监听器作为备用
+                area.addEventListener('mousedown', function(e) {
+                    console.log('Manual mousedown event triggered');
+                    drinkTracker.handleMouseDown(e);
+                });
+            });
+        }
+        
+        // 页面加载完成后测试
+         setTimeout(testEventBinding, 1000);
+         
+         // 添加全局点击测试
+         document.addEventListener('click', function(e) {
+             console.log('Global click detected:', e.target);
+             if (e.target.closest('.drink-swipe-area')) {
+                 console.log('Click on swipe area detected!');
+             }
+         });
+         
+         // 添加全局鼠标按下测试
+         document.addEventListener('mousedown', function(e) {
+             console.log('Global mousedown detected:', e.target);
+             if (e.target.closest('.drink-swipe-area')) {
+                 console.log('Mousedown on swipe area detected!');
+             }
+         });
 
         // 弹窗控制函数
         function openSettingsModal() {
@@ -599,13 +1039,19 @@
             // 生成名字编辑列表
             updateNameEditList();
             
+            // 防止背景滚动
+            document.body.classList.add('modal-open');
             document.getElementById('settingsModal').style.display = 'block';
         }
 
         function closeSettingsModal() {
             document.getElementById('settingsModal').style.display = 'none';
+            // 恢复背景滚动
+            document.body.classList.remove('modal-open');
             // 关闭时重新渲染以应用酒量变化
             drinkTracker.render();
+            // 保存设置变化
+            drinkTracker.saveToStorage();
         }
 
         function updateNameEditList() {
@@ -639,6 +1085,7 @@
         function resetAllRecords() {
             if (confirm('⚠️ 确定要重置所有酒友的饮酒记录吗？\n\n此操作不可撤销！')) {
                 drinkTracker.resetAll();
+                drinkTracker.clearStorage();
             }
         }
 
