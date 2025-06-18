@@ -647,18 +647,13 @@
             }
 
             updateDrinkCount(playerId, change) {
-                console.log('updateDrinkCount called with playerId:', playerId, 'change:', change);
                 const player = this.players.find(p => p.id === playerId);
-                console.log('Found player:', player);
-                if (player) {
-                    const oldCount = player.drinkCount;
-                    player.drinkCount = Math.max(0, player.drinkCount + change);
-                    console.log('Updated drinkCount from', oldCount, 'to', player.drinkCount);
+            if (player) {
+                const oldCount = player.drinkCount;
+                player.drinkCount = Math.max(0, player.drinkCount + change);
                     this.updateStats();
                     this.renderPlayerCard(player);
                     this.saveToStorage();
-                } else {
-                    console.log('Player not found with id:', playerId);
                 }
             }
 
@@ -676,17 +671,16 @@
 
             // 滑动手势功能
             handleTouchStart(event) {
-                console.log('Touch start triggered', event);
+                event.preventDefault();
                 const touch = event.touches[0];
+                const rect = event.currentTarget.getBoundingClientRect();
+                const playerId = parseInt(event.currentTarget.dataset.playerId);
+                
                 this.swipeData = {
-                    startX: touch.clientX,
-                    startY: touch.clientY,
-                    playerId: parseFloat(event.currentTarget.dataset.playerId),
-                    isActive: true,
+                    startX: touch.clientX - rect.left,
+                    playerId: playerId,
                     isDragging: false
                 };
-                console.log('Touch swipe data:', this.swipeData);
-                this.updateSwipeFeedback(0);
             }
 
             handleTouchMove(event) {
@@ -699,7 +693,6 @@
                 // 检测是否开始拖拽
                 if (!this.swipeData.isDragging && (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10)) {
                     this.swipeData.isDragging = true;
-                    console.log('Touch dragging started');
                     // 只有在确定是水平滑动时才阻止默认行为
                     if (Math.abs(deltaX) > Math.abs(deltaY) && event.cancelable) {
                         event.preventDefault();
@@ -711,7 +704,6 @@
                         event.preventDefault();
                     }
                     this.updateSwipeFeedback(deltaX);
-                    console.log('Touch dragging:', deltaX);
                 }
             }
 
@@ -720,7 +712,6 @@
                 
                 const touch = event.changedTouches[0];
                 const deltaX = touch.clientX - this.swipeData.startX;
-                console.log('Touch end:', deltaX, 'isDragging:', this.swipeData.isDragging);
                 
                 if (this.swipeData.isDragging) {
                     // 只在事件可以被取消时才调用preventDefault
@@ -751,7 +742,6 @@
             }
 
             handleMouseDown(event) {
-                console.log('handleMouseDown called', event);
                 event.preventDefault();
                 this.swipeData = {
                     startX: event.clientX,
@@ -760,7 +750,6 @@
                     isActive: true,
                     isDragging: false
                 };
-                console.log('Mouse down:', this.swipeData);
                 
                 // 保存绑定的函数引用以便后续移除
                 this.boundGlobalMouseMove = this.handleGlobalMouseMove.bind(this);
@@ -773,12 +762,10 @@
 
             handleMouseMove(event) {
                 // 使用全局事件处理，这里保持空实现
-                console.log('handleMouseMove called (using global handler)');
             }
 
             handleMouseUp(event) {
                 // 使用全局事件处理，这里保持空实现
-                console.log('handleMouseUp called (using global handler)');
             }
             
             handleGlobalMouseMove(event) {
@@ -790,12 +777,10 @@
                 // 检测是否开始拖拽
                 if (!this.swipeData.isDragging && (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5)) {
                     this.swipeData.isDragging = true;
-                    console.log('Start dragging');
                 }
                 
                 if (this.swipeData.isDragging) {
                     this.updateSwipeFeedback(deltaX);
-                    console.log('Dragging:', deltaX);
                 }
             }
             
@@ -803,7 +788,6 @@
                 if (!this.swipeData || !this.swipeData.isActive) return;
                 
                 const deltaX = event.clientX - this.swipeData.startX;
-                console.log('Global mouse up:', deltaX, 'isDragging:', this.swipeData.isDragging);
                 
                 if (this.swipeData.isDragging) {
                     this.executeSwipe(deltaX);
@@ -867,14 +851,11 @@
             }
 
             executeSwipe(deltaX) {
-                console.log('executeSwipe called with deltaX:', deltaX, 'swipeData:', this.swipeData);
                 if (!this.swipeData) {
-                    console.log('No swipeData, returning');
                     return;
                 }
                 const absDistance = Math.abs(deltaX);
                 if (absDistance < 15) {
-                    console.log('Distance too small:', absDistance, 'no change (0 position)');
                     // 滑动距离太小，相当于放在0位置，不做任何改变
                 } else {
                     let change;
@@ -886,7 +867,6 @@
                         change = Math.min(6, Math.floor(absDistance / 25) + 1);
                     }
                     
-                    console.log('Calling updateDrinkCount with playerId:', this.swipeData.playerId, 'change:', change);
                     this.updateDrinkCount(this.swipeData.playerId, change);
                 }
                 
@@ -935,14 +915,13 @@
                             <div class="drink-count">${player.drinkCount}</div>
                             <div class="drink-swipe-area" 
                                  data-player-id="${player.id}"
-                                 ontouchstart="console.log('Touch start'); drinkTracker.handleTouchStart(event)"
+                                 ontouchstart="drinkTracker.handleTouchStart(event)"
                                  ontouchmove="drinkTracker.handleTouchMove(event)"
                                  ontouchend="drinkTracker.handleTouchEnd(event)"
-                                 onmousedown="console.log('Inline mousedown triggered'); drinkTracker.handleMouseDown(event)"
+                                 onmousedown="drinkTracker.handleMouseDown(event)"
                                  onmousemove="drinkTracker.handleMouseMove(event)"
                                  onmouseup="drinkTracker.handleMouseUp(event)"
                                  onmouseleave="drinkTracker.handleMouseUp(event)"
-                                 onclick="console.log('Click event triggered on swipe area')"
                                  style="user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;">
                                 <div class="swipe-track">
                                     <div class="swipe-zones">
@@ -995,17 +974,11 @@
         
         // 添加测试函数验证事件绑定
         function testEventBinding() {
-            console.log('Testing event binding...');
             const swipeAreas = document.querySelectorAll('.drink-swipe-area');
-            console.log('Found swipe areas:', swipeAreas.length);
             
             swipeAreas.forEach((area, index) => {
-                console.log(`Area ${index}:`, area);
-                console.log('Dataset playerId:', area.dataset.playerId);
-                
                 // 手动添加事件监听器作为备用
                 area.addEventListener('mousedown', function(e) {
-                    console.log('Manual mousedown event triggered');
                     drinkTracker.handleMouseDown(e);
                 });
             });
@@ -1016,17 +989,13 @@
          
          // 添加全局点击测试
          document.addEventListener('click', function(e) {
-             console.log('Global click detected:', e.target);
              if (e.target.closest('.drink-swipe-area')) {
-                 console.log('Click on swipe area detected!');
              }
          });
          
          // 添加全局鼠标按下测试
          document.addEventListener('mousedown', function(e) {
-             console.log('Global mousedown detected:', e.target);
              if (e.target.closest('.drink-swipe-area')) {
-                 console.log('Mousedown on swipe area detected!');
              }
          });
 
