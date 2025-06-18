@@ -28,8 +28,15 @@
         }
 
         .header {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: 20px;
+        }
+
+        .header-content {
+            flex: 1;
+            text-align: left;
         }
 
         .header h1 {
@@ -39,59 +46,28 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .subtitle {
-            color: #666;
-            font-size: 1em;
-        }
 
-        .settings-panel {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 2px solid #e9ecef;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
 
-        .setting-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .setting-item label {
-            font-weight: bold;
-            color: #495057;
-            font-size: 14px;
-        }
-
-        .setting-item input {
-            padding: 6px 10px;
-            border: 2px solid #dee2e6;
-            border-radius: 6px;
-            font-size: 14px;
-            width: 70px;
-            text-align: center;
+        .header-settings {
+            flex-shrink: 0;
         }
 
         .settings-btn {
             background: #007bff;
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
+            padding: 10px 16px;
+            border-radius: 8px;
             font-size: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
         }
 
         .settings-btn:hover {
             background: #0056b3;
             transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
         }
 
         .btn {
@@ -155,38 +131,34 @@
             transform: translateY(-3px);
         }
 
+        .player-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
         .player-name {
             font-size: 1.1em;
             font-weight: bold;
             color: #8B4513;
-            margin-bottom: 10px;
+            flex: 1;
+            text-align: left;
+        }
+
+        .drink-count {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #495057;
+            min-width: 50px;
             text-align: center;
+            flex: 0 0 auto;
         }
 
-        .player-name input {
-            background: transparent;
-            border: none;
-            font-size: inherit;
-            font-weight: inherit;
-            color: inherit;
-            text-align: center;
-            width: 100%;
-            padding: 3px;
-            border-radius: 3px;
-        }
-
-        .player-name input:focus {
-            outline: none;
-            background: #fff;
-            box-shadow: 0 0 0 2px #007bff;
-        }
-
-        .drink-controls {
+        .drink-buttons {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 10px;
+            gap: 8px;
+            flex: 0 0 auto;
         }
 
         .drink-btn {
@@ -293,11 +265,13 @@
 
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: 5% auto;
             padding: 20px;
             border-radius: 10px;
             width: 90%;
             max-width: 400px;
+            max-height: 85vh;
+            overflow-y: auto;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
@@ -398,15 +372,6 @@
                 grid-template-columns: 1fr;
             }
 
-            .settings-panel {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .setting-item {
-                justify-content: center;
-            }
-
             .modal-content {
                 margin: 10% auto;
                 width: 95%;
@@ -417,27 +382,19 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>🍻 酒桌记录器 🍻</h1>
-            <p class="subtitle">记录每一次干杯的美好时光</p>
+            <div class="header-content">
+                 <h1>🍻 喝酒计数</h1>
+             </div>
+            <div class="header-settings">
+                <button class="settings-btn" onclick="openSettingsModal()">⚙️ 设置</button>
+            </div>
         </header>
-
-        <div class="settings-panel">
-            <div class="setting-item">
-                <label for="cupVolume">一杯酒量 (ml):</label>
-                <input type="number" id="cupVolume" value="25" min="10" max="200" step="5">
-            </div>
-            <div class="setting-item">
-                <button onclick="openSettingsModal()">酒友管理</button>
-            </div>
-        </div>
 
         <div class="players-container" id="playersContainer">
             <!-- 玩家列表将通过JavaScript动态生成 -->
         </div>
 
-        <div class="controls">
-            <button id="resetAll" class="btn btn-reset">🔄 重置记录</button>
-        </div>
+
 
         <div class="stats">
             <h3>📊 统计信息</h3>
@@ -455,11 +412,26 @@
                 <span class="close" onclick="closeSettingsModal()">&times;</span>
             </div>
             <div class="modal-setting-item">
-                <label>当前酒友数量: <span id="playerCount">5</span></label>
+                <label for="modalCupVolume">一杯酒量 (ml):</label>
+                <input type="number" id="modalCupVolume" value="25" min="10" max="200" step="5">
+            </div>
+            <div class="modal-setting-item">
+                <label>酒友管理</label>
                 <div class="modal-buttons">
-                    <button class="modal-btn modal-btn-primary" onclick="addPlayer()">➕ 增加酒友</button>
-                    <button class="modal-btn modal-btn-danger" onclick="removePlayer()">➖ 减少酒友</button>
+                    <button class="modal-btn modal-btn-primary" onclick="addPlayerAndUpdate()">➕ 增加酒友</button>
+                    <button class="modal-btn modal-btn-danger" onclick="removePlayerAndUpdate()">➖ 减少酒友</button>
                 </div>
+                <p style="margin-top: 10px; color: #666; font-size: 14px;">当前酒友数量: <span id="playerCount">5</span></p>
+            </div>
+            <div class="modal-setting-item">
+                <label>修改酒友名字</label>
+                <div id="nameEditList">
+                    <!-- 名字编辑列表将动态生成 -->
+                </div>
+            </div>
+            <div class="modal-setting-item">
+                <label>数据管理</label>
+                <button class="modal-btn modal-btn-danger" onclick="resetAllRecords()" style="width: 100%;">🔄 重置所有记录</button>
             </div>
         </div>
     </div>
@@ -495,10 +467,7 @@
             }
 
             bindEvents() {
-                document.getElementById('resetAll').addEventListener('click', () => this.resetAll());
-                document.getElementById('cupVolume').addEventListener('change', () => {
-                    this.render();
-                });
+                // 移除了重置按钮的事件绑定，现在通过设置模态框中的按钮调用
             }
 
             addPlayer() {
@@ -537,26 +506,21 @@
             }
 
             resetAll() {
-                if (confirm('确定要重置所有记录吗？')) {
-                    this.players.forEach(player => {
-                        player.drinkCount = 0;
-                    });
-                    this.render();
-                }
+                this.players.forEach(player => {
+                    player.drinkCount = 0;
+                });
+                this.render();
             }
 
             getCupVolume() {
-                return parseInt(document.getElementById('cupVolume').value) || 25;
+                return parseInt(document.getElementById('modalCupVolume').value) || 25;
             }
 
             renderPlayerCard(player) {
                 const card = document.querySelector(`[data-player-id="${player.id}"]`);
                 if (card) {
                     const countElement = card.querySelector('.drink-count');
-                    const infoElement = card.querySelector('.drink-info');
                     countElement.textContent = player.drinkCount;
-                    const totalMl = player.drinkCount * this.getCupVolume();
-                    infoElement.textContent = `总计: ${totalMl}ml (${player.drinkCount}杯)`;
                 }
             }
 
@@ -577,20 +541,15 @@
                     const totalMl = player.drinkCount * this.getCupVolume();
                     
                     playerCard.innerHTML = `
-                        <div class="player-name">
-                            <input type="text" value="${player.name}" 
-                                   onchange="drinkTracker.updatePlayerName(${player.id}, this.value)"
-                                   onblur="drinkTracker.updatePlayerName(${player.id}, this.value)">
-                        </div>
-                        <div class="drink-controls">
-                            <button class="drink-btn drink-btn-minus" 
-                                    onclick="drinkTracker.updateDrinkCount(${player.id}, -1)">−</button>
+                        <div class="player-content">
+                            <div class="player-name">${player.name}</div>
                             <div class="drink-count">${player.drinkCount}</div>
-                            <button class="drink-btn drink-btn-plus" 
-                                    onclick="drinkTracker.updateDrinkCount(${player.id}, 1)">+</button>
-                        </div>
-                        <div class="drink-info">
-                            总计: ${totalMl}ml (${player.drinkCount}杯)
+                            <div class="drink-buttons">
+                                <button class="drink-btn drink-btn-minus" 
+                                        onclick="drinkTracker.updateDrinkCount(${player.id}, -1)">−</button>
+                                <button class="drink-btn drink-btn-plus" 
+                                        onclick="drinkTracker.updateDrinkCount(${player.id}, 1)">+</button>
+                            </div>
                         </div>
                     `;
 
@@ -633,11 +592,54 @@
 
         // 弹窗控制函数
         function openSettingsModal() {
+            // 同步酒量设置
+            const currentVolume = drinkTracker.getCupVolume();
+            document.getElementById('modalCupVolume').value = currentVolume;
+            
+            // 生成名字编辑列表
+            updateNameEditList();
+            
             document.getElementById('settingsModal').style.display = 'block';
         }
 
         function closeSettingsModal() {
             document.getElementById('settingsModal').style.display = 'none';
+            // 关闭时重新渲染以应用酒量变化
+            drinkTracker.render();
+        }
+
+        function updateNameEditList() {
+            const container = document.getElementById('nameEditList');
+            container.innerHTML = '';
+            
+            drinkTracker.players.forEach((player, index) => {
+                const nameItem = document.createElement('div');
+                nameItem.style.cssText = 'display: flex; align-items: center; gap: 10px; margin-bottom: 8px;';
+                nameItem.innerHTML = `
+                    <span style="min-width: 60px; font-size: 14px;">${index + 1}号:</span>
+                    <input type="text" value="${player.name}" 
+                           style="flex: 1; padding: 6px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;"
+                           onchange="drinkTracker.updatePlayerName(${player.id}, this.value)"
+                           onblur="drinkTracker.updatePlayerName(${player.id}, this.value)">
+                `;
+                container.appendChild(nameItem);
+            });
+        }
+
+        function addPlayerAndUpdate() {
+            drinkTracker.addPlayer();
+            updateNameEditList();
+        }
+
+        function removePlayerAndUpdate() {
+            drinkTracker.removePlayer();
+            updateNameEditList();
+        }
+
+        function resetAllRecords() {
+            if (confirm('⚠️ 确定要重置所有酒友的饮酒记录吗？\n\n此操作不可撤销！')) {
+                drinkTracker.resetAll();
+            }
         }
 
         // 点击弹窗外部关闭弹窗
