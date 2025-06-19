@@ -321,12 +321,33 @@
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
             min-width: 40px;
             height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drink-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+
+        .drink-btn:active::before {
+            width: 120px;
+            height: 120px;
         }
 
         .drink-btn.decrease {
@@ -336,7 +357,14 @@
 
         .drink-btn.decrease:hover {
             background: #ff3838;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(255, 71, 87, 0.4);
+        }
+
+        .drink-btn.decrease:active {
+            background: #e63946;
+            transform: translateY(0px) scale(0.95);
+            box-shadow: 0 2px 4px rgba(255, 71, 87, 0.6);
         }
 
         .drink-btn.increase {
@@ -346,7 +374,14 @@
 
         .drink-btn.increase:hover {
             background: #26d065;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(46, 213, 115, 0.4);
+        }
+
+        .drink-btn.increase:active {
+            background: #20bf6b;
+            transform: translateY(0px) scale(0.95);
+            box-shadow: 0 2px 4px rgba(46, 213, 115, 0.6);
         }
 
         .controls {
@@ -723,7 +758,54 @@
             }
 
             changeDrinkCount(playerId, change) {
+                // 播放音效
+                if (change > 0) {
+                    this.playSound('increase');
+                } else if (change < 0) {
+                    this.playSound('decrease');
+                }
                 this.updateDrinkCount(playerId, change);
+            }
+
+            // 播放音效的方法
+            playSound(type) {
+                try {
+                    // 创建音频上下文
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // 创建振荡器
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    // 连接节点
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    if (type === 'increase') {
+                        // 增加酒：愉快的上升音调
+                        oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                        oscillator.frequency.exponentialRampToValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    } else if (type === 'decrease') {
+                        // 减少酒：较低的音调
+                        oscillator.frequency.setValueAtTime(392.00, audioContext.currentTime); // G4
+                        oscillator.frequency.exponentialRampToValueAtTime(329.63, audioContext.currentTime + 0.1); // E4
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                    }
+                    
+                    // 设置波形类型
+                    oscillator.type = 'sine';
+                    
+                    // 播放音效
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                    
+                } catch (error) {
+                    // 如果音频API不支持，静默失败
+                    console.log('音效播放失败:', error);
+                }
             }
 
             resetAll() {
@@ -934,6 +1016,13 @@
                     } else {
                         // 右滑按距离增加1-6
                         change = Math.min(6, Math.floor(absDistance / 25) + 1);
+                    }
+                    
+                    // 播放音效
+                    if (change > 0) {
+                        this.playSound('increase');
+                    } else if (change < 0) {
+                        this.playSound('decrease');
                     }
                     
                     this.updateDrinkCount(this.swipeData.playerId, change);
