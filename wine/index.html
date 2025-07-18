@@ -96,6 +96,42 @@
             margin: 5px;
         }
 
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-success:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
         .btn-add {
             background: #28a745;
             color: white;
@@ -581,7 +617,9 @@
             <!-- 玩家列表将通过JavaScript动态生成 -->
         </div>
 
-
+        <div class="controls">
+            <button class="btn btn-success" onclick="openShareModal()">📸 生成排名分享</button>
+        </div>
 
         <div class="stats">
             <h3>📊 统计信息</h3>
@@ -628,6 +666,25 @@
             <div class="modal-setting-item">
                 <label>数据管理</label>
                 <button class="modal-btn modal-btn-danger" onclick="resetAllRecords()" style="width: 100%;">🔄 重置所有记录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分享排名弹窗 -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+
+            <div class="modal-body">
+                <div id="shareContent" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 10px; color: white; text-align: center;">
+                    <h2 style="margin: 0 0 20px 0; font-size: 24px;">🍷 酒场战况 🍷</h2>
+                    <div id="rankingList" style="margin-bottom: 20px;"></div>
+                    <div id="shareStats" style="font-size: 14px; opacity: 0.9;"></div>
+                    <div style="margin-top: 15px; font-size: 12px; opacity: 0.7;">— 今夜无眠，友谊万岁 —</div>
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="btn btn-success" onclick="generateShareImage()" style="margin-right: 10px;">分享到朋友圈</button>
+                    <button class="btn btn-secondary" onclick="closeShareModal()">取消</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1138,6 +1195,78 @@
                     </div>
                 `;
             }
+
+            // 获取排名数据
+            getRankingData() {
+                const sortedPlayers = [...this.players].sort((a, b) => b.drinkCount - a.drinkCount);
+                const totalDrinks = this.players.reduce((sum, player) => sum + player.drinkCount, 0);
+                const cupSize = this.getCupVolume();
+                const totalCups = Math.floor(totalDrinks / cupSize);
+                const remainingDrinks = totalDrinks % cupSize;
+                
+                // 为每个玩家添加排名和特殊类型
+                const playersWithRank = sortedPlayers.map((player, index) => {
+                    const rank = index + 1;
+                    let specialType = null;
+                    
+                    if (rank === 1 && player.drinkCount > 0) {
+                        specialType = 'champion';
+                    } else if (rank === sortedPlayers.length && sortedPlayers.length > 1) {
+                        specialType = 'last';
+                    }
+                    
+                    return {
+                        ...player,
+                        rank,
+                        specialType
+                    };
+                });
+                
+                return {
+                    players: playersWithRank,
+                    totalDrinks,
+                    totalCups,
+                    remainingDrinks,
+                    cupSize,
+                    totalPlayers: this.players.length
+                };
+            }
+
+            // 获取称呼
+            getPlayerTitle(rank, drinkCount, totalPlayers, specialType = null) {
+                // 第一名称呼
+                if (specialType === 'champion') {
+                    const championTitles = ['全场最佳', 'MVP'];
+                    return championTitles[Math.floor(Math.random() * championTitles.length)];
+                }
+                
+                // 最后一名称呼
+                if (specialType === 'last') {
+                    const lastTitles = ['气运之子', '狗屎运'];
+                    return lastTitles[Math.floor(Math.random() * lastTitles.length)];
+                }
+                
+                if (drinkCount === 0) {
+                    return '滴酒不沾';
+                }
+                
+                // 其他排名的通用称呼
+                if (rank === 1) {
+                    const championTitles = ['全场最佳', 'MVP'];
+                    return championTitles[Math.floor(Math.random() * championTitles.length)];
+                } else if (rank === totalPlayers && totalPlayers > 1) {
+                    const lastTitles = ['气运之子', '狗屎运'];
+                    return lastTitles[Math.floor(Math.random() * lastTitles.length)];
+                } else {
+                    // 中间排名显示具体名次
+                    const rankNames = ['', '第一名', '第二名', '第三名', '第四名', '第五名', '第六名', '第七名', '第八名', '第九名', '第十名'];
+                    if (rank <= 10) {
+                        return rankNames[rank];
+                    } else {
+                        return `第${rank}名`;
+                    }
+                }
+            }
         }
 
         // 初始化应用
@@ -1212,11 +1341,185 @@
             }
         }
 
+        // 分享功能相关函数
+        function openShareModal() {
+            const rankingData = drinkTracker.getRankingData();
+            updateShareContent(rankingData);
+            document.body.classList.add('modal-open');
+            document.getElementById('shareModal').style.display = 'block';
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').style.display = 'none';
+            document.body.classList.remove('modal-open');
+        }
+
+        function updateShareContent(rankingData) {
+            const rankingList = document.getElementById('rankingList');
+            const shareStats = document.getElementById('shareStats');
+            
+            // 生成排名列表
+            let rankingHTML = '';
+            rankingData.players.forEach((player, index) => {
+                const title = drinkTracker.getPlayerTitle(player.rank, player.drinkCount, rankingData.totalPlayers, player.specialType);
+                
+                // 根据排名设置图标
+                  let medal = '';
+                  if (player.rank === 1) {
+                      medal = '🥇';
+                  } else if (player.rank === 2) {
+                      medal = '🥈';
+                  } else if (player.rank === 3) {
+                      medal = '🥉';
+                  } else {
+                      medal = `${player.rank}.`;
+                  }
+                
+                rankingHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px 12px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 16px; min-width: 24px;">${medal}</span>
+                            <span style="font-weight: bold;">${player.name}</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 14px;">${title}</div>
+                            <div style="font-size: 12px; opacity: 0.8;">${player.drinkCount} 个酒</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            rankingList.innerHTML = rankingHTML;
+            
+            // 生成统计信息
+            const statsHTML = `
+                总计: ${rankingData.totalCups}个酒${rankingData.remainingDrinks > 0 ? ` + ${rankingData.remainingDrinks}个酒` : ''} | 
+                参与人数: ${rankingData.players.length}人
+            `;
+            shareStats.innerHTML = statsHTML;
+        }
+
+        async function generateShareImage() {
+            try {
+                // 显示加载提示
+                alert('📸 正在生成图片，请稍候...');
+                
+                // 动态加载html2canvas库
+                if (typeof html2canvas === 'undefined') {
+                    try {
+                        const script = document.createElement('script');
+                        script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+                        document.head.appendChild(script);
+                        
+                        await new Promise((resolve, reject) => {
+                            script.onload = resolve;
+                            script.onerror = () => reject(new Error('html2canvas库加载失败'));
+                            setTimeout(() => reject(new Error('html2canvas库加载超时')), 10000);
+                        });
+                    } catch (error) {
+                        throw new Error('无法加载图片生成库，请检查网络连接');
+                    }
+                }
+                
+                // 添加静态二维码到分享内容
+                addStaticQRCodeToShare();
+                
+                const shareContent = document.getElementById('shareContent');
+                if (!shareContent) {
+                    throw new Error('找不到分享内容元素');
+                }
+                
+                // 生成图片
+                const canvas = await html2canvas(shareContent, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: false,
+                    logging: false,
+                    width: shareContent.offsetWidth,
+                    height: shareContent.offsetHeight
+                });
+                
+                // 移除二维码元素
+                removeQRCodeFromShare();
+                
+                // 创建下载链接
+                const link = document.createElement('a');
+                const dateStr = new Date().toLocaleDateString().replace(/\//g, '-');
+                link.download = `酒场战况_${dateStr}.png`;
+                link.href = canvas.toDataURL('image/png', 0.9);
+                
+                // 触发下载
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // 显示成功提示
+                alert('🎉 排行榜图片已生成！\n\n你可以将图片保存到相册，然后分享到朋友圈啦！');
+                
+            } catch (error) {
+                console.error('生成图片失败:', error);
+                
+                // 清理可能残留的二维码元素
+                removeQRCodeFromShare();
+                
+                // 根据错误类型提供不同的提示
+                let errorMessage = '😅 图片生成失败，请稍后重试。';
+                if (error.message.includes('网络') || error.message.includes('加载')) {
+                    errorMessage += '\n\n可能是网络问题，请检查网络连接后重试。';
+                } else if (error.message.includes('元素')) {
+                    errorMessage += '\n\n页面元素异常，请刷新页面后重试。';
+                }
+                errorMessage += '\n\n💡 备用方案：你也可以直接截图分享哦！';
+                
+                alert(errorMessage);
+            }
+        }
+        
+        function addStaticQRCodeToShare() {
+              const shareContent = document.getElementById('shareContent');
+              if (!shareContent) {
+                  console.warn('找不到分享内容容器，跳过二维码添加');
+                  return;
+              }
+              
+              // 创建二维码容器
+              const qrContainer = document.createElement('div');
+              qrContainer.id = 'qrCodeContainer';
+              qrContainer.style.cssText = 'text-align: center; margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;';
+              
+              // 创建二维码图片
+              const qrImage = document.createElement('img');
+              qrImage.src = './qrcode.png';
+              qrImage.style.cssText = 'display: block; margin: 0 auto 10px auto; width: 100px; height: 100px;';
+              qrImage.alt = '扫码访问酒友记录器';
+              
+              // 添加说明文字
+              const qrText = document.createElement('div');
+              qrText.style.cssText = 'font-size: 12px; color: #666; margin-top: 5px;';
+              qrText.textContent = '扫码体验酒友记录器';
+              
+              qrContainer.appendChild(qrImage);
+              qrContainer.appendChild(qrText);
+              shareContent.appendChild(qrContainer);
+          }
+        
+        function removeQRCodeFromShare() {
+            const qrContainer = document.getElementById('qrCodeContainer');
+            if (qrContainer) {
+                qrContainer.remove();
+            }
+        }
+
         // 点击弹窗外部关闭弹窗
         window.onclick = function(event) {
-            const modal = document.getElementById('settingsModal');
-            if (event.target === modal) {
+            const settingsModal = document.getElementById('settingsModal');
+            const shareModal = document.getElementById('shareModal');
+            
+            if (event.target === settingsModal) {
                 closeSettingsModal();
+            } else if (event.target === shareModal) {
+                closeShareModal();
             }
         }
     </script>
