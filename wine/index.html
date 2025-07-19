@@ -1443,19 +1443,58 @@
                 // 移除二维码元素
                 removeQRCodeFromShare();
                 
-                // 创建下载链接
-                const link = document.createElement('a');
+                const dataURL = canvas.toDataURL('image/png', 0.9);
                 const dateStr = new Date().toLocaleDateString().replace(/\//g, '-');
-                link.download = `酒场战况_${dateStr}.png`;
-                link.href = canvas.toDataURL('image/png', 0.9);
                 
-                // 触发下载
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                // 检测是否为移动设备
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                                (navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && /MacIntel/.test(navigator.platform));
                 
-                // 显示成功提示
-                alert('🎉 排行榜图片已生成！\n\n你可以将图片保存到相册，然后分享到朋友圈啦！');
+                if (isMobile) {
+                    // 移动设备：在新窗口显示图片
+                    const newWindow = window.open('', '_blank');
+                    if (newWindow) {
+                        newWindow.document.write(`
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <meta charset="UTF-8">
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                <title>酒场战况_${dateStr}</title>
+                                <style>
+                                    body { margin: 0; padding: 20px; background: #f5f5f5; text-align: center; font-family: Arial, sans-serif; }
+                                    .container { max-width: 100%; }
+                                    .image { max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+                                    .tip { margin-top: 20px; padding: 15px; background: #fff; border-radius: 8px; color: #666; font-size: 14px; line-height: 1.5; }
+                                    .tip-title { font-weight: bold; color: #333; margin-bottom: 10px; }
+                                </style>
+                            </head>
+                            <body>
+                                <div class="container">
+                                    <img src="${dataURL}" alt="酒场战况" class="image">
+                                    <div class="tip">
+                                        <div class="tip-title">📱 保存图片到相册</div>
+                                        <div>• 长按图片选择"保存图片"</div>
+                                        <div>• 或者截图保存</div>
+                                        <div>• 然后就可以分享到朋友圈啦！</div>
+                                    </div>
+                                </div>
+                            </body>
+                            </html>
+                        `);
+                        newWindow.document.close();
+                        
+                        // 显示提示
+                        alert('🎉 图片已在新页面打开！\n\n请长按图片保存到相册，然后分享到朋友圈吧！');
+                    } else {
+                        // 如果无法打开新窗口，降级到下载方式
+                        downloadImage(dataURL, `酒场战况_${dateStr}.png`);
+                    }
+                } else {
+                    // 桌面设备：直接下载
+                    downloadImage(dataURL, `酒场战况_${dateStr}.png`);
+                    alert('🎉 排行榜图片已下载！\n\n你可以将图片分享到朋友圈啦！');
+                }
                 
             } catch (error) {
                 console.error('生成图片失败:', error);
@@ -1474,6 +1513,16 @@
                 
                 alert(errorMessage);
             }
+        }
+        
+        // 下载图片的辅助函数
+        function downloadImage(dataURL, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = dataURL;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
         
         function addStaticQRCodeToShare() {
