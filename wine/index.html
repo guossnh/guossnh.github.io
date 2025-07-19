@@ -664,6 +664,15 @@
                 </div>
             </div>
             <div class="modal-setting-item">
+                <label for="keepScreenOn">屏幕常亮:</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="keepScreenOn" onchange="toggleScreenWakeLock()">
+                    <span id="screenStatus" style="color: #666; font-size: 12px;">关闭</span>
+                </div>
+                <p style="margin-top: 5px; color: #666; font-size: 12px;">开启后屏幕将保持常亮，适合嘈杂环境</p>
+            </div>
+
+            <div class="modal-setting-item">
                 <label>数据管理</label>
                 <button class="modal-btn modal-btn-danger" onclick="resetAllRecords()" style="width: 100%;">🔄 重置所有记录</button>
             </div>
@@ -839,16 +848,16 @@
                     gainNode.connect(audioContext.destination);
                     
                     if (type === 'increase') {
-                        // 增加酒：愉快的上升音调
+                        // 增加酒：愉快的上升音调，使用最大音量
                         oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
                         oscillator.frequency.exponentialRampToValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
-                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
                         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
                     } else if (type === 'decrease') {
-                        // 减少酒：较低的音调
+                        // 减少酒：较低的音调，使用最大音量
                         oscillator.frequency.setValueAtTime(392.00, audioContext.currentTime); // G4
                         oscillator.frequency.exponentialRampToValueAtTime(329.63, audioContext.currentTime + 0.1); // E4
-                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
                         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
                     }
                     
@@ -1559,6 +1568,79 @@
                 qrContainer.remove();
             }
         }
+
+        // 屏幕常亮功能
+        let wakeLock = null;
+        
+        async function toggleScreenWakeLock() {
+            const checkbox = document.getElementById('keepScreenOn');
+            const status = document.getElementById('screenStatus');
+            
+            try {
+                if (checkbox.checked) {
+                    // 开启屏幕常亮
+                    if ('wakeLock' in navigator) {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        status.textContent = '开启';
+                        status.style.color = '#28a745';
+                        
+                        // 监听屏幕锁定状态变化
+                        wakeLock.addEventListener('release', () => {
+                            console.log('屏幕常亮已释放');
+                            if (checkbox.checked) {
+                                checkbox.checked = false;
+                                status.textContent = '关闭';
+                                status.style.color = '#666';
+                            }
+                        });
+                        
+                        console.log('屏幕常亮已开启');
+                    } else {
+                        // 浏览器不支持Wake Lock API
+                        checkbox.checked = false;
+                        status.textContent = '不支持';
+                        status.style.color = '#dc3545';
+                        alert('😅 您的浏览器不支持屏幕常亮功能\n\n建议使用最新版本的Chrome、Safari或Edge浏览器');
+                    }
+                } else {
+                    // 关闭屏幕常亮
+                    if (wakeLock) {
+                        await wakeLock.release();
+                        wakeLock = null;
+                    }
+                    status.textContent = '关闭';
+                    status.style.color = '#666';
+                    console.log('屏幕常亮已关闭');
+                }
+            } catch (error) {
+                console.error('屏幕常亮操作失败:', error);
+                checkbox.checked = false;
+                status.textContent = '失败';
+                status.style.color = '#dc3545';
+                
+                if (error.name === 'NotAllowedError') {
+                    alert('😅 屏幕常亮功能被拒绝\n\n请在浏览器设置中允许此网站使用屏幕常亮功能');
+                } else {
+                    alert('😅 屏幕常亮功能启用失败\n\n' + error.message);
+                }
+            }
+        }
+        
+        // 页面可见性变化时处理屏幕常亮
+        document.addEventListener('visibilitychange', async () => {
+            const checkbox = document.getElementById('keepScreenOn');
+            if (document.visibilityState === 'visible' && checkbox && checkbox.checked && !wakeLock) {
+                // 页面重新可见且用户之前开启了屏幕常亮，尝试重新申请
+                try {
+                    if ('wakeLock' in navigator) {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        console.log('屏幕常亮已重新开启');
+                    }
+                } catch (error) {
+                    console.warn('重新开启屏幕常亮失败:', error);
+                }
+            }
+        });
 
         // 点击弹窗外部关闭弹窗
         window.onclick = function(event) {
