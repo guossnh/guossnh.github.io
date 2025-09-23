@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>小朋友学数数</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <h1>🌟 小朋友学数数 🌟</h1>
+            <div class="score-board">
+                <div class="score">得分: <span id="score">0</span></div>
+                <div class="level">关卡: <span id="level">1</span></div>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <div class="question-area">
+                <div class="question-text">
+                    <h2 id="question">数一数有几个？</h2>
+                </div>
+                <div class="objects-container" id="objectsContainer">
+                    <!-- 动态生成物品 -->
+                </div>
+            </div>
+
+            <div class="answer-area">
+                <div class="answer-options" id="answerOptions">
+                    <!-- 动态生成答案选项 -->
+                </div>
+            </div>
+
+            <div class="feedback-area" id="feedbackArea">
+                <div class="feedback-message" id="feedbackMessage"></div>
+                <button class="next-btn" id="nextBtn" style="display: none;">继续</button>
+            </div>
+        </main>
+
+        <footer class="game-footer">
+            <button class="sound-toggle" id="soundToggle">🔊 声音</button>
+            <button class="reset-btn" id="resetBtn">重新开始</button>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
