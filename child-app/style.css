@@ -202,6 +202,8 @@ body {
 .answer-area {
     display: flex;
     justify-content: center;
+    position: relative;
+    z-index: 15; /* 确保答案区域在拖拽区域之上 */
 }
 
 .answer-options {
@@ -228,6 +230,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    z-index: 100; /* 确保答案按钮在最高层 */
 }
 
 .answer-btn:hover {
@@ -247,6 +251,10 @@ body {
 .answer-btn.wrong {
     background: linear-gradient(135deg, #ff4757, #c44569);
     animation: wrongAnswer 0.6s ease;
+    opacity: 0.7;
+    cursor: pointer;
+    transform: scale(0.95);
+    transition: all 0.3s ease;
 }
 
 @keyframes correctAnswer {
@@ -265,6 +273,14 @@ body {
 .feedback-area {
     text-align: center;
     min-height: 100px; /* 增大最小高度 */
+    position: relative;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    pointer-events: none; /* 确保反馈区域不会接收点击事件 */
 }
 
 .feedback-message {
@@ -300,6 +316,9 @@ body {
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     touch-action: manipulation;
     min-width: 200px; /* 增加最小宽度 */
+    position: relative;
+    z-index: 20;
+    pointer-events: auto; /* 确保继续按钮可以接收点击事件 */
 }
 
 .next-btn:hover {

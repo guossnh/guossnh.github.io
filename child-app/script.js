@@ -314,23 +314,23 @@ class CountingGame {
     
     // 处理自由拖拽
     handleFreeDrag(item) {
-        if (!this.dragMode || item.classList.contains('dragged')) return;
+        if (!this.dragMode) return;
 
-        // 标记为已拖拽（但保持可拖拽状态）
-        item.classList.add('dragged');
-
-        // 增加计数
-        this.draggedCount++;
-        this.dragCounter.textContent = this.draggedCount;
-        this.dragCounter.parentElement.classList.add('show');
+        // 如果是第一次拖拽这个物品，增加计数
+        if (!item.classList.contains('dragged')) {
+            item.classList.add('dragged');
+            this.draggedCount++;
+            this.dragCounter.textContent = this.draggedCount;
+            this.dragCounter.parentElement.classList.add('show');
+            
+            // 每拖拽3个物品播放一次鼓励音效
+            if (this.draggedCount % 3 === 0) {
+                this.playSound('encourage');
+            }
+        }
 
         // 播放拖拽音效
         this.playSound('drop');
-
-        // 每拖拽3个物品播放一次鼓励音效
-        if (this.draggedCount % 3 === 0) {
-            this.playSound('encourage');
-        }
 
         // 显示拖拽计数
         this.dragArea.classList.add('active');
@@ -474,9 +474,16 @@ class CountingGame {
         this.feedbackArea.style.display = 'none';
         this.nextBtn.style.display = 'none';
         
+        // 确保答案区域可见
+        this.answerOptions.style.display = 'grid';
+        console.log('答案选项区域已清空并设置为grid显示');
+        
         // 重置拖拽状态
         this.draggedCount = 0;
         this.draggedItems = [];
+        
+        // 重置点击状态（如果有的话）
+        this.clickedCount = 0;
         
         // 根据模式显示或隐藏容器
         if (this.dragMode) {
@@ -489,6 +496,7 @@ class CountingGame {
             // 隐藏点击模式容器
             this.objectsContainer.style.display = 'none';
         } else {
+            // 确保在点击模式下拖拽区域完全隐藏
             this.dragArea.style.display = 'none';
             // 显示点击模式容器
             this.objectsContainer.style.display = 'flex';
@@ -565,15 +573,32 @@ class CountingGame {
         
         // 生成答案选项
         const options = this.generateAnswerOptions();
+        console.log('生成答案选项，数量:', options.length);
+        
+        // 强制清除所有现有按钮和事件监听器
+        this.answerOptions.innerHTML = '';
+        
         options.forEach((option, index) => {
             const button = document.createElement('button');
             button.className = 'answer-btn';
             button.textContent = option;
-            button.addEventListener('click', () => this.checkAnswer(option));
-            button.addEventListener('touchstart', (e) => {
-                e.preventDefault();
+            button.disabled = false; // 确保按钮是可点击的
+            console.log('创建按钮:', option, 'disabled状态:', button.disabled);
+            
+            // 使用具名函数而不是箭头函数，确保事件监听器正确绑定
+            const handleClick = () => {
+                console.log('按钮被点击:', option);
                 this.checkAnswer(option);
-            });
+            };
+            
+            const handleTouch = (e) => {
+                e.preventDefault();
+                console.log('按钮被触摸:', option);
+                this.checkAnswer(option);
+            };
+            
+            button.addEventListener('click', handleClick);
+            button.addEventListener('touchstart', handleTouch);
             
             // 添加延迟动画
             setTimeout(() => {
@@ -605,23 +630,30 @@ class CountingGame {
     
     checkAnswer(selectedAnswer) {
         const answerBtns = this.answerOptions.querySelectorAll('.answer-btn');
+        console.log('检查答案，当前选择:', selectedAnswer, '正确答案:', this.correctAnswer);
+        
+        if (answerBtns.length === 0) {
+            console.log('警告：没有找到答案按钮！');
+            return;
+        }
+        
+        // 清除之前的状态
         answerBtns.forEach(btn => {
-            btn.disabled = true;
-            if (parseInt(btn.textContent) === this.correctAnswer) {
-                btn.classList.add('correct');
-            } else if (parseInt(btn.textContent) === selectedAnswer && selectedAnswer !== this.correctAnswer) {
-                btn.classList.add('wrong');
-            }
+            btn.classList.remove('correct', 'wrong');
         });
         
-        this.feedbackArea.style.display = 'block';
-        
         if (selectedAnswer === this.correctAnswer) {
+            // 答对了
+            answerBtns.forEach(btn => {
+                btn.disabled = true; // 答对了就禁用所有按钮
+                if (parseInt(btn.textContent) === this.correctAnswer) {
+                    btn.classList.add('correct');
+                }
+            });
+            
             this.score += 10 * this.level;
             this.feedbackMessage.textContent = '🎉 太棒了！答对了！';
             this.feedbackMessage.className = 'feedback-message success';
-            
-            // 播放成功音效（现在包含音调和轻柔掌声）
             this.playSound('correct');
             
             // 升级逻辑
@@ -631,22 +663,40 @@ class CountingGame {
                     alert(`🎊 恭喜升级到第 ${this.level} 关！`);
                 }, 1000);
             }
+            
+            // 显示下一题按钮
+            this.nextBtn.style.display = 'inline-block';
+            this.feedbackArea.style.display = 'block';
+            
         } else {
-            this.feedbackMessage.textContent = `😊 再试试！正确答案是 ${this.correctAnswer} 个`;
+            // 答错了，允许继续选择
+            answerBtns.forEach(btn => {
+                btn.disabled = false; // 保持按钮可点击
+                if (parseInt(btn.textContent) === selectedAnswer) {
+                    btn.classList.add('wrong'); // 标记错误选择
+                }
+            });
+            
+            this.feedbackMessage.textContent = `😊 再试试！还有${this.correctAnswer}个哦`;
             this.feedbackMessage.className = 'feedback-message error';
             this.playSound('wrong');
             
             // 错误时播放温和的鼓励音效
             setTimeout(() => {
                 this.playSound('encourage');
-            }, 500);
+            }, 300);
+            
+            // 显示反馈但不显示下一题按钮
+            this.nextBtn.style.display = 'none';
+            this.feedbackArea.style.display = 'block';
         }
         
         this.updateDisplay();
-        this.nextBtn.style.display = 'inline-block';
         
-        // 隐藏拖拽区域
-        this.dragArea.style.display = 'none';
+        // 只在点击模式下且答对时隐藏拖拽区域
+        if (!this.dragMode && selectedAnswer === this.correctAnswer) {
+            this.dragArea.style.display = 'none';
+        }
     }
     
     updateDisplay() {
