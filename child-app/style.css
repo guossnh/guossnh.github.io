@@ -13,12 +13,13 @@ body {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    font-size: 20px; /* 增大基础字体大小 */
 }
 
 .game-container {
-    max-width: 800px;
+    max-width: 1200px; /* 增大最大宽度 */
     margin: 0 auto;
-    padding: 20px;
+    padding: 30px; /* 增大内边距 */
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -27,32 +28,33 @@ body {
 .game-header {
     text-align: center;
     color: white;
-    margin-bottom: 20px;
+    margin-bottom: 30px; /* 增大下边距 */
 }
 
 .game-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    font-size: 4rem; /* 大幅增大标题字体 */
+    margin-bottom: 20px;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+    letter-spacing: 2px; /* 增加字间距 */
 }
 
 .score-board {
     display: flex;
     justify-content: center;
-    gap: 30px;
-    font-size: 1.2rem;
+    gap: 50px; /* 增大间距 */
+    font-size: 2rem; /* 增大分数字体 */
     font-weight: bold;
 }
 
 .game-main {
     flex: 1;
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border-radius: 30px; /* 增大圆角 */
+    padding: 40px; /* 增大内边距 */
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 30px; /* 增大间距 */
 }
 
 .question-area {
@@ -60,33 +62,126 @@ body {
 }
 
 .question-text h2 {
-    font-size: 2rem;
+    font-size: 3rem; /* 增大问题字体 */
     color: #4a5568;
-    margin-bottom: 20px;
+    margin-bottom: 30px; /* 增大下边距 */
 }
 
 .objects-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 15px;
-    margin: 20px 0;
-    min-height: 120px;
+    gap: 25px; /* 增大物品间距 */
+    margin: 30px 0;
+    min-height: 200px; /* 增大最小高度 */
     align-items: center;
 }
 
 .object-item {
-    width: 60px;
-    height: 60px;
+    width: 100px; /* 大幅增大物品尺寸 */
+    height: 100px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
-    cursor: pointer;
+    font-size: 3.5rem; /* 增大emoji大小 */
+    cursor: grab;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
     touch-action: manipulation;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.object-item:active {
+    cursor: grabbing;
+}
+
+.object-item.dragging {
+    position: fixed;
+    z-index: 1000;
+    transform: scale(1.2);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    pointer-events: none;
+}
+
+.object-item.dragged {
+    opacity: 0.3;
+    transform: scale(0.8);
+}
+
+/* 自由拖拽区域样式 */
+.drag-area {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border: 6px solid #FFB74D;
+    border-radius: 20px;
+    padding: 30px;
+    margin: 20px auto;
+    text-align: center;
+    min-height: 300px;
+    width: 90%;
+    max-width: 800px;
+    position: relative;
+    box-shadow: 0 6px 20px rgba(255, 183, 77, 0.2);
+    overflow: visible;
+    z-index: 5;
+    display: none;
+}
+
+.drag-area.dragging {
+    background: linear-gradient(135deg, #fff3c4, #ffe082);
+    border-color: #FFA726;
+    border-width: 8px;
+    box-shadow: 0 12px 35px rgba(255, 167, 38, 0.3);
+}
+
+.drag-counter {
+    font-size: 24px;
+    color: #E65100;
+    font-weight: bold;
+    background: white;
+    padding: 12px 24px;
+    border-radius: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+/* 可拖拽元素样式 */
+.draggable-item {
+    position: absolute !important;
+    cursor: move;
+    cursor: grab;
+    cursor: -webkit-grab;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    z-index: 15;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-drag: element;
+}
+
+.draggable-item:active {
+    cursor: grabbing;
+    cursor: -webkit-grabbing;
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+
+.draggable-item.dragging {
+    transform: scale(1.15);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+    z-index: 1001;
+}
+
+.draggable-item.clicked {
+    opacity: 0.6;
+    transform: scale(0.9);
 }
 
 .object-item:hover {
@@ -111,9 +206,9 @@ body {
 
 .answer-options {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-    gap: 15px;
-    max-width: 400px;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* 增大按钮最小宽度 */
+    gap: 25px; /* 增大按钮间距 */
+    max-width: 600px; /* 增大最大宽度 */
     width: 100%;
 }
 
@@ -121,15 +216,15 @@ body {
     background: linear-gradient(135deg, #ff6b6b, #ee5a24);
     color: white;
     border: none;
-    border-radius: 15px;
-    padding: 20px;
-    font-size: 1.5rem;
+    border-radius: 25px; /* 增大圆角 */
+    padding: 30px; /* 增大内边距 */
+    font-size: 2.5rem; /* 大幅增大字体 */
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     touch-action: manipulation;
-    min-height: 80px;
+    min-height: 120px; /* 增大最小高度 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -169,15 +264,15 @@ body {
 
 .feedback-area {
     text-align: center;
-    min-height: 60px;
+    min-height: 100px; /* 增大最小高度 */
 }
 
 .feedback-message {
-    font-size: 1.3rem;
+    font-size: 2rem; /* 增大反馈字体 */
     font-weight: bold;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 10px;
+    padding: 25px; /* 增大内边距 */
+    border-radius: 20px; /* 增大圆角 */
+    margin-bottom: 20px; /* 增大下边距 */
 }
 
 .feedback-message.success {
@@ -196,14 +291,15 @@ body {
     background: linear-gradient(135deg, #74b9ff, #0984e3);
     color: white;
     border: none;
-    border-radius: 15px;
-    padding: 15px 30px;
-    font-size: 1.2rem;
+    border-radius: 25px; /* 增大圆角 */
+    padding: 25px 40px; /* 增大内边距 */
+    font-size: 2rem; /* 增大字体 */
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     touch-action: manipulation;
+    min-width: 200px; /* 增加最小宽度 */
 }
 
 .next-btn:hover {

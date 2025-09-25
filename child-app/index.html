@@ -11,8 +11,19 @@
         <header class="game-header">
             <h1>🌟 小朋友学数数 🌟</h1>
             <div class="score-board">
-                <div class="score">得分: <span id="score">0</span></div>
-                <div class="level">关卡: <span id="level">1</span></div>
+                <div class="score-item">
+                    <span class="score-label">得分：</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">关卡：</span>
+                    <span id="level">1</span>
+                </div>
+            </div>
+            <div class="control-buttons">
+                <button id="modeToggle" class="control-btn">🖐️ 拖拽模式</button>
+                <button id="soundToggle" class="control-btn">🔊 声音</button>
+                <button id="resetBtn" class="control-btn">🔄 重新开始</button>
             </div>
         </header>
 
