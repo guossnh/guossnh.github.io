@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>找找小能手</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-shell">
+        <header class="game-header">
+            <a class="home-link" href="../" aria-label="返回首页">←</a>
+            <div>
+                <p class="eyebrow">4-5岁过渡游戏</p>
+                <h1>找找小能手</h1>
+            </div>
+            <button class="sound-btn" id="soundBtn" type="button" aria-label="声音开关">🔊</button>
+        </header>
+
+        <main class="game-board">
+            <section class="task-panel">
+                <div class="task-title">
+                    <span id="levelText">第 1 关</span>
+                    <strong id="scoreText">0 分</strong>
+                </div>
+                <h2 id="taskText">找出所有水果</h2>
+                <p id="hintText">点一点你觉得符合条件的东西。</p>
+                <div class="progress">
+                    <span>已找到</span>
+                    <strong id="foundText">0 / 0</strong>
+                </div>
+                <button class="listen-btn" id="listenBtn" type="button">再听一遍</button>
+            </section>
+
+            <section class="play-panel">
+                <div class="item-grid" id="itemGrid"></div>
+                <div class="feedback" id="feedback">先找一找，再点“检查”。</div>
+                <div class="actions">
+                    <button class="check-btn" id="checkBtn" type="button">检查</button>
+                    <button class="clear-btn" id="clearBtn" type="button">重选</button>
+                    <button class="next-btn" id="nextBtn" type="button">下一关</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

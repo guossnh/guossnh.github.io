@@ -4,6 +4,7 @@ class MarketGame {
         this.score = 0;
         this.stars = 0;
         this.soundEnabled = true;
+        this.audioContext = null;
         this.selected = [];
         this.currentMission = null;
 
@@ -50,7 +51,7 @@ class MarketGame {
         this.soundBtn.addEventListener("click", () => {
             this.soundEnabled = !this.soundEnabled;
             this.soundBtn.textContent = this.soundEnabled ? "🔊" : "🔇";
-            this.playTone(520, 0.08);
+            if (this.soundEnabled) this.playChime([520]);
         });
     }
 
@@ -162,12 +163,12 @@ class MarketGame {
         } else {
             if (this.selected.length >= totalNeeded) {
                 this.setFeedback("购物篮满了，先检查一下，或者清空重选。", "try");
-                this.playTone(280, 0.12);
+                this.playChime([260]);
                 return;
             }
             this.selected.push(item);
             shelfButton.classList.add("selected");
-            this.playTone(640, 0.08);
+            this.playChime([620]);
         }
 
         this.renderBasket();
@@ -178,7 +179,7 @@ class MarketGame {
         this.shelfGrid.querySelectorAll(".item-card").forEach(card => card.classList.remove("selected"));
         this.renderBasket();
         this.setFeedback("购物篮已经清空，可以重新选择。", "");
-        this.playTone(420, 0.08);
+        this.playChime([420]);
     }
 
     checkBasket() {
@@ -187,7 +188,7 @@ class MarketGame {
 
         if (this.selected.length < totalNeeded) {
             this.setFeedback(`还少 ${totalNeeded - this.selected.length} 个东西，再找找货架。`, "try");
-            this.playTone(300, 0.16);
+            this.playChime([260]);
             return;
         }
 
@@ -199,11 +200,11 @@ class MarketGame {
             this.checkBtn.style.display = "none";
             this.nextBtn.style.display = "inline-flex";
             this.markMissionDone();
-            this.playSuccess();
+            this.playChime([520, 660, 780]);
             this.speak("买对啦，真棒！");
         } else {
             this.setFeedback(result.message, "try");
-            this.playTone(260, 0.16);
+            this.playChime([260]);
             this.speak("再看一看购物单。");
         }
     }
@@ -277,34 +278,46 @@ class MarketGame {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(message);
         utterance.lang = "zh-CN";
-        utterance.rate = 0.82;
-        utterance.pitch = 1.15;
-        utterance.volume = 0.85;
+        utterance.rate = 0.72;
+        utterance.pitch = 1.05;
+        utterance.volume = 0.9;
+
+        const voices = window.speechSynthesis.getVoices();
+        const voice = voices.find(item => item.lang === "zh-CN")
+            || voices.find(item => item.lang && item.lang.startsWith("zh"));
+        if (voice) utterance.voice = voice;
+
         window.speechSynthesis.speak(utterance);
     }
 
-    playTone(frequency, duration) {
-        if (!this.soundEnabled) return;
-
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-
-        const audioContext = new AudioContext();
-        const oscillator = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        oscillator.connect(gain);
-        gain.connect(audioContext.destination);
-        oscillator.frequency.value = frequency;
-        oscillator.type = "sine";
-        gain.gain.setValueAtTime(0.12, audioContext.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + duration);
+    getAudioContext() {
+        if (!this.audioContext) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return null;
+            this.audioContext = new AudioContext();
+        }
+        return this.audioContext;
     }
 
-    playSuccess() {
-        [520, 660, 780].forEach((frequency, index) => {
-            setTimeout(() => this.playTone(frequency, 0.12), index * 120);
+    playChime(notes) {
+        if (!this.soundEnabled) return;
+
+        const audioContext = this.getAudioContext();
+        if (!audioContext) return;
+
+        notes.forEach((frequency, index) => {
+            const start = audioContext.currentTime + index * 0.13;
+            const oscillator = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            oscillator.connect(gain);
+            gain.connect(audioContext.destination);
+            oscillator.type = "sine";
+            oscillator.frequency.setValueAtTime(frequency, start);
+            gain.gain.setValueAtTime(0.001, start);
+            gain.gain.linearRampToValueAtTime(0.09, start + 0.025);
+            gain.gain.exponentialRampToValueAtTime(0.001, start + 0.28);
+            oscillator.start(start);
+            oscillator.stop(start + 0.3);
         });
     }
 

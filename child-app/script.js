@@ -75,7 +75,7 @@ class CountingGame {
                             osc.type = 'square';
                             
                             // 更轻柔的音量
-                            gain.gain.setValueAtTime(0.15, this.audioContext.currentTime + i * 0.08);
+                            gain.gain.setValueAtTime(0.08, this.audioContext.currentTime + i * 0.08);
                             gain.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + i * 0.08 + 0.1);
                             
                             osc.start(this.audioContext.currentTime + i * 0.08);
@@ -121,7 +121,7 @@ class CountingGame {
                     osc.type = 'square';
                     
                     // 快速衰减
-                    gain.gain.setValueAtTime(0.2, now + i * 0.05);
+                    gain.gain.setValueAtTime(0.1, now + i * 0.05);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.05 + 0.1);
                     
                     osc.start(now + i * 0.05);
@@ -130,7 +130,7 @@ class CountingGame {
                 return; // 提前返回，避免重复设置
         }
         
-        gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0.16, this.audioContext.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.6);
         
         oscillator.start(this.audioContext.currentTime);
@@ -142,9 +142,9 @@ class CountingGame {
         if ('speechSynthesis' in window && this.soundEnabled) {
             const utterance = new SpeechSynthesisUtterance(message);
             utterance.lang = 'zh-CN';
-            utterance.rate = 0.8; // 稍慢的语速，适合小朋友
-            utterance.pitch = 1.2; // 稍高的音调，更亲切
-            utterance.volume = 0.7;
+            utterance.rate = 0.72; // 更慢一点，适合小朋友听清楚
+            utterance.pitch = 1.05; // 不要太尖，听起来更柔和
+            utterance.volume = 0.85;
             
             // 使用女声
             const voices = speechSynthesis.getVoices();
