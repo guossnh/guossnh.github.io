@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>小小超市</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-shell">
+        <header class="game-header">
+            <a class="home-link" href="../" aria-label="返回首页">←</a>
+            <div>
+                <p class="eyebrow">5岁学习游戏</p>
+                <h1>小小超市</h1>
+            </div>
+            <button class="sound-btn" id="soundBtn" type="button" aria-label="声音开关">🔊</button>
+        </header>
+
+        <main class="game-board">
+            <section class="mission-panel" aria-live="polite">
+                <div class="mission-title">
+                    <span>购物单</span>
+                    <strong id="roundText">第 1 关</strong>
+                </div>
+                <h2 id="missionText">帮妈妈买东西</h2>
+                <div class="mission-chips" id="missionChips"></div>
+                <div class="stats">
+                    <div>
+                        <span>得分</span>
+                        <strong id="scoreText">0</strong>
+                    </div>
+                    <div>
+                        <span>星星</span>
+                        <strong id="starText">0</strong>
+                    </div>
+                </div>
+            </section>
+
+            <section class="shelf-panel">
+                <div class="panel-head">
+                    <h2>货架</h2>
+                    <button class="small-btn" id="listenBtn" type="button">再听一遍</button>
+                </div>
+                <div class="shelf-grid" id="shelfGrid"></div>
+            </section>
+
+            <section class="basket-panel">
+                <div class="panel-head">
+                    <h2>购物篮</h2>
+                    <button class="small-btn muted" id="clearBtn" type="button">清空</button>
+                </div>
+                <div class="basket-grid" id="basketGrid"></div>
+                <div class="feedback" id="feedback">选好以后点“检查购物篮”。</div>
+                <div class="actions">
+                    <button class="check-btn" id="checkBtn" type="button">检查购物篮</button>
+                    <button class="next-btn" id="nextBtn" type="button">下一关</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

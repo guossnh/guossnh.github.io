@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>卓的个人空间</title>
     <style>
@@ -11,469 +10,596 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
+        :root {
+            --ink: #1f2937;
+            --muted: #64748b;
+            --line: #dbe4ef;
+            --paper: #fffaf2;
+            --card: #ffffff;
+            --blue: #2563eb;
+            --green: #16a34a;
+            --orange: #f97316;
+            --rose: #e11d48;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            color: var(--ink);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background:
+                radial-gradient(circle at 18% 18%, rgba(37, 99, 235, 0.14), transparent 28%),
+                radial-gradient(circle at 80% 0%, rgba(249, 115, 22, 0.15), transparent 28%),
+                linear-gradient(180deg, #f7fbff 0%, #fffaf2 100%);
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .site-shell {
+            width: min(1120px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 28px 0 40px;
+        }
+
+        .topbar {
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: #333;
-        }
-        
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 60px 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 600px;
-            width: 90%;
-            backdrop-filter: blur(10px);
-            animation: fadeInUp 1s ease-out;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            margin: 0 auto 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            color: white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .subtitle {
-            font-size: 1.2em;
-            color: #666;
-            margin-bottom: 40px;
-            line-height: 1.6;
-        }
-        
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            justify-content: space-between;
             gap: 20px;
-            margin-top: 40px;
+            padding: 12px 0 28px;
         }
-        
-        .nav-item {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            letter-spacing: 0;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border-radius: 12px;
             color: white;
+            background: linear-gradient(135deg, var(--blue), var(--green));
+            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.2);
+        }
+
+        .top-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .top-links a,
+        .ghost-button {
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 9px 14px;
+            color: var(--muted);
+            background: rgba(255, 255, 255, 0.7);
             text-decoration: none;
-            padding: 20px;
-            border-radius: 15px;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .nav-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-        
-        .nav-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: left 0.5s ease;
-        }
-        
-        .nav-item:hover::before {
-            left: 100%;
-        }
-        
-        .nav-item h3 {
-            font-size: 1.3em;
-            margin-bottom: 10px;
-        }
-        
-        .nav-item p {
-            font-size: 0.9em;
-            opacity: 0.9;
-            line-height: 1.4;
-        }
-        
-        .footer {
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 1px solid #eee;
-            color: #999;
-            font-size: 0.9em;
-        }
-        
-        .social-links {
-            margin-top: 20px;
-        }
-        
-        .social-links a {
-            display: inline-block;
-            margin: 0 10px;
-            color: #667eea;
-            font-size: 1.5em;
-            transition: transform 0.3s ease;
-        }
-        
-        .social-links a:hover {
-            transform: scale(1.2);
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 40px 20px;
-            }
-            
-            h1 {
-                font-size: 2em;
-            }
-            
-            .nav-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* 模态框样式 */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-        }
-        
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            animation: modalFadeIn 0.3s ease-out;
-        }
-        
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 14px;
             cursor: pointer;
-            transition: color 0.3s ease;
         }
-        
-        .close:hover {
-            color: #667eea;
-        }
-        
-        .script-list {
+
+        .hero {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
+            grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+            align-items: center;
+            gap: 28px;
+            min-height: 430px;
+            padding: 36px;
+            border: 1px solid rgba(219, 228, 239, 0.9);
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.82);
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
+            backdrop-filter: blur(12px);
         }
-        
-        .script-item {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 15px;
-            border-left: 4px solid #667eea;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        .eyebrow {
+            width: fit-content;
+            margin-bottom: 18px;
+            border-radius: 999px;
+            padding: 8px 12px;
+            color: #0f766e;
+            background: #ccfbf1;
+            font-size: 14px;
+            font-weight: 700;
         }
-        
-        .script-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+
+        h1 {
+            max-width: 620px;
+            font-size: clamp(36px, 6vw, 66px);
+            line-height: 1.04;
+            letter-spacing: 0;
         }
-        
-        .script-item h4 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 1.1em;
+
+        .subtitle {
+            max-width: 560px;
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.8;
         }
-        
-        .script-item p {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-            line-height: 1.4;
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 28px;
         }
-        
+
+        .primary-button,
+        .secondary-button,
         .download-btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            border-radius: 999px;
+            padding: 0 18px;
             text-decoration: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+            font-weight: 800;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        
+
+        .primary-button {
+            color: white;
+            background: var(--blue);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+        }
+
+        .secondary-button {
+            color: var(--ink);
+            border: 1px solid var(--line);
+            background: white;
+        }
+
+        .primary-button:hover,
+        .secondary-button:hover,
         .download-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
-        
-        #scriptModal h2 {
-            color: #333;
-            margin-bottom: 15px;
-            text-align: center;
+
+        .hero-board {
+            display: grid;
+            gap: 12px;
+            padding: 18px;
+            border-radius: 22px;
+            background: #0f172a;
+            color: white;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
         }
-        
-        #scriptModal p {
-            text-align: center;
-            color: #666;
-            margin-bottom: 20px;
+
+        .board-row {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(54px, 1fr));
+            gap: 10px;
         }
-        
-        #scriptModal p a {
-            color: #667eea;
+
+        .board-tile {
+            display: grid;
+            min-height: 72px;
+            place-items: center;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 32px;
+        }
+
+        .board-note {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-radius: 16px;
+            padding: 14px 16px;
+            background: #fff7ed;
+            color: #9a3412;
+            font-weight: 800;
+        }
+
+        .section {
+            margin-top: 34px;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+
+        .section h2 {
+            font-size: 28px;
+            letter-spacing: 0;
+        }
+
+        .section-head p {
+            max-width: 520px;
+            color: var(--muted);
+            line-height: 1.7;
+            text-align: right;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .app-card {
+            display: block;
+            min-height: 210px;
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 22px;
+            background: var(--card);
+            color: inherit;
+            font: inherit;
+            text-align: left;
             text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 14px 36px rgba(15, 23, 42, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        
-        #scriptModal p a:hover {
-            text-decoration: underline;
+
+        .app-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 46px rgba(15, 23, 42, 0.1);
         }
-        
-        @media (max-width: 768px) {
-            .modal-content {
-                margin: 10% auto;
-                padding: 20px;
-                width: 95%;
+
+        .card-icon {
+            display: grid;
+            width: 52px;
+            height: 52px;
+            place-items: center;
+            border-radius: 14px;
+            margin-bottom: 18px;
+            color: white;
+            font-size: 26px;
+        }
+
+        .card-icon.blue { background: var(--blue); }
+        .card-icon.green { background: var(--green); }
+        .card-icon.orange { background: var(--orange); }
+        .card-icon.rose { background: var(--rose); }
+
+        .app-card h3 {
+            margin-bottom: 10px;
+            font-size: 21px;
+        }
+
+        .app-card p {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .tag {
+            border-radius: 999px;
+            padding: 6px 10px;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .footer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 38px;
+            padding-top: 24px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: none;
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.58);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal.is-open {
+            display: grid;
+            place-items: center;
+        }
+
+        .modal-content {
+            width: min(900px, 100%);
+            max-height: min(760px, 88vh);
+            overflow: auto;
+            border-radius: 20px;
+            padding: 28px;
+            background: white;
+            box-shadow: 0 30px 90px rgba(15, 23, 42, 0.32);
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .modal-head p {
+            margin-top: 8px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .close {
+            width: 42px;
+            height: 42px;
+            border: 0;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: var(--ink);
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .script-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+        }
+
+        .script-item {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 16px;
+            background: #f8fafc;
+        }
+
+        .script-item h4 {
+            margin-bottom: 8px;
+        }
+
+        .script-item p {
+            min-height: 44px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .download-btn {
+            min-height: 38px;
+            margin-top: 12px;
+            color: white;
+            background: var(--blue);
+            font-size: 14px;
+        }
+
+        @media (max-width: 860px) {
+            .topbar,
+            .section-head,
+            .footer {
+                align-items: flex-start;
+                flex-direction: column;
             }
-            
-            .script-list {
+
+            .top-links {
+                justify-content: flex-start;
+            }
+
+            .hero {
                 grid-template-columns: 1fr;
+                padding: 24px;
+            }
+
+            .section-head p {
+                text-align: left;
+            }
+
+            .app-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .site-shell {
+                width: min(100% - 20px, 1120px);
+                padding-top: 16px;
+            }
+
+            .hero {
+                border-radius: 18px;
+            }
+
+            .board-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-actions a,
+            .hero-actions button {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="avatar">🚀</div>
-        
-        <h1>卓的个人空间</h1>
-        
-        <p class="subtitle">
-            探索技术，分享生活<br>
-            在这里记录我的成长与思考
-        </p>
-        
-        <div class="nav-grid">
-            <a href="child-app/" class="nav-item">
-                <h3>🔢 3-4岁儿童查数</h3>
-                <p>专为3-4岁小朋友设计的数字认知游戏，快乐学数数</p>
-            </a>
-            
-            <a href="wine/" class="nav-item">
-                <h3>🍺 酒量计量器</h3>
-                <p>智能酒精摄入量计算，健康饮酒助手</p>
-            </a>
-            
-            <a href="#" class="nav-item" onclick="showTampermonkeyScripts(); return false;">
-                <h3>🐵 油猴脚本</h3>
-                <p>电商淘宝实用脚本合集，提升工作效率</p>
-            </a>
-        </div>
-        
-        <!-- 油猴脚本下载模态框 -->
-        <div id="scriptModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <h2>🐵 油猴脚本合集</h2>
-                <p>以下脚本需要在浏览器中安装 <a href="https://www.tampermonkey.net/" target="_blank">Tampermonkey</a> 扩展后使用</p>
-                
-                <div class="script-list">
-                    <div class="script-item">
-                        <h4>📋 复制ID工具</h4>
-                        <p>快速复制商品ID、用户ID等信息</p>
-                        <a href="taobao/copy_id_web/userscript.js" class="download-btn" download>下载脚本</a>
-                    </div>
-                    
-                    <div class="script-item">
-                        <h4>📋 复制到剪贴板</h4>
-                        <p>便捷复制功能增强</p>
-                        <a href="taobao/copytojiantieban/userscript.js" class="download-btn" download>下载脚本</a>
-                    </div>
-                    
-                    <div class="script-item">
-                        <h4>📊 数据统计工具</h4>
-                        <p>淘宝数据统计与分析</p>
-                        <a href="taobao/dtb_get_data/userscript.js" class="download-btn" download>下载脚本</a>
-                    </div>
-                    
-                    <div class="script-item">
-                        <h4>🔍 查找买家工具</h4>
-                        <p>快速查找买家信息</p>
-                        <a href="taobao/findBaidMan/userscript.js" class="download-btn" download>下载脚本</a>
-                    </div>
-                    
-                    <div class="script-item">
-                        <h4>🔍 拼多多查找</h4>
-                        <p>拼多多商品查找工具</p>
-                        <a href="taobao/mj_find_PDD/userscript.js" class="download-btn" download>下载脚本</a>
-                    </div>
-                    
-                    <div class="script-item">
-                        <h4>💬 拼多多评价</h4>
-                        <p>拼多多商品评价管理</p>
-                        <a href="taobao/pdd_all_remark/userscript.js" class="download-btn" download>下载脚本</a>
-                    </div>
-                    
-                    <div class="script-item">
-                        <h4>⏰ 拼多多时间清零</h4>
-                        <p>拼多多时间相关功能</p>
-                        <a href="taobao/pdd_time_zero/pdd_time_zero.js" class="download-btn" download>下载脚本</a>
-                    </div>
-                    
-                    <div class="script-item">
-                        <h4>🔗 快速链接</h4>
-                        <p>快速访问常用链接</p>
-                        <a href="taobao/quickLink/userscript.js" class="download-btn" download>下载脚本</a>
-                    </div>
-                    
-                    <div class="script-item">
-                        <h4>➕ 批量添加</h4>
-                        <p>批量添加商品功能</p>
-                        <a href="taobao/sellAllAdd/userscript.js" class="download-btn" download>下载脚本</a>
-                    </div>
-                    
-                    <div class="script-item">
-                        <h4>📈 淘宝统计</h4>
-                        <p>淘宝数据统计分析</p>
-                        <a href="taobao/tb_statistics/UserScript.js" class="download-btn" download>下载脚本</a>
-                    </div>
+    <div class="site-shell">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark">卓</div>
+                <div>
+                    <div>卓的个人空间</div>
+                    <small>小工具、小游戏、脚本合集</small>
                 </div>
             </div>
-        </div>
-        
-        <div class="footer">
-            <p>用心创造，用爱分享</p>
-            <div class="social-links">
-                <a href="https://github.com/guossnh" target="_blank" rel="noopener noreferrer" title="GitHub">📦</a>
-                <a href="mailto:your-email@example.com" title="邮箱">✉️</a>
-                <a href="#" title="微信">💬</a>
+            <nav class="top-links" aria-label="站点导航">
+                <a href="#kids">儿童游戏</a>
+                <a href="#tools">生活工具</a>
+                <button class="ghost-button" type="button" onclick="showTampermonkeyScripts()">油猴脚本</button>
+                <a href="https://github.com/guossnh" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div>
+                    <div class="eyebrow">给家里小朋友和自己都能用的网站</div>
+                    <h1>把常用的小想法做成能直接玩的页面。</h1>
+                    <p class="subtitle">这里现在有儿童数数、5岁适合的“小小超市”学习游戏、酒桌记录器和电商脚本入口。首页重新整理后，更方便继续往里加新页面。</p>
+                    <div class="hero-actions">
+                        <a class="primary-button" href="market-game/">打开小小超市</a>
+                        <a class="secondary-button" href="child-app/">玩数数游戏</a>
+                    </div>
+                </div>
+                <div class="hero-board" aria-label="小小超市游戏预览">
+                    <div class="board-row">
+                        <div class="board-tile">🍎</div>
+                        <div class="board-tile">🥕</div>
+                        <div class="board-tile">✏️</div>
+                        <div class="board-tile">🧃</div>
+                    </div>
+                    <div class="board-row">
+                        <div class="board-tile">🧸</div>
+                        <div class="board-tile">📘</div>
+                        <div class="board-tile">🍌</div>
+                        <div class="board-tile">🚗</div>
+                    </div>
+                    <div class="board-note">
+                        <span>购物单：2个水果 + 1本文具</span>
+                        <span>学分类和加法</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="kids">
+                <div class="section-head">
+                    <h2>儿童游戏</h2>
+                    <p>一个适合3-4岁练数数，一个适合5岁练分类、数量和简单计算。</p>
+                </div>
+                <div class="app-grid">
+                    <a class="app-card" href="market-game/">
+                        <div class="card-icon orange">🛒</div>
+                        <h3>小小超市</h3>
+                        <p>按购物单选择物品，练习水果、文具、玩具分类，以及1-10以内的数量和加法。</p>
+                        <div class="tag-row">
+                            <span class="tag">5岁推荐</span>
+                            <span class="tag">分类</span>
+                            <span class="tag">数感</span>
+                        </div>
+                    </a>
+                    <a class="app-card" href="child-app/">
+                        <div class="card-icon green">🔢</div>
+                        <h3>小朋友学数数</h3>
+                        <p>通过点击和拖拽数清楚物品数量，适合刚开始建立数字概念的小朋友。</p>
+                        <div class="tag-row">
+                            <span class="tag">3-4岁</span>
+                            <span class="tag">数数</span>
+                            <span class="tag">触屏</span>
+                        </div>
+                    </a>
+                    <button class="app-card" type="button" onclick="showTampermonkeyScripts()">
+                        <div class="card-icon blue">🐵</div>
+                        <h3>油猴脚本合集</h3>
+                        <p>把淘宝、拼多多相关脚本整理成一个下载入口，安装 Tampermonkey 后使用。</p>
+                        <div class="tag-row">
+                            <span class="tag">效率工具</span>
+                            <span class="tag">电商</span>
+                        </div>
+                    </button>
+                </div>
+            </section>
+
+            <section class="section" id="tools">
+                <div class="section-head">
+                    <h2>生活工具</h2>
+                    <p>保持独立页面，打开就能用。</p>
+                </div>
+                <div class="app-grid">
+                    <a class="app-card" href="wine/">
+                        <div class="card-icon rose">🍺</div>
+                        <h3>酒量计量器</h3>
+                        <p>记录酒桌上的杯数和人员，适合手机上快速点按统计。</p>
+                    </a>
+                    <a class="app-card" href="lcin/">
+                        <div class="card-icon blue">📱</div>
+                        <h3>LCIN 页面</h3>
+                        <p>已有独立页面入口，后续可以继续整理成完整介绍页。</p>
+                    </a>
+                    <a class="app-card" href="yf/shop_name.html">
+                        <div class="card-icon green">🏷️</div>
+                        <h3>店铺名称页</h3>
+                        <p>保留现有页面入口，方便从首页直接访问。</p>
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>© 2026 卓的个人空间</p>
+            <p>用心创造，用爱分享 | 已启用 HTTPS</p>
+        </footer>
+    </div>
+
+    <div id="scriptModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="scriptTitle">
+        <div class="modal-content">
+            <div class="modal-head">
+                <div>
+                    <h2 id="scriptTitle">油猴脚本合集</h2>
+                    <p>以下脚本需要先安装 <a href="https://www.tampermonkey.net/" target="_blank" rel="noopener noreferrer">Tampermonkey</a> 扩展。</p>
+                </div>
+                <button class="close" type="button" onclick="closeModal()" aria-label="关闭">&times;</button>
             </div>
-            <p style="margin-top: 20px; font-size: 0.8em;">
-                © 2024 卓的个人空间 | 用❤️构建
-            </p>
-            <p style="margin-top: 10px; font-size: 0.7em; color: #999;">
-                🔒 本站已启用HTTPS安全连接
-            </p>
+            <div class="script-list">
+                <div class="script-item"><h4>复制ID工具</h4><p>快速复制商品ID、用户ID等信息。</p><a href="taobao/copy_id_web/userscript.js" class="download-btn" download>下载脚本</a></div>
+                <div class="script-item"><h4>复制到剪贴板</h4><p>便捷复制功能增强。</p><a href="taobao/copytojiantieban/userscript.js" class="download-btn" download>下载脚本</a></div>
+                <div class="script-item"><h4>数据统计工具</h4><p>淘宝数据统计与分析。</p><a href="taobao/dtb_get_data/userscript.js" class="download-btn" download>下载脚本</a></div>
+                <div class="script-item"><h4>查找买家工具</h4><p>快速查找买家信息。</p><a href="taobao/findBaidMan/userscript.js" class="download-btn" download>下载脚本</a></div>
+                <div class="script-item"><h4>拼多多查找</h4><p>拼多多商品查找工具。</p><a href="taobao/mj_find_PDD/userscript.js" class="download-btn" download>下载脚本</a></div>
+                <div class="script-item"><h4>拼多多评价</h4><p>拼多多商品评价管理。</p><a href="taobao/pdd_all_remark/userscript.js" class="download-btn" download>下载脚本</a></div>
+                <div class="script-item"><h4>拼多多时间清零</h4><p>拼多多时间相关功能。</p><a href="taobao/pdd_time_zero/pdd_time_zero.js" class="download-btn" download>下载脚本</a></div>
+                <div class="script-item"><h4>快速链接</h4><p>快速访问常用链接。</p><a href="taobao/quickLink/userscript.js" class="download-btn" download>下载脚本</a></div>
+                <div class="script-item"><h4>批量添加</h4><p>批量添加商品功能。</p><a href="taobao/sellAllAdd/userscript.js" class="download-btn" download>下载脚本</a></div>
+                <div class="script-item"><h4>淘宝统计</h4><p>淘宝数据统计分析。</p><a href="taobao/tb_statistics/UserScript.js" class="download-btn" download>下载脚本</a></div>
+            </div>
         </div>
     </div>
-    
+
     <script>
-        // 添加一些交互效果
-        document.addEventListener('DOMContentLoaded', function() {
-            // 为导航项添加点击动画
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    this.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        this.style.transform = '';
-                        window.location.href = this.href;
-                    }, 150);
-                });
-            });
-            
-            // 添加滚动显示效果
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            });
-            
-            // 观察所有导航项
-            navItems.forEach(item => {
-                item.style.opacity = '0';
-                item.style.transform = 'translateY(20px)';
-                item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                observer.observe(item);
-            });
-        });
-        
-        // 油猴脚本模态框功能
+        const modal = document.getElementById('scriptModal');
+
         function showTampermonkeyScripts() {
-            document.getElementById('scriptModal').style.display = 'block';
+            modal.classList.add('is-open');
             document.body.style.overflow = 'hidden';
         }
-        
+
         function closeModal() {
-            document.getElementById('scriptModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
+            modal.classList.remove('is-open');
+            document.body.style.overflow = '';
         }
-        
-        // 点击模态框外部关闭
-        window.onclick = function(event) {
-            const modal = document.getElementById('scriptModal');
-            if (event.target == modal) {
+
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
                 closeModal();
             }
-        }
-        
-        // ESC键关闭模态框
+        });
+
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeModal();
