@@ -151,13 +151,19 @@ h1 {
 }
 
 .listen-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     min-height: 48px;
     margin-top: 16px;
     border-radius: 16px;
+    padding: 0 16px;
     color: white;
     background: var(--blue);
     font-weight: 900;
+    line-height: 1;
+    text-align: center;
 }
 
 .item-grid {
@@ -242,12 +248,18 @@ h1 {
 .check-btn,
 .clear-btn,
 .next-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     min-height: 52px;
     flex: 1;
     border-radius: 18px;
+    padding: 0 16px;
     color: white;
     font-size: 18px;
     font-weight: 900;
+    line-height: 1;
+    text-align: center;
 }
 
 .check-btn {
