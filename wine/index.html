@@ -22,7 +22,7 @@
             font-family: 'Microsoft YaHei', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 12px;
             /* 禁用触摸缩放 */
             touch-action: manipulation;
             -webkit-touch-callout: none;
@@ -38,7 +38,7 @@
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
-            padding: 20px;
+            padding: 14px;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
         }
 
@@ -46,7 +46,14 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            padding: 8px 0 10px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
         }
 
         .header-content {
@@ -56,33 +63,58 @@
 
         .header h1 {
             color: #8B4513;
-            font-size: 2em;
-            margin-bottom: 5px;
+            font-size: 1.65em;
+            margin-bottom: 0;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
 
 
-        .header-settings {
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             flex-shrink: 0;
         }
 
-        .settings-btn {
+        .settings-btn,
+        .header-undo-btn {
             background: #007bff;
             color: white;
             border: none;
-            padding: 10px 16px;
+            min-height: 36px;
+            padding: 0 12px;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
         }
 
-        .settings-btn:hover {
+        .header-undo-btn {
+            background: #dc3545;
+            box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+        }
+
+        .settings-btn:hover,
+        .header-undo-btn:hover {
             background: #0056b3;
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+        }
+
+        .header-undo-btn:hover {
+            background: #c82333;
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.38);
+        }
+
+        .header-undo-btn:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
         }
 
         .btn {
@@ -132,6 +164,14 @@
             transform: translateY(-2px);
         }
 
+        .btn:disabled {
+            background: #d1d5db;
+            color: #6b7280;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         .btn-add {
             background: #28a745;
             color: white;
@@ -165,16 +205,16 @@
         .players-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 12px;
         }
 
         .player-card {
-            background: linear-gradient(145deg, #ffffff, #f0f0f0);
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            border: 2px solid #e9ecef;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 10px 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e9ecef;
             transition: transform 0.3s ease;
             overflow: visible;
         }
@@ -184,27 +224,72 @@
         }
 
         .player-content {
-            display: flex;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
             align-items: center;
-            justify-content: space-between;
-            gap: 15px;
+            gap: 10px;
+        }
+
+        .player-main {
+            min-width: 0;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            grid-template-areas:
+                "name name"
+                "count summary";
+            align-items: end;
+            column-gap: 10px;
         }
 
         .player-name {
-            font-size: 1.1em;
+            grid-area: name;
+            font-size: 1.02em;
             font-weight: bold;
             color: #8B4513;
-            flex: 1;
             text-align: left;
+            word-break: break-word;
+        }
+
+        .cup-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 6px;
+            color: #b45309;
+            font-size: 0.86em;
+            white-space: nowrap;
         }
 
         .drink-count {
-            font-size: 1.8em;
+            grid-area: count;
+            font-size: 1.85em;
             font-weight: bold;
+            color: #111827;
+            line-height: 1;
+            margin-top: 3px;
+            text-align: left;
+        }
+
+        .current-label {
+            display: none;
+        }
+
+        .player-summary {
+            grid-area: summary;
+            margin-top: 0;
+            padding-bottom: 2px;
             color: #495057;
-            min-width: 50px;
-            text-align: center;
-            flex: 0 0 auto;
+            font-size: 0.8em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 6px;
         }
 
         .drink-swipe-area {
@@ -328,14 +413,6 @@
             transform: translate(-50%, 0) scale(1.3);
         }
 
-        .drink-count {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #495057;
-            min-width: 50px;
-            text-align: center;
-        }
-
         .drink-info {
             text-align: center;
             color: #6c757d;
@@ -343,23 +420,23 @@
         }
 
         .drink-buttons {
-            display: flex;
+            display: grid;
+            grid-template-columns: 38px 38px;
             gap: 5px;
-            flex-wrap: wrap;
-            justify-content: center;
+            justify-content: end;
             align-items: center;
         }
 
         .drink-btn {
-            padding: 8px 12px;
+            padding: 0 8px;
             border: none;
-            border-radius: 6px;
-            font-size: 14px;
+            border-radius: 9px;
+            font-size: 17px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.15s ease;
-            min-width: 40px;
-            height: 36px;
+            min-width: 38px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -420,34 +497,69 @@
             box-shadow: 0 2px 4px rgba(46, 213, 115, 0.6);
         }
 
+        .settle-cup-btn {
+            grid-column: 1 / -1;
+            min-height: 30px;
+            border: none;
+            border-radius: 9px;
+            background: #f59e0b;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(245, 158, 11, 0.28);
+        }
+
+        .settle-cup-btn:disabled {
+            background: #d1d5db;
+            color: #6b7280;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
         .controls {
-            text-align: center;
-            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .controls .btn {
+            min-height: 38px;
+            margin: 0;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .undo-btn {
+            min-width: 74px;
         }
 
         .stats {
             background: #f8f9fa;
             border-radius: 10px;
-            padding: 15px;
-            border: 2px solid #e9ecef;
+            padding: 10px;
+            border: 1px solid #e9ecef;
         }
 
         .stats h3 {
             text-align: center;
             color: #495057;
-            margin-bottom: 12px;
-            font-size: 1.1em;
+            margin-bottom: 8px;
+            font-size: 1em;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
         }
 
         .stat-item {
             background: white;
-            padding: 12px;
+            padding: 9px;
             border-radius: 8px;
             text-align: center;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -455,14 +567,14 @@
 
         .stat-label {
             color: #495057;
-            font-size: 1.1em;
+            font-size: 0.92em;
             font-weight: bold;
             margin-bottom: 3px;
         }
 
         .stat-value {
             color: #6c757d;
-            font-size: 1.0em;
+            font-size: 0.88em;
             font-weight: normal;
         }
 
@@ -583,21 +695,56 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+
             .container {
-                padding: 15px;
+                padding: 10px;
             }
 
             .header h1 {
-                font-size: 1.8em;
+                font-size: 1.45em;
+            }
+
+            .settings-btn,
+            .header-undo-btn {
+                min-height: 34px;
+                padding: 0 10px;
+                font-size: 12px;
             }
 
             .players-container {
                 grid-template-columns: 1fr;
             }
 
+            .player-content {
+                grid-template-columns: minmax(0, 1fr) auto;
+            }
+
+            .player-card {
+                padding: 9px 10px;
+            }
+
             .modal-content {
                 margin: 10% auto;
                 width: 95%;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .drink-buttons {
+                grid-template-columns: 38px 38px;
+            }
+
+            .drink-btn {
+                min-width: 38px;
+                height: 36px;
+            }
+
+            .settle-cup-btn {
+                min-height: 30px;
+                font-size: 12px;
             }
         }
     </style>
@@ -618,7 +765,8 @@ var _hmt = _hmt || [];
             <div class="header-content">
                  <h1>🍻 喝酒计数</h1>
              </div>
-            <div class="header-settings">
+            <div class="header-actions">
+                <button class="header-undo-btn" id="undoBtn" onclick="drinkTracker.undoLastAction()" disabled>↶ 撤销</button>
                 <button class="settings-btn" onclick="openSettingsModal()">⚙️ 设置</button>
             </div>
         </header>
@@ -647,17 +795,12 @@ var _hmt = _hmt || [];
                 <span class="close" onclick="closeSettingsModal()">&times;</span>
             </div>
             <div class="modal-setting-item">
-                <label for="modalCupVolume">一杯酒等于多少个酒:</label>
-                <input type="number" id="modalCupVolume" value="30" min="5" max="100" step="1">
-                <p style="margin-top: 5px; color: #666; font-size: 12px;">设置一杯酒可以分成多少个酒</p>
-            </div>
-            <div class="modal-setting-item">
                 <label for="buttonMode">按钮模式:</label>
                 <select id="buttonMode">
                     <option value="buttons">加减按钮</option>
                     <option value="slider">滑动按钮</option>
                 </select>
-                <p style="margin-top: 5px; color: #666; font-size: 12px;">选择喝酒记录的操作方式</p>
+                <p style="margin-top: 5px; color: #666; font-size: 12px;">加减的是当前这一杯里的“个酒”，“记为一杯”后会清零当前个酒。</p>
             </div>
             <div class="modal-setting-item">
                 <label>酒友管理</label>
@@ -712,6 +855,8 @@ var _hmt = _hmt || [];
         class DrinkTracker {
             constructor() {
                 this.players = [];
+                this.history = [];
+                this.audioContext = null;
                 this.storageKey = 'drinkTracker_data';
                 this.init();
             }
@@ -728,6 +873,7 @@ var _hmt = _hmt || [];
                 this.bindEvents();
                 this.render();
                 this.updatePlayerCount();
+                this.updateUndoButton();
             }
 
             // 保存数据到本地存储
@@ -735,13 +881,44 @@ var _hmt = _hmt || [];
                 try {
                     const data = {
                         players: this.players,
-                        cupVolume: this.getCupVolume(),
                         timestamp: Date.now()
                     };
                     localStorage.setItem(this.storageKey, JSON.stringify(data));
                 } catch (error) {
                     console.warn('保存数据失败:', error);
                 }
+            }
+
+            snapshotPlayers() {
+                return this.players.map(player => ({ ...player }));
+            }
+
+            pushHistory(actionText) {
+                this.history.push({
+                    actionText,
+                    players: this.snapshotPlayers()
+                });
+                if (this.history.length > 20) {
+                    this.history.shift();
+                }
+                this.updateUndoButton();
+            }
+
+            undoLastAction() {
+                const lastAction = this.history.pop();
+                if (!lastAction) {
+                    return;
+                }
+                this.players = lastAction.players.map((player, index) => this.normalizePlayer(player, index));
+                this.render();
+                this.saveToStorage();
+                this.updateUndoButton();
+            }
+
+            updateUndoButton() {
+                const button = document.getElementById('undoBtn');
+                if (!button) return;
+                button.disabled = this.history.length === 0;
             }
 
             // 从本地存储加载数据
@@ -751,17 +928,30 @@ var _hmt = _hmt || [];
                     if (data) {
                         const parsed = JSON.parse(data);
                         if (parsed.players && Array.isArray(parsed.players)) {
-                            this.players = parsed.players;
-                            // 恢复酒量设置
-                            if (parsed.cupVolume) {
-                                document.getElementById('modalCupVolume').value = parsed.cupVolume;
-                            }
+                            this.players = parsed.players.map((player, index) => this.normalizePlayer(player, index));
                         }
                     }
                 } catch (error) {
                     console.warn('加载数据失败:', error);
                     this.players = [];
                 }
+            }
+
+            normalizePlayer(player, index = 0) {
+                const legacyCount = Number(player.drinkCount || 0);
+                const completedCups = Number.isFinite(Number(player.completedCups))
+                    ? Math.max(0, Math.floor(Number(player.completedCups)))
+                    : 0;
+                const currentDrinks = Number.isFinite(Number(player.currentDrinks))
+                    ? Math.max(0, Math.floor(Number(player.currentDrinks)))
+                    : Math.max(0, Math.floor(legacyCount));
+
+                return {
+                    id: player.id || Date.now() + Math.random() + index,
+                    name: player.name || '无名酒友',
+                    completedCups,
+                    currentDrinks
+                };
             }
 
             // 清除本地存储
@@ -783,7 +973,8 @@ var _hmt = _hmt || [];
                     this.players.push({
                         id: Date.now() + Math.random(),
                         name: name,
-                        drinkCount: 0
+                        completedCups: 0,
+                        currentDrinks: 0
                     });
                 });
             }
@@ -796,10 +987,12 @@ var _hmt = _hmt || [];
                 const playerNumber = this.players.length + 1;
                 const names = ['老大', '老二', '老三', '老四', '老五', '老六', '老七', '老八', '老九', '老十'];
                 const defaultName = playerNumber <= names.length ? names[playerNumber - 1] : `酒友${playerNumber}`;
+                this.pushHistory('增加酒友');
                 this.players.push({
                     id: Date.now() + Math.random(),
                     name: defaultName,
-                    drinkCount: 0
+                    completedCups: 0,
+                    currentDrinks: 0
                 });
                 this.render();
                 this.updatePlayerCount();
@@ -808,6 +1001,7 @@ var _hmt = _hmt || [];
 
             removePlayer() {
                 if (this.players.length > 1) {
+                    this.pushHistory('减少酒友');
                     this.players.pop();
                     this.render();
                     this.updatePlayerCount();
@@ -826,7 +1020,7 @@ var _hmt = _hmt || [];
             updateDrinkCount(playerId, change) {
                 const player = this.players.find(p => p.id === playerId);
                 if (player) {
-                    player.drinkCount = Math.max(0, player.drinkCount + change);
+                    player.currentDrinks = Math.max(0, player.currentDrinks + change);
                     this.updateStats();
                     this.renderPlayerCard(player);
                     this.saveToStorage();
@@ -834,6 +1028,13 @@ var _hmt = _hmt || [];
             }
 
             changeDrinkCount(playerId, change) {
+                const player = this.players.find(p => p.id === playerId);
+                if (!player || (change < 0 && player.currentDrinks <= 0)) {
+                    return;
+                }
+
+                this.pushHistory(`${player.name} ${change > 0 ? '+1' : '-1'}`);
+
                 // 播放音效
                 if (change > 0) {
                     this.playSound('increase');
@@ -843,11 +1044,33 @@ var _hmt = _hmt || [];
                 this.updateDrinkCount(playerId, change);
             }
 
+            settleCup(playerId) {
+                const player = this.players.find(p => p.id === playerId);
+                if (!player || player.currentDrinks <= 0) {
+                    return;
+                }
+
+                if (player.currentDrinks <= 2 && !confirm(`${player.name} 当前只有 ${player.currentDrinks} 个酒，确定记为一杯吗？`)) {
+                    return;
+                }
+
+                this.pushHistory(`${player.name} 成杯`);
+                player.completedCups += 1;
+                player.currentDrinks = 0;
+                this.playSound('increase');
+                this.updateStats();
+                this.renderPlayerCard(player);
+                this.saveToStorage();
+            }
+
             // 播放音效的方法
             playSound(type) {
                 try {
-                    // 创建音频上下文
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    // 复用音频上下文，避免酒桌上连续点击时声音被削弱或延迟
+                    if (!this.audioContext) {
+                        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    }
+                    const audioContext = this.audioContext;
                     
                     // 创建振荡器
                     const oscillator = audioContext.createOscillator();
@@ -858,17 +1081,17 @@ var _hmt = _hmt || [];
                     gainNode.connect(audioContext.destination);
                     
                     if (type === 'increase') {
-                        // 增加酒：愉快的上升音调，使用最大音量
+                        // 增加酒：更响亮的上升音调，适合嘈杂环境
                         oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-                        oscillator.frequency.exponentialRampToValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
-                        gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                        oscillator.frequency.exponentialRampToValueAtTime(783.99, audioContext.currentTime + 0.12); // G5
+                        gainNode.gain.setValueAtTime(0.9, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.32);
                     } else if (type === 'decrease') {
-                        // 减少酒：较低的音调，使用最大音量
+                        // 减少酒：更明显的下降音调
                         oscillator.frequency.setValueAtTime(392.00, audioContext.currentTime); // G4
-                        oscillator.frequency.exponentialRampToValueAtTime(329.63, audioContext.currentTime + 0.1); // E4
-                        gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                        oscillator.frequency.exponentialRampToValueAtTime(293.66, audioContext.currentTime + 0.12); // D4
+                        gainNode.gain.setValueAtTime(0.82, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.26);
                     }
                     
                     // 设置波形类型
@@ -876,7 +1099,7 @@ var _hmt = _hmt || [];
                     
                     // 播放音效
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.2);
+                    oscillator.stop(audioContext.currentTime + 0.34);
                     
                 } catch (error) {
                     // 如果音频API不支持，静默失败
@@ -885,15 +1108,13 @@ var _hmt = _hmt || [];
             }
 
             resetAll() {
+                this.pushHistory('重置记录');
                 this.players.forEach(player => {
-                    player.drinkCount = 0;
+                    player.completedCups = 0;
+                    player.currentDrinks = 0;
                 });
                 this.render();
                 this.saveToStorage();
-            }
-
-            getCupVolume() {
-                return parseInt(document.getElementById('modalCupVolume').value) || 30;
             }
 
             // 滑动手势功能
@@ -1094,14 +1315,7 @@ var _hmt = _hmt || [];
                         change = Math.min(6, Math.floor(absDistance / 25) + 1);
                     }
                     
-                    // 播放音效
-                    if (change > 0) {
-                        this.playSound('increase');
-                    } else if (change < 0) {
-                        this.playSound('decrease');
-                    }
-                    
-                    this.updateDrinkCount(this.swipeData.playerId, change);
+                    this.changeDrinkCount(this.swipeData.playerId, change);
                 }
                 
                 // 重置滑块位置
@@ -1125,8 +1339,41 @@ var _hmt = _hmt || [];
                 const card = document.querySelector(`[data-player-id="${player.id}"]`);
                 if (card) {
                     const countElement = card.querySelector('.drink-count');
-                    countElement.textContent = player.drinkCount;
+                    const cupBadge = card.querySelector('.cup-badge');
+                    const summary = card.querySelector('.player-summary');
+                    const settleButton = card.querySelector('.settle-cup-btn');
+                    countElement.textContent = player.currentDrinks;
+                    cupBadge.textContent = this.getCupBadge(player.completedCups);
+                    summary.textContent = this.formatPlayerScore(player);
+                    if (settleButton) {
+                        settleButton.disabled = player.currentDrinks <= 0;
+                    }
                 }
+            }
+
+            getCupBadge(cups) {
+                return cups > 0 ? `🍷×${cups}` : '';
+            }
+
+            formatPlayerScore(player) {
+                return `${player.completedCups}杯 + ${player.currentDrinks}个酒`;
+            }
+
+            getPlayerScoreValue(player) {
+                return player.completedCups * 10000 + player.currentDrinks;
+            }
+
+            escapeHTML(value) {
+                return String(value)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            escapeAttr(value) {
+                return this.escapeHTML(value);
             }
 
             render() {
@@ -1147,38 +1394,48 @@ var _hmt = _hmt || [];
                     let controlsHTML = '';
                     if (buttonMode === 'slider') {
                         controlsHTML = `
-                            <div class="drink-swipe-area" 
-                                 data-player-id="${player.id}"
-                                 ontouchstart="drinkTracker.handleTouchStart(event)"
-                                 ontouchmove="drinkTracker.handleTouchMove(event)"
-                                 ontouchend="drinkTracker.handleTouchEnd(event)"
-                                 onmousedown="drinkTracker.handleMouseDown(event)"
-                                 onmousemove="drinkTracker.handleMouseMove(event)"
-                                 onmouseup="drinkTracker.handleMouseUp(event)"
-                                 onmouseleave="drinkTracker.handleMouseUp(event)"
-                                 style="user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;">
-                                <div class="swipe-track">
-                                    <div class="swipe-zones">
-                                        <div class="swipe-zone left">-1</div>
-                                        <div class="swipe-zone center"></div>
-                                        <div class="swipe-zone right">+1~6</div>
+                            <div class="player-controls">
+                                <div class="drink-swipe-area" 
+                                     data-player-id="${player.id}"
+                                     ontouchstart="drinkTracker.handleTouchStart(event)"
+                                     ontouchmove="drinkTracker.handleTouchMove(event)"
+                                     ontouchend="drinkTracker.handleTouchEnd(event)"
+                                     onmousedown="drinkTracker.handleMouseDown(event)"
+                                     onmousemove="drinkTracker.handleMouseMove(event)"
+                                     onmouseup="drinkTracker.handleMouseUp(event)"
+                                     onmouseleave="drinkTracker.handleMouseUp(event)"
+                                     style="user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;">
+                                    <div class="swipe-track">
+                                        <div class="swipe-zones">
+                                            <div class="swipe-zone left">-1</div>
+                                            <div class="swipe-zone center"></div>
+                                            <div class="swipe-zone right">+1~6</div>
+                                        </div>
+                                        <div class="swipe-handle" id="handle-${player.id}"></div>
+                                        <div class="swipe-feedback" id="feedback-${player.id}"></div>
                                     </div>
-                                    <div class="swipe-handle" id="handle-${player.id}"></div>
-                                    <div class="swipe-feedback" id="feedback-${player.id}"></div>
                                 </div>
+                                <button class="settle-cup-btn" onclick="drinkTracker.settleCup(${player.id})" ${player.currentDrinks <= 0 ? 'disabled' : ''}>成杯</button>
                             </div>`;
                     } else {
                         controlsHTML = `
-                            <div class="drink-buttons">
-                                <button class="drink-btn decrease" onclick="drinkTracker.changeDrinkCount(${player.id}, -1)">-</button>
-                                <button class="drink-btn increase" onclick="drinkTracker.changeDrinkCount(${player.id}, 1)">+</button>
+                            <div class="player-controls">
+                                <div class="drink-buttons">
+                                    <button class="drink-btn decrease" onclick="drinkTracker.changeDrinkCount(${player.id}, -1)">-</button>
+                                    <button class="drink-btn increase" onclick="drinkTracker.changeDrinkCount(${player.id}, 1)">+</button>
+                                    <button class="settle-cup-btn" onclick="drinkTracker.settleCup(${player.id})" ${player.currentDrinks <= 0 ? 'disabled' : ''}>成杯</button>
+                                </div>
                             </div>`;
                     }
                     
                     playerCard.innerHTML = `
                         <div class="player-content">
-                            <div class="player-name">${player.name}</div>
-                            <div class="drink-count">${player.drinkCount}</div>
+                            <div class="player-main">
+                                <div class="player-name">${this.escapeHTML(player.name)}<span class="cup-badge">${this.getCupBadge(player.completedCups)}</span></div>
+                                <div class="drink-count">${player.currentDrinks}</div>
+                                <div class="current-label">当前个酒</div>
+                                <div class="player-summary">${this.formatPlayerScore(player)}</div>
+                            </div>
                             ${controlsHTML}
                         </div>
                     `;
@@ -1190,45 +1447,47 @@ var _hmt = _hmt || [];
             updateStats() {
                 const container = document.getElementById('statsContainer');
                 
-                const totalDrinks = this.players.reduce((sum, player) => sum + player.drinkCount, 0);
-                const cupSize = this.getCupVolume();
-                const totalCups = Math.floor(totalDrinks / cupSize);
-                const remainingDrinks = totalDrinks % cupSize;
+                const totalCups = this.players.reduce((sum, player) => sum + player.completedCups, 0);
+                const currentDrinks = this.players.reduce((sum, player) => sum + player.currentDrinks, 0);
                 const maxDrinker = this.players.reduce((max, player) => 
-                    player.drinkCount > max.drinkCount ? player : max, this.players[0] || {name: '无', drinkCount: 0});
+                    this.getPlayerScoreValue(player) > this.getPlayerScoreValue(max) ? player : max,
+                    this.players[0] || {name: '无', completedCups: 0, currentDrinks: 0});
                 const minDrinker = this.players.reduce((min, player) => 
-                    player.drinkCount < min.drinkCount ? player : min, this.players[0] || {name: '无', drinkCount: 0});
+                    this.getPlayerScoreValue(player) < this.getPlayerScoreValue(min) ? player : min,
+                    this.players[0] || {name: '无', completedCups: 0, currentDrinks: 0});
 
                 container.innerHTML = `
                     <div class="stat-item">
-                        <div class="stat-label">总杯数</div>
-                        <div class="stat-value">${totalCups}杯${remainingDrinks > 0 ? ` + ${remainingDrinks}个酒` : ''}</div>
+                        <div class="stat-label">已结算杯数</div>
+                        <div class="stat-value">${totalCups}杯</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">当前个酒</div>
+                        <div class="stat-value">${currentDrinks}个酒</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">全场最佳</div>
-                        <div class="stat-value">${maxDrinker.name} (${maxDrinker.drinkCount})</div>
+                        <div class="stat-value">${this.escapeHTML(maxDrinker.name)} (${this.formatPlayerScore(maxDrinker)})</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">运气之子</div>
-                        <div class="stat-value">${minDrinker.name} (${minDrinker.drinkCount})</div>
+                        <div class="stat-value">${this.escapeHTML(minDrinker.name)} (${this.formatPlayerScore(minDrinker)})</div>
                     </div>
                 `;
             }
 
             // 获取排名数据
             getRankingData() {
-                const sortedPlayers = [...this.players].sort((a, b) => b.drinkCount - a.drinkCount);
-                const totalDrinks = this.players.reduce((sum, player) => sum + player.drinkCount, 0);
-                const cupSize = this.getCupVolume();
-                const totalCups = Math.floor(totalDrinks / cupSize);
-                const remainingDrinks = totalDrinks % cupSize;
+                const sortedPlayers = [...this.players].sort((a, b) => this.getPlayerScoreValue(b) - this.getPlayerScoreValue(a));
+                const totalCups = this.players.reduce((sum, player) => sum + player.completedCups, 0);
+                const currentDrinks = this.players.reduce((sum, player) => sum + player.currentDrinks, 0);
                 
                 // 为每个玩家添加排名和特殊类型
                 const playersWithRank = sortedPlayers.map((player, index) => {
                     const rank = index + 1;
                     let specialType = null;
                     
-                    if (rank === 1 && player.drinkCount > 0) {
+                    if (rank === 1 && this.getPlayerScoreValue(player) > 0) {
                         specialType = 'champion';
                     } else if (rank === sortedPlayers.length && sortedPlayers.length > 1) {
                         specialType = 'last';
@@ -1243,16 +1502,14 @@ var _hmt = _hmt || [];
                 
                 return {
                     players: playersWithRank,
-                    totalDrinks,
                     totalCups,
-                    remainingDrinks,
-                    cupSize,
+                    currentDrinks,
                     totalPlayers: this.players.length
                 };
             }
 
             // 获取称呼
-            getPlayerTitle(rank, drinkCount, totalPlayers, specialType = null) {
+            getPlayerTitle(rank, player, totalPlayers, specialType = null) {
                 // 第一名称呼
                 if (specialType === 'champion') {
                     const championTitles = ['全场最佳', 'MVP'];
@@ -1265,7 +1522,7 @@ var _hmt = _hmt || [];
                     return lastTitles[Math.floor(Math.random() * lastTitles.length)];
                 }
                 
-                if (drinkCount === 0) {
+                if (this.getPlayerScoreValue(player) === 0) {
                     return '滴酒不沾';
                 }
                 
@@ -1295,10 +1552,6 @@ var _hmt = _hmt || [];
 
         // 弹窗控制函数
         function openSettingsModal() {
-            // 同步酒量设置
-            const currentVolume = drinkTracker.getCupVolume();
-            document.getElementById('modalCupVolume').value = currentVolume;
-            
             // 同步按钮模式设置
             const currentButtonMode = localStorage.getItem('buttonMode') || 'buttons';
             document.getElementById('buttonMode').value = currentButtonMode;
@@ -1334,7 +1587,7 @@ var _hmt = _hmt || [];
                 nameItem.style.cssText = 'display: flex; align-items: center; gap: 10px; margin-bottom: 8px;';
                 nameItem.innerHTML = `
                     <span style="min-width: 60px; font-size: 14px;">${index + 1}号:</span>
-                    <input type="text" value="${player.name}" 
+                    <input type="text" value="${drinkTracker.escapeAttr(player.name)}" 
                            style="flex: 1; padding: 6px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;"
                            onchange="drinkTracker.updatePlayerName(${player.id}, this.value)"
                            onblur="drinkTracker.updatePlayerName(${player.id}, this.value)">
@@ -1356,7 +1609,6 @@ var _hmt = _hmt || [];
         function resetAllRecords() {
             if (confirm('⚠️ 确定要重置所有酒友的饮酒记录吗？\n\n此操作不可撤销！')) {
                 drinkTracker.resetAll();
-                drinkTracker.clearStorage();
             }
         }
 
@@ -1380,7 +1632,7 @@ var _hmt = _hmt || [];
             // 生成排名列表
             let rankingHTML = '';
             rankingData.players.forEach((player, index) => {
-                const title = drinkTracker.getPlayerTitle(player.rank, player.drinkCount, rankingData.totalPlayers, player.specialType);
+                const title = drinkTracker.getPlayerTitle(player.rank, player, rankingData.totalPlayers, player.specialType);
                 
                 // 根据排名设置图标
                   let medal = '';
@@ -1398,11 +1650,11 @@ var _hmt = _hmt || [];
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px 12px; background: rgba(255,255,255,0.1); border-radius: 8px;">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <span style="font-size: 16px; min-width: 24px;">${medal}</span>
-                            <span style="font-weight: bold;">${player.name}</span>
+                            <span style="font-weight: bold;">${drinkTracker.escapeHTML(player.name)}</span>
                         </div>
                         <div style="text-align: right;">
                             <div style="font-size: 14px;">${title}</div>
-                            <div style="font-size: 12px; opacity: 0.8;">${player.drinkCount} 个酒</div>
+                            <div style="font-size: 12px; opacity: 0.85;">${drinkTracker.formatPlayerScore(player)}</div>
                         </div>
                     </div>
                 `;
@@ -1412,7 +1664,7 @@ var _hmt = _hmt || [];
             
             // 生成统计信息
             const statsHTML = `
-                总计: ${rankingData.totalCups}个酒${rankingData.remainingDrinks > 0 ? ` + ${rankingData.remainingDrinks}个酒` : ''} | 
+                总计: ${rankingData.totalCups}杯 + ${rankingData.currentDrinks}个酒 | 
                 参与人数: ${rankingData.players.length}人
             `;
             shareStats.innerHTML = statsHTML;
@@ -1554,7 +1806,7 @@ var _hmt = _hmt || [];
               // 创建二维码容器
               const qrContainer = document.createElement('div');
               qrContainer.id = 'qrCodeContainer';
-              qrContainer.style.cssText = 'text-align: center; margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;';
+              qrContainer.style.cssText = 'text-align: center; margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.16); border-radius: 8px;';
               
               // 创建二维码图片
               const qrImage = document.createElement('img');
@@ -1564,7 +1816,7 @@ var _hmt = _hmt || [];
               
               // 添加说明文字
               const qrText = document.createElement('div');
-              qrText.style.cssText = 'font-size: 12px; color: #666; margin-top: 5px;';
+              qrText.style.cssText = 'font-size: 12px; color: rgba(255,255,255,0.92); margin-top: 5px;';
               qrText.textContent = '扫码体验酒友记录器';
               
               qrContainer.appendChild(qrImage);
