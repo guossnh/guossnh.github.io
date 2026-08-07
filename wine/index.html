@@ -232,57 +232,51 @@
 
         .player-main {
             min-width: 0;
-            display: grid;
-            grid-template-columns: auto minmax(0, 1fr);
-            grid-template-areas:
-                "name name"
-                "count summary";
-            align-items: end;
-            column-gap: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .player-name {
-            grid-area: name;
-            font-size: 1.02em;
+            font-size: 1.32em;
             font-weight: bold;
             color: #8B4513;
             text-align: left;
             word-break: break-word;
+            line-height: 1.15;
         }
 
         .cup-badge {
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            margin-left: 6px;
             color: #b45309;
-            font-size: 0.86em;
+            font-size: 1.12em;
+            font-weight: bold;
+            white-space: nowrap;
+            line-height: 1.15;
+        }
+
+        .current-drink {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 3px;
             white-space: nowrap;
         }
 
         .drink-count {
-            grid-area: count;
-            font-size: 1.85em;
+            font-size: 1.7em;
             font-weight: bold;
             color: #111827;
             line-height: 1;
-            margin-top: 3px;
             text-align: left;
         }
 
-        .current-label {
-            display: none;
-        }
-
-        .player-summary {
-            grid-area: summary;
-            margin-top: 0;
-            padding-bottom: 2px;
+        .drink-unit {
             color: #495057;
-            font-size: 0.8em;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 0.95em;
+            font-weight: bold;
         }
 
         .player-controls {
@@ -421,8 +415,8 @@
 
         .drink-buttons {
             display: grid;
-            grid-template-columns: 38px 38px;
-            gap: 5px;
+            grid-template-columns: 58px 58px;
+            gap: 8px;
             justify-content: end;
             align-items: center;
         }
@@ -430,13 +424,13 @@
         .drink-btn {
             padding: 0 8px;
             border: none;
-            border-radius: 9px;
-            font-size: 17px;
+            border-radius: 10px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.15s ease;
-            min-width: 38px;
-            height: 34px;
+            min-width: 58px;
+            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -463,23 +457,6 @@
             height: 120px;
         }
 
-        .drink-btn.decrease {
-            background: #ff4757;
-            color: white;
-        }
-
-        .drink-btn.decrease:hover {
-            background: #ff3838;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(255, 71, 87, 0.4);
-        }
-
-        .drink-btn.decrease:active {
-            background: #e63946;
-            transform: translateY(0px) scale(0.95);
-            box-shadow: 0 2px 4px rgba(255, 71, 87, 0.6);
-        }
-
         .drink-btn.increase {
             background: #2ed573;
             color: white;
@@ -498,13 +475,12 @@
         }
 
         .settle-cup-btn {
-            grid-column: 1 / -1;
-            min-height: 30px;
+            min-height: 42px;
             border: none;
-            border-radius: 9px;
+            border-radius: 10px;
             background: #f59e0b;
             color: #ffffff;
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 3px 8px rgba(245, 158, 11, 0.28);
@@ -734,17 +710,17 @@
 
         @media (max-width: 360px) {
             .drink-buttons {
-                grid-template-columns: 38px 38px;
+                grid-template-columns: 52px 52px;
             }
 
             .drink-btn {
-                min-width: 38px;
-                height: 36px;
+                min-width: 52px;
+                height: 40px;
             }
 
             .settle-cup-btn {
-                min-height: 30px;
-                font-size: 12px;
+                min-height: 40px;
+                font-size: 13px;
             }
         }
     </style>
@@ -793,14 +769,6 @@ var _hmt = _hmt || [];
             <div class="modal-header">
                 <span class="modal-title">酒友管理</span>
                 <span class="close" onclick="closeSettingsModal()">&times;</span>
-            </div>
-            <div class="modal-setting-item">
-                <label for="buttonMode">按钮模式:</label>
-                <select id="buttonMode">
-                    <option value="buttons">加减按钮</option>
-                    <option value="slider">滑动按钮</option>
-                </select>
-                <p style="margin-top: 5px; color: #666; font-size: 12px;">加减的是当前这一杯里的“个酒”，“记为一杯”后会清零当前个酒。</p>
             </div>
             <div class="modal-setting-item">
                 <label>酒友管理</label>
@@ -881,6 +849,7 @@ var _hmt = _hmt || [];
                 try {
                     const data = {
                         players: this.players,
+                        history: this.history,
                         timestamp: Date.now()
                     };
                     localStorage.setItem(this.storageKey, JSON.stringify(data));
@@ -898,7 +867,7 @@ var _hmt = _hmt || [];
                     actionText,
                     players: this.snapshotPlayers()
                 });
-                if (this.history.length > 20) {
+                if (this.history.length > 100) {
                     this.history.shift();
                 }
                 this.updateUndoButton();
@@ -930,10 +899,20 @@ var _hmt = _hmt || [];
                         if (parsed.players && Array.isArray(parsed.players)) {
                             this.players = parsed.players.map((player, index) => this.normalizePlayer(player, index));
                         }
+                        if (parsed.history && Array.isArray(parsed.history)) {
+                            this.history = parsed.history
+                                .filter(item => item && Array.isArray(item.players))
+                                .slice(-100)
+                                .map(item => ({
+                                    actionText: item.actionText || '撤销操作',
+                                    players: item.players.map((player, index) => this.normalizePlayer(player, index))
+                                }));
+                        }
                     }
                 } catch (error) {
                     console.warn('加载数据失败:', error);
                     this.players = [];
+                    this.history = [];
                 }
             }
 
@@ -1029,18 +1008,13 @@ var _hmt = _hmt || [];
 
             changeDrinkCount(playerId, change) {
                 const player = this.players.find(p => p.id === playerId);
-                if (!player || (change < 0 && player.currentDrinks <= 0)) {
+                if (!player || change <= 0) {
                     return;
                 }
 
-                this.pushHistory(`${player.name} ${change > 0 ? '+1' : '-1'}`);
+                this.pushHistory(`${player.name} +${change}`);
 
-                // 播放音效
-                if (change > 0) {
-                    this.playSound('increase');
-                } else if (change < 0) {
-                    this.playSound('decrease');
-                }
+                this.playSound('increase');
                 this.updateDrinkCount(playerId, change);
             }
 
@@ -1086,12 +1060,6 @@ var _hmt = _hmt || [];
                         oscillator.frequency.exponentialRampToValueAtTime(783.99, audioContext.currentTime + 0.12); // G5
                         gainNode.gain.setValueAtTime(0.9, audioContext.currentTime);
                         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.32);
-                    } else if (type === 'decrease') {
-                        // 减少酒：更明显的下降音调
-                        oscillator.frequency.setValueAtTime(392.00, audioContext.currentTime); // G4
-                        oscillator.frequency.exponentialRampToValueAtTime(293.66, audioContext.currentTime + 0.12); // D4
-                        gainNode.gain.setValueAtTime(0.82, audioContext.currentTime);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.26);
                     }
                     
                     // 设置波形类型
@@ -1279,15 +1247,14 @@ var _hmt = _hmt || [];
                 const handlePosition = Math.max(14, Math.min(136, centerPosition + constrainedDelta));
                 handle.style.left = `${handlePosition - 14}px`;
                 
-                // 计算增减量
+                // 计算增加量。减酒已由全局撤销功能承担。
                 if (Math.abs(deltaX) < 15) {
                     feedback.textContent = '0';
                     feedback.style.color = '#6c757d';
                     feedback.classList.add('active');
                 } else if (deltaX < 0) {
-                    // 左滑固定减1
-                    feedback.textContent = '-1';
-                    feedback.style.color = '#ff4757';
+                    feedback.textContent = '撤销';
+                    feedback.style.color = '#6c757d';
                     feedback.classList.add('active');
                 } else {
                     // 右滑按距离增加1-6
@@ -1305,16 +1272,9 @@ var _hmt = _hmt || [];
                 const absDistance = Math.abs(deltaX);
                 if (absDistance < 15) {
                     // 滑动距离太小，相当于放在0位置，不做任何改变
-                } else {
-                    let change;
-                    if (deltaX < 0) {
-                        // 左滑固定减1
-                        change = -1;
-                    } else {
-                        // 右滑按距离增加1-6
-                        change = Math.min(6, Math.floor(absDistance / 25) + 1);
-                    }
-                    
+                } else if (deltaX > 0) {
+                    // 右滑按距离增加1-6。减酒使用全局撤销。
+                    const change = Math.min(6, Math.floor(absDistance / 25) + 1);
                     this.changeDrinkCount(this.swipeData.playerId, change);
                 }
                 
@@ -1340,11 +1300,9 @@ var _hmt = _hmt || [];
                 if (card) {
                     const countElement = card.querySelector('.drink-count');
                     const cupBadge = card.querySelector('.cup-badge');
-                    const summary = card.querySelector('.player-summary');
                     const settleButton = card.querySelector('.settle-cup-btn');
                     countElement.textContent = player.currentDrinks;
                     cupBadge.textContent = this.getCupBadge(player.completedCups);
-                    summary.textContent = this.formatPlayerScore(player);
                     if (settleButton) {
                         settleButton.disabled = player.currentDrinks <= 0;
                     }
@@ -1352,7 +1310,7 @@ var _hmt = _hmt || [];
             }
 
             getCupBadge(cups) {
-                return cups > 0 ? `🍷×${cups}` : '';
+                return `🍷×${cups}`;
             }
 
             formatPlayerScore(player) {
@@ -1384,57 +1342,26 @@ var _hmt = _hmt || [];
             renderPlayers() {
                 const container = document.getElementById('playersContainer');
                 container.innerHTML = '';
-                const buttonMode = localStorage.getItem('buttonMode') || 'buttons';
 
                 this.players.forEach(player => {
                     const playerCard = document.createElement('div');
                     playerCard.className = 'player-card';
                     playerCard.setAttribute('data-player-id', player.id);
                     
-                    let controlsHTML = '';
-                    if (buttonMode === 'slider') {
-                        controlsHTML = `
-                            <div class="player-controls">
-                                <div class="drink-swipe-area" 
-                                     data-player-id="${player.id}"
-                                     ontouchstart="drinkTracker.handleTouchStart(event)"
-                                     ontouchmove="drinkTracker.handleTouchMove(event)"
-                                     ontouchend="drinkTracker.handleTouchEnd(event)"
-                                     onmousedown="drinkTracker.handleMouseDown(event)"
-                                     onmousemove="drinkTracker.handleMouseMove(event)"
-                                     onmouseup="drinkTracker.handleMouseUp(event)"
-                                     onmouseleave="drinkTracker.handleMouseUp(event)"
-                                     style="user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;">
-                                    <div class="swipe-track">
-                                        <div class="swipe-zones">
-                                            <div class="swipe-zone left">-1</div>
-                                            <div class="swipe-zone center"></div>
-                                            <div class="swipe-zone right">+1~6</div>
-                                        </div>
-                                        <div class="swipe-handle" id="handle-${player.id}"></div>
-                                        <div class="swipe-feedback" id="feedback-${player.id}"></div>
-                                    </div>
-                                </div>
+                    const controlsHTML = `
+                        <div class="player-controls">
+                            <div class="drink-buttons">
                                 <button class="settle-cup-btn" onclick="drinkTracker.settleCup(${player.id})" ${player.currentDrinks <= 0 ? 'disabled' : ''}>成杯</button>
-                            </div>`;
-                    } else {
-                        controlsHTML = `
-                            <div class="player-controls">
-                                <div class="drink-buttons">
-                                    <button class="drink-btn decrease" onclick="drinkTracker.changeDrinkCount(${player.id}, -1)">-</button>
-                                    <button class="drink-btn increase" onclick="drinkTracker.changeDrinkCount(${player.id}, 1)">+</button>
-                                    <button class="settle-cup-btn" onclick="drinkTracker.settleCup(${player.id})" ${player.currentDrinks <= 0 ? 'disabled' : ''}>成杯</button>
-                                </div>
-                            </div>`;
-                    }
+                                <button class="drink-btn increase" onclick="drinkTracker.changeDrinkCount(${player.id}, 1)">+1</button>
+                            </div>
+                        </div>`;
                     
                     playerCard.innerHTML = `
                         <div class="player-content">
                             <div class="player-main">
-                                <div class="player-name">${this.escapeHTML(player.name)}<span class="cup-badge">${this.getCupBadge(player.completedCups)}</span></div>
-                                <div class="drink-count">${player.currentDrinks}</div>
-                                <div class="current-label">当前个酒</div>
-                                <div class="player-summary">${this.formatPlayerScore(player)}</div>
+                                <div class="player-name">${this.escapeHTML(player.name)}</div>
+                                <div class="cup-badge">${this.getCupBadge(player.completedCups)}</div>
+                                <div class="current-drink"><span class="drink-count">${player.currentDrinks}</span><span class="drink-unit">个酒</span></div>
                             </div>
                             ${controlsHTML}
                         </div>
@@ -1552,10 +1479,6 @@ var _hmt = _hmt || [];
 
         // 弹窗控制函数
         function openSettingsModal() {
-            // 同步按钮模式设置
-            const currentButtonMode = localStorage.getItem('buttonMode') || 'buttons';
-            document.getElementById('buttonMode').value = currentButtonMode;
-            
             // 生成名字编辑列表
             updateNameEditList();
             
@@ -1565,14 +1488,10 @@ var _hmt = _hmt || [];
         }
 
         function closeSettingsModal() {
-            // 保存按钮模式设置
-            const buttonMode = document.getElementById('buttonMode').value;
-            localStorage.setItem('buttonMode', buttonMode);
-            
             document.getElementById('settingsModal').style.display = 'none';
             // 恢复背景滚动
             document.body.classList.remove('modal-open');
-            // 关闭时重新渲染以应用酒量变化和按钮模式变化
+            // 关闭时重新渲染以应用名字变化
             drinkTracker.render();
             // 保存设置变化
             drinkTracker.saveToStorage();
