@@ -1,0 +1,7 @@
+{
+  "provider": "Microsoft Edge online neural TTS",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "rate": "-8%",
+  "generator": "edge-tts 7.2.8",
+  "clips": 53
+}
