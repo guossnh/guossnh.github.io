@@ -209,6 +209,15 @@
             margin-top: 34px;
         }
 
+        main > .section:first-child {
+            margin-top: 0;
+        }
+
+        .brand h1 {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
         .section-head {
             display: flex;
             align-items: end;
@@ -421,7 +430,84 @@
         @media (max-width: 520px) {
             .site-shell {
                 width: min(100% - 20px, 1120px);
-                padding-top: 16px;
+                padding-top: 8px;
+            }
+
+            .topbar {
+                gap: 12px;
+                padding: 8px 0 20px;
+            }
+
+            .top-links {
+                gap: 6px;
+            }
+
+            .top-links a,
+            .ghost-button {
+                min-height: 44px;
+                display: inline-flex;
+                align-items: center;
+                padding: 8px 10px;
+            }
+
+            .section {
+                margin-top: 24px;
+            }
+
+            .section-head {
+                margin-bottom: 10px;
+            }
+
+            .section h2 {
+                font-size: 20px;
+            }
+
+            .section-head p,
+            .app-card p,
+            .app-card .tag-row {
+                display: none;
+            }
+
+            .app-grid {
+                gap: 8px;
+            }
+
+            .app-card {
+                display: grid;
+                grid-template-columns: 44px minmax(0, 1fr) 12px;
+                align-items: center;
+                gap: 12px;
+                min-height: 72px;
+                padding: 12px 14px;
+                border-radius: 8px;
+                box-shadow: none;
+            }
+
+            .app-card::after {
+                content: '';
+                width: 7px;
+                height: 7px;
+                border-top: 2px solid var(--muted);
+                border-right: 2px solid var(--muted);
+                transform: rotate(45deg);
+            }
+
+            .app-card:hover {
+                transform: none;
+            }
+
+            .card-icon {
+                width: 44px;
+                height: 44px;
+                margin: 0;
+                border-radius: 8px;
+                font-size: 24px;
+            }
+
+            .app-card h3 {
+                margin: 0;
+                font-size: 18px;
+                line-height: 1.5;
             }
 
             .hero {
@@ -445,7 +531,7 @@
             <div class="brand">
                 <div class="brand-mark">卓</div>
                 <div>
-                    <div>卓的个人空间</div>
+                    <h1>卓的个人空间</h1>
                     <small>小工具、小游戏、脚本合集</small>
                 </div>
             </div>
@@ -458,36 +544,6 @@
         </header>
 
         <main>
-            <section class="hero">
-                <div>
-                    <div class="eyebrow">给家里小朋友和自己都能用的网站</div>
-                    <h1>把常用的小想法做成能直接玩的页面。</h1>
-                    <p class="subtitle">这里现在保留儿童数数游戏、酒桌记录器和电商脚本入口。孩子游戏先走简单直接的路线，后面有更好的想法再继续加。</p>
-                    <div class="hero-actions">
-                        <a class="primary-button" href="child-app/">玩数数游戏</a>
-                        <a class="secondary-button" href="wine/">打开酒量计数</a>
-                    </div>
-                </div>
-                <div class="hero-board" aria-label="数数游戏预览">
-                    <div class="board-row">
-                        <div class="board-tile">🍎</div>
-                        <div class="board-tile">🍎</div>
-                        <div class="board-tile">🍎</div>
-                        <div class="board-tile">🍎</div>
-                    </div>
-                    <div class="board-row">
-                        <div class="board-tile">1</div>
-                        <div class="board-tile">2</div>
-                        <div class="board-tile">3</div>
-                        <div class="board-tile">4</div>
-                    </div>
-                    <div class="board-note">
-                        <span>数一数有几个？</span>
-                        <span>简单直接</span>
-                    </div>
-                </div>
-            </section>
-
             <section class="section" id="kids">
                 <div class="section-head">
                     <h2>儿童游戏</h2>
