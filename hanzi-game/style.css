@@ -4,6 +4,9 @@ body { margin: 0; background: #f5f5f7; color: var(--ink); font-family: -apple-sy
 button, a { touch-action: manipulation; }
 button { font: inherit; cursor: pointer; }
 button:disabled { cursor: default; }
+.primary:disabled, .primary:disabled:hover { background: #dcdce2; color: #77777e; transform: none; }
+.listen:disabled { background: #e8e8ed; color: #85858b; }
+.choices[aria-busy="true"] .choice:not(.correct):not(.tried) { background: #ededf1; }
 button:focus-visible, a:focus-visible { outline: 3px solid #0071e3; outline-offset: 5px; }
 [hidden] { display: none !important; }
 .shell { max-width: 820px; margin: auto; padding: 0 32px; }

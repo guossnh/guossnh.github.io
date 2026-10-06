@@ -10,7 +10,7 @@
     if (value && Number.isSafeInteger(value.stars) && value.stars >= 0 && value.words && typeof value.words === 'object' && !Array.isArray(value.words)) saved = value;
   } catch (_) { /* Learning remains available when storage is blocked. */ }
   let sound = true, phase = 'welcome', batch = [], queue = [], lesson = 0, round = 0, answered = false, missed = false, target;
-  let spokenAudio = null, speechVersion = 0;
+  let spokenAudio = null, speechVersion = 0, speechBusy = false, speechTimeout;
   const shuffle = list => {
     const result = [...list];
     for (let i = result.length - 1; i > 0; i--) {
@@ -25,12 +25,24 @@
   }
   function stopSpeech() {
     speechVersion++;
+    clearTimeout(speechTimeout);
     if (spokenAudio) {
       spokenAudio.pause();
       spokenAudio.removeAttribute('src');
       spokenAudio.load();
       spokenAudio = null;
     }
+    setSpeechBusy(false);
+  }
+  function setSpeechBusy(busy) {
+    speechBusy = busy;
+    $('next').disabled = busy;
+    $('listen').disabled = busy;
+    $('word-button').disabled = busy;
+    $('choices').setAttribute('aria-busy', String(busy));
+    [...$('choices').children].forEach(button => {
+      button.disabled = busy || answered || button.classList.contains('tried');
+    });
   }
   function speak(text) {
     stopSpeech();
@@ -40,10 +52,25 @@
     if (!source) { audioFallback(); return; }
     const clip = new Audio(source);
     spokenAudio = clip;
-    const failed = () => { if (version === speechVersion) audioFallback(); };
+    setSpeechBusy(true);
+    const failed = () => {
+      if (version !== speechVersion) return;
+      stopSpeech();
+      audioFallback();
+    };
+    // A failed or stalled request must not leave the child stuck on a locked screen.
+    speechTimeout = setTimeout(failed, 30000);
+    clip.addEventListener('ended', () => {
+      if (version !== speechVersion) return;
+      clearTimeout(speechTimeout);
+      setSpeechBusy(false);
+    }, { once: true });
     clip.addEventListener('error', failed, { once: true });
     clip.addEventListener('playing', () => {
-      if (version === speechVersion) $('audio-note').hidden = true;
+      if (version !== speechVersion) return;
+      $('audio-note').hidden = true;
+      clearTimeout(speechTimeout);
+      speechTimeout = setTimeout(failed, (Number.isFinite(clip.duration) ? clip.duration + 10 : 30) * 1000);
     }, { once: true });
     clip.play().catch(failed);
   }
@@ -58,13 +85,17 @@
     return item && Number.isFinite(item.correct) && Number.isFinite(item.misses) && Number.isFinite(item.seen) ? item : { correct: 0, misses: 0, seen: 0 };
   }
   function newBatch() {
-    const simple = words.filter(word => !word.familiar);
-    const known = words.filter(word => word.familiar);
-    const priority = word => { const item = record(word); return item.seen === 0 ? -100 : item.correct - item.misses * 2; };
-    batch = simple.sort((a, b) => priority(a) - priority(b)).slice(0, 2);
-    const review = known.sort((a, b) => priority(a) - priority(b))[0];
-    if (review) batch.push(review);
-    batch = [...batch, ...words.filter(word => !batch.includes(word))].slice(0, Math.min(3, words.length));
+    const byId = new Map(words.map(word => [word.id, word]));
+    let deck = Array.isArray(saved.deck) ? [...new Set(saved.deck)].filter(id => byId.has(id)) : [];
+    batch = [];
+    // Draw without replacement across rounds and reloads, then shuffle a fresh deck.
+    while (batch.length < Math.min(3, words.length)) {
+      if (!deck.length) deck = shuffle(words.map(word => word.id));
+      const available = deck.findIndex(id => !batch.some(word => word.id === id));
+      batch.push(byId.get(deck.splice(available, 1)[0]));
+    }
+    saved.deck = deck;
+    persist();
     lesson = 0; round = 0;
     $('progress').setAttribute('aria-valuenow', '0'); $('progress').firstElementChild.style.width = '0%';
     showLesson();
@@ -97,11 +128,12 @@
     prompt();
   }
   function prompt() {
+    if (speechBusy) return;
     if (!sound) audioFallback();
     else speak(lines.prompt(target));
   }
   function choose(word, button) {
-    if (answered || button.disabled) return;
+    if (speechBusy || answered || button.disabled) return;
     if (word.id !== target.id) {
       missed = true; button.classList.add('tried'); button.disabled = true;
       $('feedback').textContent = '没关系，再听听，你可以的。';
@@ -131,6 +163,7 @@
     speak(lines.finish);
   }
   $('next').addEventListener('click', () => {
+    if (speechBusy) return;
     if (phase === 'welcome' || phase === 'finish') newBatch();
     else if (phase === 'learn') {
       lesson++;
@@ -139,7 +172,7 @@
     } else if (answered) { if (round === 6) finish(); else ask(); }
   });
   $('listen').addEventListener('click', prompt);
-  $('word-button').addEventListener('click', () => speak(lines.lesson(target || words[0])));
+  $('word-button').addEventListener('click', () => { if (!speechBusy) speak(lines.lesson(target || words[0])); });
   $('sound').addEventListener('click', () => {
     sound = !sound; if (!sound) stopSpeech();
     $('sound').textContent = sound ? '♪' : '♩'; $('sound').setAttribute('aria-pressed', String(sound));

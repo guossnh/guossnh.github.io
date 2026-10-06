@@ -16,5 +16,21 @@ window.HANZI_WORDS = [
   { id: '急', phrase: '着急', sentence: '别着急，慢慢来。', picture: '💛', familiar: true },
   { id: '忽', phrase: '忽然', sentence: '忽然，一只小鸟飞来了。', picture: '🐦', familiar: true },
   { id: '再', phrase: '再见', sentence: '挥挥手，说再见。', picture: '👋', familiar: true },
-  { id: '法', phrase: '办法', sentence: '动动脑筋，想个办法。', picture: '💡', familiar: true }
+  { id: '法', phrase: '办法', sentence: '动动脑筋，想个办法。', picture: '💡', familiar: true },
+  { id: '会', phrase: '学会', sentence: '我学会自己穿鞋啦。', picture: '👟' },
+  { id: '见', phrase: '见面', sentence: '和好朋友见面，真开心。', picture: '👋' },
+  { id: '早', phrase: '早上', sentence: '早上好，新的一天开始啦。', picture: '🌅' },
+  { id: '雪', phrase: '雪花', sentence: '小雪花，轻轻飘下来。', picture: '❄️' },
+  { id: '鸡', phrase: '小鸡', sentence: '小鸡叽叽叽，跟着妈妈走。', picture: '🐥' },
+  { id: '绿', phrase: '绿色', sentence: '树叶是绿色的。', picture: '🍃' },
+  { id: '黄', phrase: '黄色', sentence: '香蕉穿着黄色的外衣。', picture: '🍌' },
+  { id: '青', phrase: '青蛙', sentence: '青蛙在池塘边唱歌。', picture: '🐸' },
+  { id: '鱼', phrase: '小鱼', sentence: '小鱼在水里游来游去。', picture: '🐟' },
+  { id: '做', phrase: '做饭', sentence: '爸爸在厨房里做饭。', picture: '🍳' },
+  { id: '飞', phrase: '飞走', sentence: '小鸟拍拍翅膀，飞走啦。', picture: '🕊️' },
+  { id: '跑', phrase: '跑步', sentence: '我和朋友一起跑步。', picture: '🏃' },
+  { id: '要', phrase: '想要', sentence: '我想要一个大大的拥抱。', picture: '🤗' },
+  { id: '吃', phrase: '吃饭', sentence: '吃饭前，先把小手洗干净。', picture: '🍚' },
+  { id: '鸟', phrase: '小鸟', sentence: '小鸟在树枝上唱歌。', picture: '🐦' },
+  { id: '他', phrase: '他们', sentence: '他们在一起玩积木。', picture: '🧱' }
 ];
