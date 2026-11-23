@@ -19,7 +19,7 @@ function hud(){
   for(const [id,v,n] of [['stage',stage,2],['score',score,5],['lives',lives,2],['enemies',waiting+foes.length,2]]) $(id).textContent=String(v).padStart(n,'0');
 }
 function screen(mode,title='',hint='',action=''){
-  state=mode; held.clear(); $('overlay').hidden=mode==='play'; $('title').textContent=title;
+  state=mode; resetControls(); $('overlay').hidden=mode==='play'; $('title').textContent=title;
   $('hint').textContent=hint; $('action').textContent=action; $('pause').disabled=mode!=='play';
 }
 function tank(x,y,enemy=false,type=0){
@@ -49,11 +49,67 @@ window.addEventListener('keydown',e=>{
   e.preventDefault();if(!e.repeat) held.set(e.code,keys[e.code]);
 });
 window.addEventListener('keyup',e=>held.delete(e.code));
-for(const button of document.querySelectorAll('[data-key]')){
-  button.onpointerdown=e=>{if(state!=='play')return;e.preventDefault();button.setPointerCapture(e.pointerId);held.set(e.pointerId,button.dataset.key);};
-  button.onlostpointercapture=e=>held.delete(e.pointerId);
+const stick = $('stick');
+const knob = stick.querySelector('.stick-knob');
+const fire = $('fire');
+const pointers = new Map();
+
+function releaseControl(control) {
+  if (!pointers.has(control)) return;
+  const id = pointers.get(control);
+  pointers.delete(control);
+  held.delete(id);
+  control.classList.remove('active');
+  if (control === stick) knob.style.transform = '';
+  if (control.hasPointerCapture(id)) control.releasePointerCapture(id);
+}
+function resetControls() {
+  releaseControl(stick);
+  releaseControl(fire);
+  held.clear();
+}
+function steer(event) {
+  const bounds = stick.getBoundingClientRect();
+  const x = event.clientX - bounds.left - bounds.width / 2;
+  const y = event.clientY - bounds.top - bounds.height / 2;
+  const distance = Math.hypot(x, y);
+  const travel = (stick.clientWidth - knob.offsetWidth) / 2;
+  const scale = Math.min(1, travel / (distance || 1));
+  knob.style.transform = `translate(${x * scale}px, ${y * scale}px)`;
+  if (distance < 10) {
+    held.delete(event.pointerId);
+    return;
+  }
+  const horizontal = Math.abs(x) > Math.abs(y);
+  const direction = horizontal ? (x < 0 ? 'left' : 'right') : (y < 0 ? 'up' : 'down');
+  held.set(event.pointerId, direction);
+}
+for (const control of [stick, fire]) {
+  control.addEventListener('pointerdown', event => {
+    if (state !== 'play' || event.button !== 0 || pointers.has(control)) return;
+    event.preventDefault();
+    control.setPointerCapture(event.pointerId);
+    pointers.set(control, event.pointerId);
+    control.classList.add('active');
+    if (control === stick) steer(event);
+    else held.set(event.pointerId, 'fire');
+  });
+  for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+    control.addEventListener(type, event => {
+      if (pointers.get(control) === event.pointerId) releaseControl(control);
+    });
+  }
+}
+stick.addEventListener('pointermove', event => {
+  if (pointers.get(stick) === event.pointerId) steer(event);
+});
+const controls = stick.parentElement;
+for (const type of ['selectstart', 'contextmenu']) {
+  controls.addEventListener(type, event => event.preventDefault());
 }
 window.addEventListener('blur',pause);
+window.addEventListener('pagehide',pause);
+document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
 function tile(x,y){return grid[Math.floor(y/8)]?.[Math.floor(x/8)] ?? 's';}
 function open(t,x,y){
   for(const dx of [-6.7,6.7]) for(const dy of [-6.7,6.7]) if(!'.f'.includes(tile(x+dx,y+dy))) return false;

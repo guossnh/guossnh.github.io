@@ -1,8 +1,14 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>坦克大战 · 卓的个人空间</title><link rel="stylesheet" href="style.css"></head>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>坦克大战 · 卓的个人空间</title><link rel="stylesheet" href="style.css?v=joystick1"></head>
 <body><main><header><a href="../">← 返回首页</a><button id="sound" aria-pressed="true">声音 开</button></header>
 <h1>坦克大战 <small>BATTLE CITY</small></h1>
 <div class="machine"><div class="screen"><canvas width="208" height="208" id="field" aria-label="坦克大战战场"></canvas><div id="overlay"><strong id="title">保卫鹰堡</strong><span id="hint">守住基地，击退 20 辆敌军坦克</span><button id="action">开始游戏</button></div></div>
 <aside><div><label>关卡</label><b id="stage">01</b></div><div><label>剩余敌军</label><b id="enemies">20</b></div><div><label>生命</label><b id="lives">03</b></div><div><label>得分</label><b id="score">00000</b></div><button id="pause" disabled>暂停</button></aside></div>
-<div class="controls"><div class="pad"><button data-key="up" aria-label="向上">▲</button><button data-key="left" aria-label="向左">◀</button><button data-key="down" aria-label="向下">▼</button><button data-key="right" aria-label="向右">▶</button></div><button class="fire" data-key="fire">开火</button></div>
-<footer>方向键 / WASD 移动　·　空格开火　·　P 暂停</footer></main><script src="levels.js"></script><script src="game.js"></script></body></html>
+<div class="controls">
+  <div id="stick" role="group" aria-label="四向移动摇杆">
+    <span class="stick-knob" aria-hidden="true"></span>
+  </div>
+  <button type="button" id="fire" class="fire">开火</button>
+</div>
+<p class="touch-help">拖动摇杆移动，松手停车。按住开火可连射。</p>
+<footer>方向键 / WASD 移动　·　空格开火　·　P 暂停</footer></main><script src="levels.js"></script><script src="game.js?v=joystick1"></script></body></html>
