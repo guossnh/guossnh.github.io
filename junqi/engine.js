@@ -35,17 +35,15 @@ const Junqi = (() => {
   }
   function destinations(board,from) {
     const reachable = new Set(links[from].map(edge => edge.to));
-    const engineer = board[from].rank === 1;
-    const seen = new Set([from]);
-    const queue = [{at:from,direction:0}];
-    while (queue.length) {
-      const {at,direction} = queue.pop();
-      for (const {to,rail} of links[at]) {
-        const step = to-at;
-        if (!rail || seen.has(to) || (!engineer && direction && step !== direction)) continue;
-        seen.add(to);
-        reachable.add(to);
-        if (!board[to]) queue.push({at:to,direction:step});
+    for (const first of links[from]) {
+      if (!first.rail) continue;
+      const step = first.to - from;
+      let edge = first;
+      while (edge) {
+        const at = edge.to;
+        reachable.add(at);
+        if (board[at]) break;
+        edge = links[at].find(link => link.rail && link.to === at + step);
       }
     }
     return reachable;
@@ -55,7 +53,7 @@ const Junqi = (() => {
     board.forEach((p,i) => {
       if (!p) return;
       if (!p.open) { options.push({to:i}); return; }
-      if (p.side !== side || p.rank === mine || p.rank === flag || bases.has(i)) return;
+      if (p.side !== side || p.rank === mine || p.rank === flag) return;
       for (const to of destinations(board,i)) {
         const q = board[to];
         if (q && (!q.open || q.side === side || camps.has(to))) continue;
@@ -74,6 +72,7 @@ const Junqi = (() => {
   }
   function play(game,move) {
     const {board,turn} = game;
+    if (game.winner || !moves(board,turn).some(m => m.from === move.from && m.to === move.to)) return false;
     const target = board[move.to];
     game.steps++;
     game.quiet = target ? 0 : game.quiet+1;
@@ -85,6 +84,7 @@ const Junqi = (() => {
     game.turn = other(turn);
     if (!game.winner && !moves(board,game.turn).length) game.winner = turn;
     if (!game.winner && game.quiet >= 80) game.winner = 'draw';
+    return true;
   }
   const value = p => p ? [1000,5,2,3,4,5,6,7,8,9,7,8][p.rank] : 0;
   function gain(board,move) {
@@ -94,18 +94,28 @@ const Junqi = (() => {
   }
   function choose(game,level) {
     const options = moves(game.board,game.turn);
-    if (level === 'easy') return options[Math.floor(Math.random()*options.length)];
+    const opponent = other(game.turn);
+    function risk(board,landing) {
+      let highest = 0;
+      for (const reply of moves(board,opponent)) {
+        if (reply.from === undefined || !board[reply.to]) continue;
+        if (level === 'easy' && reply.to !== landing) continue;
+        highest = Math.max(highest,gain(board,reply));
+      }
+      return highest;
+    }
+    const flipScore = level === 'easy' ? 0.6 : 1 - 0.85 * risk(game.board);
     let best, high = -Infinity;
     for (const move of options) {
-      let score = 1;
+      let score = flipScore;
       if (move.from !== undefined) {
+        if (game.board[move.to]?.rank === flag) return move;
         score = gain(game.board,move);
         const next = game.board.slice();
         resolve(next,move);
-        const threats = moves(next,other(game.turn)).filter(m => m.from !== undefined && next[m.to]);
-        score -= 0.85 * Math.max(0,...threats.map(m => gain(next,m)));
+        score -= (level === 'easy' ? 0.55 : 0.85) * risk(next,move.to);
       }
-      score += Math.random()*0.8;
+      score += Math.random() * (level === 'easy' ? 1.4 : 0.8);
       if (score > high) { high = score; best = move; }
     }
     return best;

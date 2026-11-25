@@ -51,10 +51,11 @@ function render() {
 function act(move) {
   const target = game.board[move.to], actor = team(game.turn);
   const mover = game.board[move.from];
-  Junqi.play(game,move);
+  if (!Junqi.play(game,move)) return;
   const result = game.board[move.to];
   let log;
   if (!mover) log = actor+'翻出了'+label(target);
+  else if (target?.rank === 11 && result === target) log = label(mover)+'触雷退场，'+label(target)+'留在原位';
   else if (!target) log = label(mover)+'移至第'+(Math.floor(move.to/Junqi.cols)+1)+'行第'+(move.to%Junqi.cols+1)+'列';
   else if (!result) log = label(mover)+'与'+label(target)+'同时退场';
   else log = label(result)+'击败了'+label(result === mover ? target : mover);
@@ -92,7 +93,7 @@ function clickCell(i) {
   selected = selected !== i && legal.some(m => m.from === i) ? i : null;
   render();
   if (selected === null && game.board[i]?.side === 'red' && !legal.some(m => m.from === i))
-    el('hint').textContent = Junqi.bases.has(i) ? '大本营里的棋子不能移出，可以翻棋或另选红棋。' : '这枚棋子当前不能移动，可以翻棋或另选红棋。';
+    el('hint').textContent = [0,11].includes(game.board[i].rank) ? Junqi.names[game.board[i].rank]+'固定在原位，不能移动。' : '这枚棋子当前不能移动，可以翻棋或另选红棋。';
 }
 function reset() {
   clearTimeout(timer);
