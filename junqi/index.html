@@ -7,6 +7,12 @@
 <aside><h2>人机对局</h2><div class="players"><strong>● 红方 · 你</strong><strong>● 蓝方 · 电脑</strong></div>
 <h3>电脑难度</h3><div class="switch" aria-label="电脑难度"><button data-level="easy">简单</button><button data-level="medium">中等</button></div>
 <section class="status" aria-live="polite"><h2 id="turn"></h2><p id="hint"></p></section><h3>上一步</h3><p id="last"></p><button id="reset">重新开局</button></aside></main>
+<dialog id="result" aria-labelledby="result-title" aria-describedby="result-detail">
+  <span class="result-flag" aria-hidden="true">⚑</span>
+  <h2 id="result-title"></h2>
+  <p id="result-detail"></p>
+  <form method="dialog"><button autofocus>查看终局</button><button type="button" id="replay">再来一局</button></form>
+</dialog>
 <dialog id="guide" aria-labelledby="guide-title">
   <h2 id="guide-title">翻翻棋玩法</h2>
   <h3>开局和回合</h3>

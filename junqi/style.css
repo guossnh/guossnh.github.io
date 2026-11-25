@@ -29,3 +29,12 @@
   .cell[data-mark="至"],.cell[data-mark="翻"]{animation:arrival .55s ease-out}
   @keyframes arrival{from{box-shadow:0 0 0 8px #4784a8}to{box-shadow:0 0 0 3px #28678e}}
 }
+
+#result{width:min(360px,90vw);text-align:center;padding:30px 20px;border-top:5px solid currentColor}
+#result[data-outcome="red"]{color:#983826}
+#result[data-outcome="blue"]{color:#255676}
+.result-flag{display:block;font:48px/1 serif}
+#result-title{font-size:clamp(32px,8vw,44px)}
+#result-detail{color:#263f37}
+#result form{display:flex;justify-content:center;gap:12px;margin-top:22px}
+#result button:first-child{background:transparent;color:#304e40}

@@ -71,7 +71,18 @@ function act(move) {
     notice.textContent = game.winner ? '对局结束' : '电脑正在走棋…';
   }
   render();
-  if (!game.winner && game.turn === 'blue') timer = setTimeout(() => act(Junqi.choose(game,level)),650);
+  if (game.winner) {
+    const title = el('turn').textContent;
+    let reason = team(game.turn) + '已无棋可走。';
+    if (game.winner === 'draw') reason = '双方连续 80 步没有翻棋或交锋。';
+    else if (mover && target?.rank === 0) reason = label(mover) + '夺取了' + label(target) + '！';
+    el('result-title').textContent = title;
+    el('result-detail').textContent = reason;
+    el('result').dataset.outcome = game.winner;
+    notice.textContent = title + '　' + reason;
+    if (el('guide').open) el('guide').close();
+    el('result').showModal();
+  } else if (game.turn === 'blue') timer = setTimeout(() => act(Junqi.choose(game,level)),650);
 }
 function clickCell(i) {
   if (game.winner || game.turn !== 'red') return;
@@ -94,6 +105,10 @@ function reset() {
 for (const btn of levels) btn.onclick = () => {
   level = btn.dataset.level;
   levels.forEach(b => b.setAttribute('aria-pressed',String(b === btn)));
+};
+el('replay').onclick = () => {
+  el('result').close();
+  reset();
 };
 drawMap();
 levels[0].click();
