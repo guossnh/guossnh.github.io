@@ -14,6 +14,23 @@ function allows(game, from, to) {
   return rules.moves(game.board, game.turn).some(move => move.from === from && move.to === to);
 }
 
+// Test every ordinary rank pairing in both attack directions and colors.
+for (const side of ['red','blue']) {
+  for (let attacker = 1; attacker <= 9; attacker++) {
+    for (let defender = 1; defender <= 9; defender++) {
+      const g = fixture();
+      g.turn = side;
+      g.board[5] = piece(side,attacker);
+      g.board[8] = piece(side === 'red' ? 'blue' : 'red',defender);
+      const before = JSON.stringify(g);
+      const legal = attacker >= defender;
+      assert.equal(allows(g,5,8),legal);
+      assert.equal(rules.play(g,{from:5,to:8}),legal);
+      if (!legal) assert.equal(JSON.stringify(g),before);
+      else assert.equal(g.board[8]?.rank ?? null,attacker === defender ? null : attacker);
+    }
+  }
+}
 // Check every multi-station trip on an empty board, including engineers.
 for (const rank of [1, 7]) {
   for (let from = 0; from < 60; from++) {

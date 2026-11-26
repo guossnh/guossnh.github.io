@@ -57,6 +57,7 @@ const Junqi = (() => {
       for (const to of destinations(board,i)) {
         const q = board[to];
         if (q && (!q.open || q.side === side || camps.has(to))) continue;
+        if (q && q.rank < bomb && p.rank < q.rank) continue;
         if (q?.rank === flag && board.some(v => v?.side === q.side && v.rank === mine)) continue;
         options.push({from:i,to});
       }
